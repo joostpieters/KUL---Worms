@@ -1,10 +1,16 @@
 package worms.model;
 
+/**
+ * 
+ * @author Kristof Achten <kristof.achten@student.kuleuven.be>
+ * @version 0.9
+ *
+ */
+
 public class Facade implements IFacade {
 
 	@Override
-	public Worm createWorm(double x, double y, double direction, double radius,
-			String name) {
+	public Worm createWorm(double x, double y, double direction, double radius, String name) {
 		// TODO Auto-generated method stub
 		return null;
 	}
