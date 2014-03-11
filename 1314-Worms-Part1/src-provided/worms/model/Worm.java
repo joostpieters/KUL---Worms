@@ -39,7 +39,10 @@ public class Worm {
 	}
 	
 	public void setRadius(Worm worm, double newRadius){
-		initialRadius = newRadius;
+		if(newRadius < 0.25){
+			initialRadius = 0.25;
+		}
+		else{initialRadius = newRadius;}
 	}
 	
 	public double getOrientation(Worm worm){
@@ -68,6 +71,23 @@ public class Worm {
 		return actionPoints;
 	}
 	
+	/**
+	 * Method to give the current worm a new name. Name may only contain normal letters, capital letters, spaces and quotationmarks. 
+	 * @param worm
+	 * @param newName
+	 */
+	
+	public void rename(Worm worm, String newName){
+		for(int i = 0; i<newName.length(); i++){
+			if(newName.matches("^[a-zA-Z]+$")){
+				initialName = newName;
+			}
+			else{
+				System.out.println("This name is not correct. The new name may only contain alphabetical letters, spaces and quotationmarks.");
+			}
+		}
+		
+	}
 	
 
 }
