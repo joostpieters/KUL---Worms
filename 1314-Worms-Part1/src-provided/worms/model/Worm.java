@@ -18,7 +18,12 @@ public class Worm {
 		xPos = x;
 		yPos = y;
 		initialDirection = direction;
-		initialName = name;		
+		if(name.matches("^[a-zA-Z]+$")){
+			initialName = name;
+		}
+		else{
+			initialName = "Jack Harkness";
+		}
 		if(initialRadius<0.25){
 			initialRadius = 0.25;
 		}
@@ -78,14 +83,12 @@ public class Worm {
 	 */
 	
 	public void rename(Worm worm, String newName){
-		for(int i = 0; i<newName.length(); i++){
 			if(newName.matches("^[a-zA-Z]+$")){
 				initialName = newName;
 			}
 			else{
 				System.out.println("This name is not correct. The new name may only contain alphabetical letters, spaces and quotationmarks.");
 			}
-		}
 		
 	}
 	
