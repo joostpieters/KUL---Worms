@@ -22,6 +22,7 @@ public class Worm {
 			initialName = name;
 		}
 		else{
+			System.out.println("This name is not correct. The new name may only contain alphabetical letters, spaces and quotationmarks. Your worm will be given a preset name.");
 			initialName = "Jack Harkness";
 		}
 		if(initialRadius<0.25){
