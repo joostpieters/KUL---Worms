@@ -9,9 +9,22 @@ package worms.model;
 
 public class Worm {
 	
-	public int actionPoints, InitialActionPoints;
-	public double xPos, yPos, initialDirection, initialRadius, initialMass, mass;
-	public String initialName;
+	public static int actionPoints;
+	public static int InitialActionPoints;
+	public static double xPos, yPos, initialDirection;
+	public static double initialRadius;
+	public static double initialMass;
+	public static double mass;
+	public static String initialName;
+	
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @param direction
+	 * @param radius
+	 * @param name
+	 */
 	
 	public Worm(double x, double y, double direction, double radius, String name){
 	
@@ -31,49 +44,109 @@ public class Worm {
 		else{initialRadius = radius;}
 	}
 	
-	public double getMass(Worm worm){
+	/**
+	 * 
+	 * @param worm
+	 * @return
+	 */
+	
+	public static double getMass(Worm worm){
 		mass = 1062*((4/3)*Math.PI*Math.pow(initialRadius, 3));
 		return mass;
 	}
 	
-	public double getRadius(Worm worm){
+	/**
+	 * 
+	 * @param worm
+	 * @return
+	 */
+	
+	public static double getRadius(Worm worm){
 		return initialRadius;
 	}
 	
-	public double getMinimalRadius(Worm worm){
+	/**
+	 * 
+	 * @param worm
+	 * @return
+	 */
+	
+	public static double getMinimalRadius(Worm worm){
 		return 0.25;
 	}
 	
-	public void setRadius(Worm worm, double newRadius){
+	/**
+	 * 
+	 * @param worm
+	 * @param newRadius
+	 */
+	
+	public static void setRadius(Worm worm, double newRadius){
 		if(newRadius < 0.25){
 			initialRadius = 0.25;
 		}
 		else{initialRadius = newRadius;}
 	}
 	
-	public double getOrientation(Worm worm){
+	/**
+	 * 
+	 * @param worm
+	 * @return
+	 */
+	
+	public static double getOrientation(Worm worm){
 		return initialDirection;
 	}
 	
-	public double getX(Worm worm){
+	/**
+	 * 
+	 * @param worm
+	 * @return
+	 */
+	
+	public static double getX(Worm worm){
 		return xPos;
 	}
 	
-	public double getY(Worm worm){
+	/**
+	 * 
+	 * @param worm
+	 * @return
+	 */
+	
+	public static double getY(Worm worm){
 		return yPos;
 	}
 	
-	public String getName(Worm worm){
+	/**
+	 * 
+	 * @param worm
+	 * @return
+	 */
+	
+	public static String getName(Worm worm){
 		return initialName;
 	}
 	
-	public int getMaxActionPoints(Worm worm){
+	/**
+	 * 
+	 * @param worm
+	 * @return
+	 */
+	
+	public static int getMaxActionPoints(Worm worm){
 		InitialActionPoints = (int)(worm.getMass(worm));
 		actionPoints = InitialActionPoints;
 		return InitialActionPoints;
 	}
 	
-	public int getActionPoints(Worm worm){
+	/**
+	 * 
+	 * @param worm
+	 * @return
+	 */
+	
+	public static int getActionPoints(Worm worm){
 		return actionPoints;
 	}
 	
@@ -83,7 +156,7 @@ public class Worm {
 	 * @param newName
 	 */
 	
-	public void rename(Worm worm, String newName){
+	public static void rename(Worm worm, String newName){
 			if(newName.matches("^[a-zA-Z]+$")){
 				initialName = newName;
 			}
