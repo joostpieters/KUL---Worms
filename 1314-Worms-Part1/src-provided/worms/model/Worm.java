@@ -31,12 +31,37 @@ public class Worm {
 		xPos = x;
 		yPos = y;
 		initialDirection = direction;
-		if(name.matches("^[a-zA-Z]+$")){
+		if(name.matches("^[a-zA-Z']+$")){
 			initialName = name;
 		}
 		else{
 			System.out.println("This name is not correct. The new name may only contain alphabetical letters, spaces and quotationmarks. Your worm will be given a preset name.");
-			initialName = "Jack Harkness";
+			int i = (int)((Math.random()*7)+1);
+			switch(i){		
+			case 1:
+				initialName = "Conor O'Brian";
+				break;
+			case 2:
+				initialName = "Cap'n Transalore";
+				break;
+			case 3:
+				initialName = "Tom Baker";
+				break;
+			case 4:
+				initialName = "David Smith";
+				break;
+			case 5:
+				initialName = "Matthew O'Hare";
+				break;
+			case 6:
+				initialName = "Procra Stinator";
+				break;
+			case 7:
+				initialName = "Jack Harkness";
+				break;
+			default:
+				initialName = "Geoff Mermaid";
+			}
 		}
 		if(initialRadius<0.25){
 			initialRadius = 0.25;
@@ -134,6 +159,7 @@ public class Worm {
 	 * @return
 	 */
 	
+	@SuppressWarnings("static-access")
 	public static int getMaxActionPoints(Worm worm){
 		InitialActionPoints = (int)(worm.getMass(worm));
 		actionPoints = InitialActionPoints;
@@ -164,6 +190,43 @@ public class Worm {
 				System.out.println("This name is not correct. The new name may only contain alphabetical letters, spaces and quotationmarks.");
 			}
 		
+	}
+	
+	/**
+	 * 
+	 * @param worm
+	 * @param steps
+	 * @return
+	 */
+	
+	public static boolean canMove(Worm worm, int steps){
+		boolean canMove = true;
+		int stepCost = (int)(Math.ceil(Math.abs(Math.cos(initialDirection)))+(Math.abs(4*Math.sin(initialDirection))));
+		if(stepCost > actionPoints){
+			canMove = false;
+		}
+		return canMove;
+	}
+	
+	/**
+	 * 
+	 * @param worm
+	 * @param steps
+	 */
+	
+	public static void move(Worm worm, int steps){
+		//Calc number of possible steps with canMove. True = ++ etc
+	}
+	
+	/**
+	 * 
+	 * @param worm
+	 * @param angle
+	 * @return
+	 */
+	
+	public static boolean canTurn(Worm worm, double angle){
+		return false;
 	}
 	
 
