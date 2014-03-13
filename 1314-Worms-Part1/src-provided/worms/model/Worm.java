@@ -19,7 +19,7 @@ public class Worm {
 	public static String initialName;
 	
 	/**
-	 * Initialize a ne Worm with given position, direction, radius and name.
+	 * Initialize a Worm with given position, direction, radius and name.
 	 * 
 	 * @param  	x
 	 * 		  	The initial X-coordinate of the worm.
