@@ -22,9 +22,9 @@ public class Worm {
 	 * Initialize a ne Worm with given position, direction, radius and name.
 	 * 
 	 * @param  	x
-	 * 		  	The initial X-coördinate of the worm.
+	 * 		  	The initial X-coordinate of the worm.
 	 * @param 	y
-	 * 		  	The initial Y-coördinate of the worm.	
+	 * 		  	The initial Y-coordinate of the worm.	
 	 * @param 	direction
 	 * 		  	The initial direction of the worm in radians.
 	 * @param 	radius
@@ -42,7 +42,7 @@ public class Worm {
 		xPos = x;
 		yPos = y;
 		initialDirection = direction;
-		if(name.matches("^[a-zA-Z']+$")){
+		if(Worm.isValidName(name)){
 			initialName = name;
 		}
 		else{
@@ -78,6 +78,10 @@ public class Worm {
 			initialRadius = 0.25;
 		}
 		else{initialRadius = radius;}
+	}
+	
+	public static boolean isValidName(String name){
+		return name.matches("^[a-zA-Z']+$");
 	}
 	
 	/**
@@ -139,11 +143,11 @@ public class Worm {
 	}
 	
 	/**
-	 * Return the current oriëntation of a worm.
+	 * Return the current orientation of a worm.
 	 * 
 	 * @param 	worm
-	 * 			The worm of whom the oriëntation needs to be returned.
-	 * @return	The current direction the worm is oriënted at.
+	 * 			The worm of whom the orientation needs to be returned.
+	 * @return	The current direction the worm is oriented at.
 	 * 		  | result == initialDirection
 	 */
 	
@@ -152,10 +156,10 @@ public class Worm {
 	}
 	
 	/**
-	 * Return the X-coördinate of a worm.
+	 * Return the X-coordinate of a worm.
 	 * 
 	 * @param 	worm
-	 * 			The worm of whom the X-coördinate needs to be returned.
+	 * 			The worm of whom the X-coordinate needs to be returned.
 	 * @return 	The X-position of given worm.
 	 * 		  | result == xPos
 	 */
@@ -165,10 +169,10 @@ public class Worm {
 	}
 	
 	/**
-	 * Return the Y-coördinate of a worm.
+	 * Return the Y-coordinate of a worm.
 	 * 
 	 * @param 	worm
-	 * 			The worm of whom the Y-coördinate needs to be returned.
+	 * 			The worm of whom the Y-coordinate needs to be returned.
 	 * @return	The Y-position of given worm.
 	 * 		  | result == yPos
 	 */
@@ -231,7 +235,7 @@ public class Worm {
 	 */
 	
 	public static void rename(Worm worm, String newName){
-			if(newName.matches("^[a-zA-Z]+$")){
+			if(Worm.isValidName(newName)){
 				initialName = newName;
 			}
 			else{
@@ -248,7 +252,7 @@ public class Worm {
 	 * @param 	steps
 	 * 			The amount of steps the worm want to make
 	 * @return	True if the amount of steps times the cost each step takes is smaller than the available actionpoints.
-	 * 		  |	result == ((steps*stepCost) > actionPoints)
+	 * 		  |	result == ((steps*stepCost) <= actionPoints)
 	 */
 	
 	public static boolean canMove(Worm worm, int steps){
@@ -261,16 +265,29 @@ public class Worm {
 	}
 	
 	/**
-	 * Make a worm move a certain amount of steps conform to his current oriëntation.
+	 * Make a worm move a certain amount of steps conform to his current orientation.
 	 * 
 	 * @param	worm
-	 * 			The worm who we are going to move..		
+	 * 			The worm who we are going to move.		
 	 * @param 	steps
 	 * 			The amount of steps given worm is going to move.
 	 */
 	
 	public static void move(Worm worm, int steps){
-		//Calc number of possible steps with canMove. True = ++ etc
+		try{
+		if(Worm.canMove(worm, steps) == true){
+			int stepCost = (int)(Math.ceil(Math.abs(Math.cos(initialDirection)))+(Math.abs(4*Math.sin(initialDirection))));
+			actionPoints -= (steps*stepCost);
+			xPos += (steps*(Math.cos(Worm.getOrientation(worm))*Worm.getRadius(worm)));
+			yPos += (steps*(Math.sin(Worm.getOrientation(worm))*Worm.getRadius(worm)));
+		}
+		else{
+			System.out.print("You do not have enough actionpoint to make this move.");
+		}
+		}
+		catch(Exception e){
+			System.out.print("This is an illegal move.");
+		}
 	}
 	
 	/**
@@ -280,12 +297,30 @@ public class Worm {
 	 * 			The worm we anticipate on turning.
 	 * @param 	angle
 	 * 			The angle we would like to turn given worm with.
-	 * @return	True if ...
+	 * @return	True if the cost of the turn is smaller than the actionpoints that remain.
+	 * 		  |	result == (turnCost <= actionPoints)
 	 */
 	
 	public static boolean canTurn(Worm worm, double angle){
-		return false;
+		boolean canTurn = true;
+		int turnCost = (int)(Math.ceil(angle*(60/(2*Math.PI))));
+		if(turnCost > actionPoints){
+			canTurn = false;
+		}
+		return canTurn;
 	}
 	
+	/**
+	 * Make a worm turn by adding or subtracting a certain angle from/to its current direction.
+	 * 
+	 * @param 	worm
+	 * 			The worm who we are going to turn a certain angle.
+	 * @param 	angle
+	 * 			The angle we would like given worm to turn.
+	 */
+	
+	public static void turn(Worm worm, double angle){
+		initialDirection += (angle);
+	}
 
 }

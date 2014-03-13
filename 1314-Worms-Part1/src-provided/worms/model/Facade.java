@@ -1,6 +1,7 @@
 package worms.model;
 
 /**
+ * Class used to implement the IFacade-class.
  * 
  * @author Kristof Achten <kristof.achten@student.kuleuven.be>
  * @version 0.9
@@ -11,32 +12,27 @@ public class Facade implements IFacade {
 
 	@Override
 	public Worm createWorm(double x, double y, double direction, double radius, String name) {
-		Worm newWorm = new Worm(x, y, direction, radius, name);
-		return newWorm;
+		return new Worm(x, y, direction, radius, name);
 	}
 
 	@Override
 	public boolean canMove(Worm worm, int nbSteps) {
-		// TODO Auto-generated method stub
-		return false;
+		return Worm.canMove(worm, nbSteps);
 	}
 
 	@Override
 	public void move(Worm worm, int nbSteps) {
-		// TODO Auto-generated method stub
-		
+		Worm.move(worm, nbSteps);
 	}
 
 	@Override
 	public boolean canTurn(Worm worm, double angle) {
-		// TODO Auto-generated method stub
-		return false;
+		return Worm.canTurn(worm, angle);
 	}
 
 	@Override
 	public void turn(Worm worm, double angle) {
-		// TODO Auto-generated method stub
-		
+		Worm.turn(worm, angle);
 	}
 
 	@Override
@@ -69,8 +65,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public double getOrientation(Worm worm) {
-		// TODO Auto-generated method stub
-		return 0;
+		return Worm.getOrientation(worm);
 	}
 
 	@Override
