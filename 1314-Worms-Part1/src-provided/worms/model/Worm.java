@@ -322,5 +322,76 @@ public class Worm {
 	public static void turn(Worm worm, double angle){
 		initialDirection += (angle);
 	}
+	
+	/**
+	 * Return the Force that's going to be exerted on a worm during a jump.
+	 * 
+	 * @param 	worm
+	 * 			The worm to calculate the force for.
+	 * @return	The force that needs to be exerted given said conditions.
+	 * 		  |	result == ((5*actionPoints)+(mass*9.80665))
+	 */
+	
+	public static double getJumpForce(Worm worm){
+		return ((5*actionPoints)+(mass*9.80665));
+	}
 
+	/**
+	 * Return the time it will take to potentially make a jump with respect to the worms details.
+	 * 
+	 * @param 	worm
+	 * 			The worm to calculate the potential jump time for.
+	 * @return	The time a potential jump will take.
+	 * 		  |	result == distance/(initialVelocity*cos(initialDirection))
+	 */
+	
+	public static double getJumpTime(Worm worm){
+		double initialVelocity = ((Worm.getJumpForce(worm)*0.5)/mass);
+		double distance = (((initialVelocity*initialVelocity)*Math.sin(2*initialDirection))/9.80665);
+		return distance/(initialVelocity*Math.cos(initialDirection));
+	}
+	
+	/**
+	 * Return the X and Y coordinates of a worm performing a jump at a given time.
+	 * 
+	 * @param 	worm
+	 * 			The worm to calculate the potential jump trajectory for.
+	 * @param 	time
+	 * 			The time at we would like to check the position of the worm in flight.
+	 * @return	The X and Y coordinates of given worm at given time, neatly ordened in an array.
+	 * 		  | result == positionPerTime[]
+	 */
+	
+	public static double[] getJumpStep(Worm worm, double time){
+		double[] positionPerTime = new double[2];
+		double initialXVelocity = (((Worm.getJumpForce(worm)*0.5)/mass)*Math.cos(initialDirection));
+		double initialYVelocity = (((Worm.getJumpForce(worm)*0.5)/mass)*Math.sin(initialDirection));
+		positionPerTime[0] = (Worm.getX(worm)+(initialXVelocity*time));
+		positionPerTime[1] = (Worm.getY(worm)+((initialYVelocity*time)-((9.80665*time*time/2))));
+		return positionPerTime;
+	}
+	
+	/**
+	 * Make a worm jump in a physical trajectory according to gravitation.
+	 * 
+	 * @param 	worm
+	 * 			The worm that is going to jump.
+	 */
+	
+	public static void jump(Worm worm){
+		double initialVelocity = ((Worm.getJumpForce(worm)*0.5)/mass);
+		double distance = (((initialVelocity*initialVelocity)*Math.sin(2*initialDirection))/9.80665);
+		if(initialDirection>=0 && initialDirection<(Math.PI/2)){
+			xPos += distance;
+		}
+		else if(initialDirection>(Math.PI/2) && initialDirection <= Math.PI){
+			xPos -= distance;
+		}
+		else{
+			System.out.println("Jumping at this angle was not such a good idea.");
+		}
+		
+		actionPoints = 0;
+		
+	}
 }

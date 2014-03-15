@@ -9,6 +9,9 @@ package worms.model;
  */
 
 public class Facade implements IFacade {
+	
+	public Facade(){
+	}
 
 	@Override
 	public Worm createWorm(double x, double y, double direction, double radius, String name) {
@@ -37,20 +40,17 @@ public class Facade implements IFacade {
 
 	@Override
 	public void jump(Worm worm) {
-		// TODO Auto-generated method stub
-		
+		Worm.jump(worm);
 	}
 
 	@Override
 	public double getJumpTime(Worm worm) {
-		// TODO Auto-generated method stub
-		return 0;
+		return Worm.getJumpTime(worm);
 	}
 
 	@Override
 	public double[] getJumpStep(Worm worm, double t) {
-		// TODO Auto-generated method stub
-		return null;
+		return Worm.getJumpStep(worm, t);
 	}
 
 	@Override
