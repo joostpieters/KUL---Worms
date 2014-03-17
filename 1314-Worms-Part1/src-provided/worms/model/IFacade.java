@@ -62,8 +62,7 @@ public interface IFacade {
 	 * @param name
 	 * The name of the new worm
 	 */
-	Worm createWorm(double x, double y, double direction, double radius,
-			String name);
+	Worm createWorm(double x, double y, double direction, double radius, String name);
 
 	/**
 	 * Returns whether or not the given worm can move a given number of steps.

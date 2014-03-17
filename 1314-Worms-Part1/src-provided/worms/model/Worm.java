@@ -6,8 +6,15 @@ import be.kuleuven.cs.som.annotate.Immutable;
 /**
  * A class of worms that can be manipulated, one of the main elements in the game.
  * 
- * @author Kristof Achten <kristof.achten@student.kuleuven.be>
- * @version 0.9
+ * @invar	Each worm must have a valid name
+ * 		 |	isValidName(name)
+ * @invar	Each worm must have a radius bigger than 0.25 metres.
+ * 		 |	Worm.radius >= 0.25
+ * @invar	The position of each worm must resemble a valid X and Y coordinate.
+ * 		 |  isValidPosition(worm)
+ * 
+ * @version 1.0
+ * @author 	Kristof Achten <kristof.achten@student.kuleuven.be>
  *
  */
 
@@ -34,6 +41,10 @@ public class Worm {
 	 * 		  | isValidName(name)
 	 * @pre		The initial radius must be bigger than 0.25 metres.
 	 * 		  | radius >= 0.25
+	 * @post	If the given name includes characters other than letters, quotationmarks and spaces,
+	 * 			a preset name will be given. Otherwise the provided name will have been used.
+	 * @post	If the given radius is smaller than 0.25 metres, the radius will be equal 0.25m.
+	 * 			Otherwise, the provided radius will have been used.
 	 */
 	
 	public Worm(double x, double y, double direction, double radius, String name){
@@ -134,6 +145,9 @@ public class Worm {
 	 * 			The new radius the worm needs to be in metres.
 	 * @pre		The new radius of the worm must be at least 0.25 metres.
 	 * 	     |	newRadius >= 0.25
+	 * @post	If the given radius is smaller than 0.25 metres, the radius will be equal 0.25m.
+	 * 			Otherwise, the provided radius will have been used.
+	 * @effect	The radius of the worm will be changed.
 	 */
 	
 	public static void setRadius(Worm worm, double newRadius){
@@ -240,6 +254,9 @@ public class Worm {
 	 * 			The new name we would like to give to given worm.
 	 * @pre		The name must be a valid name.
 	 * 		 |	isValidName(newName)
+	 * @post	If the given name includes characters other than letters, quotationmarks and spaces,
+	 * 			a preset name will be given. Otherwise the provided name will have been used.
+	 * @effect	The worm will be given a nem name.
 	 */
 	
 	public static void rename(Worm worm, String newName){
@@ -280,6 +297,7 @@ public class Worm {
 	 * 			The worm who we are going to move.		
 	 * @param 	steps
 	 * 			The amount of steps given worm is going to move.
+	 * @effect	The worm will move given amount of steps.
 	 */
 	
 	public static void move(Worm worm, int steps){
@@ -327,6 +345,7 @@ public class Worm {
 	 * 			The worm who we are going to turn a certain angle.
 	 * @param 	angle
 	 * 			The angle we would like given worm to turn.
+	 * @effect	The worm will turn given angle.
 	 */
 	
 	public static void turn(Worm worm, double angle){
@@ -391,6 +410,7 @@ public class Worm {
 	 * 
 	 * @param 	worm
 	 * 			The worm that is going to jump.
+	 * @effect	The worm will have jumped unless he was facing downwards.	
 	 */
 	
 	public static void jump(Worm worm){

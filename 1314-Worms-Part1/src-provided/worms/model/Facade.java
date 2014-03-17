@@ -3,19 +3,26 @@ package worms.model;
 /**
  * Class used to implement the IFacade-class.
  * 
+ * @version 1.0
  * @author Kristof Achten <kristof.achten@student.kuleuven.be>
- * @version 0.9
  *
  */
 
 public class Facade implements IFacade {
-	
-	public Facade(){
-	}
 
+	public Facade(){
+		//This is the default constructor
+	}
+	
 	@Override
-	public Worm createWorm(double x, double y, double direction, double radius, String name) {
-		return new Worm(x, y, direction, radius, name);
+	public Worm createWorm(double x, double y, double direction, double radius, String name) throws IllegalArgumentException{
+		try {
+			Worm newWorm = new Worm(x, y, direction, radius, name);
+			return newWorm;
+			}
+		catch(IllegalArgumentException e){
+			throw new ModelException("Unable to create this worm with given arguments.");
+		}
 	}
 
 	@Override
