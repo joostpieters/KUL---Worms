@@ -1,5 +1,8 @@
 package worms.model;
 
+import be.kuleuven.cs.som.annotate.Basic;
+import be.kuleuven.cs.som.annotate.Immutable;
+
 /**
  * A class of worms that can be manipulated, one of the main elements in the game.
  * 
@@ -10,14 +13,10 @@ package worms.model;
 
 public class Worm {
 	
-	public static int actionPoints;
-	public static int initialActionPoints;
-	public static double xPos, yPos, initialDirection;
-	public static double initialRadius;
-	public static double initialMass;
-	public static double mass;
-	public static String initialName;
-	
+	private static double x, y, direction, radius;
+	private static String name;
+	private static int actionPoints;
+
 	/**
 	 * Initialize a Worm with given position, direction, radius and name.
 	 * 
@@ -39,45 +38,45 @@ public class Worm {
 	
 	public Worm(double x, double y, double direction, double radius, String name){
 	
-		xPos = x;
-		yPos = y;
-		initialDirection = direction;
+		Worm.x = x;
+		Worm.y = y;
+		Worm.direction = direction;
 		if(Worm.isValidName(name)){
-			initialName = name;
+			Worm.name = name;
 		}
 		else{
 			System.out.println("This name is not correct. The new name may only contain alphabetical letters, spaces and quotationmarks. Your worm will be given a preset name.");
 			int i = (int)((Math.random()*7)+1);
 			switch(i){		
 			case 1:
-				initialName = "Conor O'Brian";
+				Worm.name = "Conor O'Brian";
 				break;
 			case 2:
-				initialName = "Cap'n Transalore";
+				Worm.name = "Cap'n Transalore";
 				break;
 			case 3:
-				initialName = "Tom Baker";
+				Worm.name = "Tom Baker";
 				break;
 			case 4:
-				initialName = "David Smith";
+				Worm.name = "David Smith";
 				break;
 			case 5:
-				initialName = "Matthew O'Hare";
+				Worm.name = "Matthew O'Hare";
 				break;
 			case 6:
-				initialName = "Procra Stinator";
+				Worm.name = "Procra Stinator";
 				break;
 			case 7:
-				initialName = "Jack Harkness";
+				Worm.name = "Jack Harkness";
 				break;
 			default:
-				initialName = "Geoff Mermaid";
+				Worm.name = "Geoff Mermaid";
 			}
 		}
-		if(initialRadius>=0.25){
-			initialRadius = 0.25;
+		if(radius>=0.25){
+			Worm.radius = 0.25;
 		}
-		else{initialRadius = radius;}
+		else{Worm.radius = radius;}
 	}
 	
 	public static boolean isValidName(String name){
@@ -93,9 +92,9 @@ public class Worm {
 	 * 		  | result == mass	
 	 */
 	
-	public static double getMass(Worm worm){
-		mass = 1062*((4/3)*Math.PI*Math.pow(initialRadius, 3));
-		return mass;
+	@Basic
+	public static double getMass(Worm worm){	
+		return 1062*((4/3)*Math.PI*Math.pow(Worm.radius, 3));
 	}
 	
 	/**
@@ -107,8 +106,9 @@ public class Worm {
 	 * 	      | result == initialRadius
 	 */
 	
+	@Basic
 	public static double getRadius(Worm worm){
-		return initialRadius;
+		return Worm.radius;
 	}
 	
 	/**
@@ -120,6 +120,7 @@ public class Worm {
 	 * 		  | result == 0.25
 	 */
 	
+	@Basic @Immutable
 	public static double getMinimalRadius(Worm worm){
 		return 0.25;
 	}
@@ -137,9 +138,11 @@ public class Worm {
 	
 	public static void setRadius(Worm worm, double newRadius){
 		if(newRadius < 0.25){
-			initialRadius = 0.25;
+			Worm.setRadius(worm, 0.25);
 		}
-		else{initialRadius = newRadius;}
+		else{
+			Worm.setRadius(worm, newRadius);
+			}
 	}
 	
 	/**
@@ -151,8 +154,9 @@ public class Worm {
 	 * 		  | result == initialDirection
 	 */
 	
+	@Basic
 	public static double getOrientation(Worm worm){
-		return initialDirection;
+		return Worm.direction;
 	}
 	
 	/**
@@ -164,8 +168,9 @@ public class Worm {
 	 * 		  | result == xPos
 	 */
 	
+	@Basic
 	public static double getX(Worm worm){
-		return xPos;
+		return Worm.x;
 	}
 	
 	/**
@@ -177,8 +182,9 @@ public class Worm {
 	 * 		  | result == yPos
 	 */
 	
+	@Basic
 	public static double getY(Worm worm){
-		return yPos;
+		return Worm.y;
 	}
 	
 	/**
@@ -190,8 +196,9 @@ public class Worm {
 	 * 		  | result.equals(initialName)
 	 */
 	
+	@Basic
 	public static String getName(Worm worm){
-		return initialName;
+		return Worm.name;
 	}
 	
 	/**
@@ -204,10 +211,10 @@ public class Worm {
 	 */
 	
 	@SuppressWarnings("static-access")
+	@Basic
 	public static int getMaxActionPoints(Worm worm){
-		initialActionPoints = (int)(worm.getMass(worm));
-		actionPoints = initialActionPoints;
-		return initialActionPoints;
+		Worm.actionPoints = (int)(worm.getMass(worm));
+		return (int)(worm.getMass(worm));
 	}
 	
 	/**
@@ -219,8 +226,9 @@ public class Worm {
 	 * 		  |	result == actionPoints
 	 */
 	
+	@Basic
 	public static int getActionPoints(Worm worm){
-		return actionPoints;
+		return Worm.actionPoints;
 	}
 	
 	/**
@@ -236,7 +244,7 @@ public class Worm {
 	
 	public static void rename(Worm worm, String newName){
 			if(Worm.isValidName(newName)){
-				initialName = newName;
+				Worm.name = newName;
 			}
 			else{
 				System.out.println("This name is not correct. The new name may only contain alphabetical letters, spaces and quotationmarks.");
@@ -255,10 +263,11 @@ public class Worm {
 	 * 		  |	result == ((steps*stepCost) <= actionPoints)
 	 */
 	
+	@Basic
 	public static boolean canMove(Worm worm, int steps){
 		boolean canMove = true;
-		int stepCost = (int)(Math.ceil(Math.abs(Math.cos(initialDirection)))+(Math.abs(4*Math.sin(initialDirection))));
-		if((steps*stepCost) > actionPoints){
+		int stepCost = (int) ((int)(Math.ceil(Math.abs(Math.cos(Worm.getOrientation(worm)))))+(Math.abs(4*Math.sin(Worm.getOrientation(worm)))));
+		if((steps*stepCost) > Worm.getActionPoints(worm)){
 			canMove = false;
 		}
 		return canMove;
@@ -276,10 +285,10 @@ public class Worm {
 	public static void move(Worm worm, int steps){
 		try{
 		if(Worm.canMove(worm, steps) == true){
-			int stepCost = (int)(Math.ceil(Math.abs(Math.cos(initialDirection)))+(Math.abs(4*Math.sin(initialDirection))));
-			actionPoints -= (steps*stepCost);
-			xPos += (steps*(Math.cos(Worm.getOrientation(worm))*Worm.getRadius(worm)));
-			yPos += (steps*(Math.sin(Worm.getOrientation(worm))*Worm.getRadius(worm)));
+			int stepCost = (int)(Math.ceil(Math.abs(Math.cos(Worm.getOrientation(worm))))+(Math.abs(4*Math.sin(Worm.getOrientation(worm)))));
+			Worm.actionPoints -= (steps*stepCost);
+			Worm.x += (steps*(Math.cos(Worm.getOrientation(worm))*Worm.getRadius(worm)));
+			Worm.x += (steps*(Math.sin(Worm.getOrientation(worm))*Worm.getRadius(worm)));
 		}
 		else{
 			System.out.print("You do not have enough actionpoint to make this move.");
@@ -301,10 +310,11 @@ public class Worm {
 	 * 		  |	result == (turnCost <= actionPoints)
 	 */
 	
+	@Basic
 	public static boolean canTurn(Worm worm, double angle){
 		boolean canTurn = true;
 		int turnCost = (int)(Math.ceil(angle*(60/(2*Math.PI))));
-		if(turnCost > actionPoints){
+		if(turnCost > Worm.getActionPoints(worm)){
 			canTurn = false;
 		}
 		return canTurn;
@@ -320,7 +330,9 @@ public class Worm {
 	 */
 	
 	public static void turn(Worm worm, double angle){
-		initialDirection += (angle);
+		if(Worm.canTurn(worm, angle)){ //TODO: Add turncost
+		Worm.direction += (angle);
+		}
 	}
 	
 	/**
@@ -332,8 +344,9 @@ public class Worm {
 	 * 		  |	result == ((5*actionPoints)+(mass*9.80665))
 	 */
 	
+	@Basic
 	public static double getJumpForce(Worm worm){
-		return ((5*actionPoints)+(mass*9.80665));
+		return ((5*actionPoints)+(Worm.getMass(worm)*9.80665));
 	}
 
 	/**
@@ -345,10 +358,11 @@ public class Worm {
 	 * 		  |	result == distance/(initialVelocity*cos(initialDirection))
 	 */
 	
+	@Basic
 	public static double getJumpTime(Worm worm){
-		double initialVelocity = ((Worm.getJumpForce(worm)*0.5)/mass);
-		double distance = (((initialVelocity*initialVelocity)*Math.sin(2*initialDirection))/9.80665);
-		return distance/(initialVelocity*Math.cos(initialDirection));
+		double initialVelocity = ((Worm.getJumpForce(worm)*0.5)/Worm.getMass(worm));
+		double distance = (((initialVelocity*initialVelocity)*Math.sin(2*Worm.getOrientation(worm)))/9.80665);
+		return distance/(initialVelocity*Math.cos(Worm.getOrientation(worm)));
 	}
 	
 	/**
@@ -362,10 +376,11 @@ public class Worm {
 	 * 		  | result == positionPerTime[]
 	 */
 	
+	@Basic
 	public static double[] getJumpStep(Worm worm, double time){
 		double[] positionPerTime = new double[2];
-		double initialXVelocity = (((Worm.getJumpForce(worm)*0.5)/mass)*Math.cos(initialDirection));
-		double initialYVelocity = (((Worm.getJumpForce(worm)*0.5)/mass)*Math.sin(initialDirection));
+		double initialXVelocity = (((Worm.getJumpForce(worm)*0.5)/Worm.getMass(worm))*Math.cos(Worm.getOrientation(worm)));
+		double initialYVelocity = (((Worm.getJumpForce(worm)*0.5)/Worm.getMass(worm))*Math.sin(Worm.getOrientation(worm)));
 		positionPerTime[0] = (Worm.getX(worm)+(initialXVelocity*time));
 		positionPerTime[1] = (Worm.getY(worm)+((initialYVelocity*time)-((9.80665*time*time/2))));
 		return positionPerTime;
@@ -379,13 +394,13 @@ public class Worm {
 	 */
 	
 	public static void jump(Worm worm){
-		double initialVelocity = ((Worm.getJumpForce(worm)*0.5)/mass);
-		double distance = (((initialVelocity*initialVelocity)*Math.sin(2*initialDirection))/9.80665);
-		if(initialDirection>=0 && initialDirection<(Math.PI/2)){
-			xPos += distance;
+		double initialVelocity = ((Worm.getJumpForce(worm)*0.5)/getMass(worm));
+		double distance = (((initialVelocity*initialVelocity)*Math.sin(2*Worm.getOrientation(worm)))/9.80665);
+		if(Worm.getOrientation(worm)>=0 && Worm.getOrientation(worm)<(Math.PI/2)){
+			Worm.x += distance;
 		}
-		else if(initialDirection>(Math.PI/2) && initialDirection <= Math.PI){
-			xPos -= distance;
+		else if(Worm.getOrientation(worm)>(Math.PI/2) && Worm.getOrientation(worm) <= Math.PI){
+			Worm.y -= distance;
 		}
 		else{
 			System.out.println("Jumping at this angle was not such a good idea.");
