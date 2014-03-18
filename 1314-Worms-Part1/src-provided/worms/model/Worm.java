@@ -66,13 +66,37 @@ public class Worm {
 
 	}
 	
+	/**
+	 * Change the X coordinate of a worm
+	 * 
+	 * @param	x
+	 * 			The new X coordinate.
+	 * 
+	 */
+	
 	public void setX(double x){
 		this.x = x;
 	}
 	
+	/**
+	 * Change the Y coordinate of a worm
+	 * 
+	 * @param 	y
+	 * 			The new Y coordinate.
+	 */
+	
 	public void setY(double y){
 		this.y = y;
 	}
+	
+	/**
+	 * Check whether a name is conform to given standards
+	 * 
+	 * @param 	name
+	 * 			The string to check.
+	 * @return	True if the name contains only letters, spaces and quotationmarks.
+	 * 		  | return name.matches("^[a-zA-Z']+$")
+	 */
 	
 	public static boolean isValidName(String name){
 		return name.matches("^[a-zA-Z']+$");
@@ -135,6 +159,13 @@ public class Worm {
 			this.radius = newRadius;
 			}
 	}
+	
+	/**
+	 * Change the direction of a worm.
+	 * 
+	 * @param	direction
+	 * 			The direction we're changing to.
+	 */
 	
 	public void setOrientation(double direction){
 		this.direction = direction;
@@ -281,6 +312,13 @@ public class Worm {
 		}
 	}
 	
+	/**
+	 * Change the Actionpoints of a worm.
+	 * 
+	 * @param 	actionPoints
+	 * 			The new amount of actionpoints.
+	 */
+	
 	public void setActionPoints(int actionPoints){
 		this.actionPoints = actionPoints;
 	}
@@ -314,7 +352,7 @@ public class Worm {
 	
 	public void turn(double angle){
 		if(canTurn(angle)){ //TODO: Add turncost
-		direction += (angle);
+		setOrientation(getOrientation()+angle);
 		}
 	}
 	
@@ -372,18 +410,32 @@ public class Worm {
 	public void jump() throws IllegalArgumentException{
 		double initialVelocity = ((getJumpForce()*0.5)/getMass());
 		double distance = (((initialVelocity*initialVelocity)*Math.sin(2*getOrientation()))/9.80665);
-		if(getOrientation()>=0 && getOrientation()<(Math.PI/2)){
-			setX(getX()-distance);
+		while(canJump() == true){
+		if(getOrientation()>=0 && getOrientation()<(Math.PI)) {
+			setX(getX() + distance);
 			setActionPoints(0);
 		}
-		else if(getOrientation()>(Math.PI/2) && getOrientation() <= Math.PI){
-			setY(getY() - distance); 
-			setActionPoints(0);
-		}
+
 		else{
 				throw new ModelException("Unable to jump");
 			}
-		
-		
+		}
+	}
+	
+	/**
+	 * Check whether a worm has enough actionpoints remaining to make a jump.
+	 * 
+	 * @return	False if the number of ActionPoints equals zero. True otherwise.
+	 * 		  |	if(getActionPoints() == 0){
+	 * 		  | 	return false;}
+	 * 		  | else{return true;}	
+	 */
+	
+	public boolean canJump(){
+		boolean canJump = true;
+		if(getActionPoints() == 0){
+			canJump = false;
+		}
+		return canJump;
 	}
 }
