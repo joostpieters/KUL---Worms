@@ -1,7 +1,6 @@
 package worms.model;
 
-import be.kuleuven.cs.som.annotate.Basic;
-import be.kuleuven.cs.som.annotate.Immutable;
+import be.kuleuven.cs.som.annotate.*;
 
 /**
  * A class of worms that can be manipulated, one of the main elements in the game.
@@ -47,17 +46,13 @@ public class Worm {
 	 * 			Otherwise, the provided radius will have been used.
 	 */
 	
+	@Raw
 	public Worm(double x, double y, double direction, double radius, String name){
 	
 		setX(x);
 		setY(y);
 		setOrientation(direction);
-		if(Worm.isValidName(name)){
-			rename(name);
-		}
-		else{
-			System.out.println("This name is not correct. The new name may only contain alphabetical letters, spaces and quotationmarks. Your worm will be given a preset name.");
-			}
+		rename(name);
 		if(radius<=0.25){
 			setRadius(0.25);
 		}
@@ -74,6 +69,7 @@ public class Worm {
 	 * 
 	 */
 	
+	@Raw
 	public void setX(double x){
 		this.x = x;
 	}
@@ -85,6 +81,7 @@ public class Worm {
 	 * 			The new Y coordinate.
 	 */
 	
+	@Raw
 	public void setY(double y){
 		this.y = y;
 	}
@@ -95,11 +92,21 @@ public class Worm {
 	 * @param 	name
 	 * 			The string to check.
 	 * @return	True if the name contains only letters, spaces and quotationmarks.
-	 * 		  | return name.matches("^[a-zA-Z']+$")
+	 * 		  | return validLetters.contains(name.subSequence)
 	 */
 	
 	public static boolean isValidName(String name){
-		return name.matches("^[a-zA-Z']+$");
+		String validLetters = "\"\' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		boolean validName = true;
+		int lenght = name.length();
+		for(int i = 0; i < lenght; i++){
+			if(!validLetters.contains(name.subSequence(i, i + 1))){
+				validName = false;
+				i = lenght;
+			}
+			
+		}
+		return validName;
 	}
 	
 	/**
@@ -109,7 +116,7 @@ public class Worm {
 	 * 		  | result == mass	
 	 */
 	
-	@Basic
+	@Basic @Raw
 	public double getMass(){
 		this.mass = (1062*((4*Math.PI*Math.pow(getRadius(), 3))/3));
 		return mass ;
@@ -122,7 +129,7 @@ public class Worm {
 	 * 	      | result == initialRadius
 	 */
 	
-	@Basic
+	@Basic @Raw
 	public double getRadius(){
 		return radius;
 	}
@@ -134,7 +141,7 @@ public class Worm {
 	 * 		  | result == 0.25
 	 */
 	
-	@Basic @Immutable
+	@Basic @Immutable @Raw
 	public double getMinimalRadius(){
 		return 0.25;
 	}
@@ -165,8 +172,10 @@ public class Worm {
 	 * 
 	 * @param	direction
 	 * 			The direction we're changing to.
+	 * @post	The new direction will be the sum of the old direction and the parameter.
 	 */
 	
+	@Raw
 	public void setOrientation(double direction){
 		this.direction = direction;
 	}
@@ -178,7 +187,7 @@ public class Worm {
 	 * 		  | result == initialDirection
 	 */
 	
-	@Basic
+	@Raw @Basic
 	public double getOrientation(){
 		return direction;
 	}
@@ -190,7 +199,7 @@ public class Worm {
 	 * 		  | result == xPos
 	 */
 	
-	@Basic
+	@Raw @Basic
 	public double getX(){
 		return x;
 	}
@@ -202,7 +211,7 @@ public class Worm {
 	 * 		  | result == yPos
 	 */
 	
-	@Basic
+	@Raw @Basic
 	public double getY(){
 		return y;
 	}
@@ -214,7 +223,7 @@ public class Worm {
 	 * 		  | result.equals(initialName)
 	 */
 	
-	@Basic
+	@Raw @Basic
 	public String getName(){
 		return name;
 	}
@@ -226,7 +235,7 @@ public class Worm {
 	 * 		  |	result == initialActionPoints
 	 */
 	
-	@Basic
+	@Raw @Basic
 	public int getMaxActionPoints(){
 		return (int)(getMass());
 	}
@@ -238,7 +247,7 @@ public class Worm {
 	 * 		  |	result == actionPoints
 	 */
 	
-	@Basic
+	@Raw @Basic
 	public int getActionPoints(){
 		return actionPoints;
 	}
@@ -255,12 +264,12 @@ public class Worm {
 	 * @effect	The worm will be given a nem name.
 	 */
 	
-	public void rename(String newName){
+	public void rename(String newName) throws IllegalArgumentException{
 			if(isValidName(newName)){
 				name = newName;
 			}
 			else{
-				System.out.println("This name is not correct. The new name may only contain alphabetical letters, spaces and quotationmarks.");
+				throw new IllegalArgumentException("Name contains invalid chararcters");
 			}
 		
 	}
@@ -292,10 +301,12 @@ public class Worm {
 	 * 
 	 * @param 	steps
 	 * 			The amount of steps given worm is going to move.
+	 * @pre		You must have a sufficient amount of actionpoints
+	 * 		  |	canMove = true;
 	 * @effect	The worm will move given amount of steps.
 	 */
 	
-	public void move(int steps){
+	public void move(int steps) throws IllegalArgumentException{
 		try{
 		if(canMove(steps)){
 			int stepCost = (int)(Math.abs(Math.cos(getOrientation()))+(Math.abs(Math.sin(getOrientation())*4)));
@@ -304,11 +315,11 @@ public class Worm {
 			setY(getY() + (steps*Math.sin(getOrientation())*getRadius()));
 		}
 		else{
-			System.out.print("You do not have enough actionpoint to make this move.");
+			throw new IllegalArgumentException("You do not have enough actionpoints left");
 		}
 		}
 		catch(Exception e){
-			System.out.print("This is an illegal move.");
+			throw new IllegalArgumentException("This is an illegal move/input");
 		}
 	}
 	
@@ -317,8 +328,10 @@ public class Worm {
 	 * 
 	 * @param 	actionPoints
 	 * 			The new amount of actionpoints.
+	 * @post	The actionpoints provided in the parameter will equal the new amount of actionPoints.
 	 */
 	
+	@Basic @Raw
 	public void setActionPoints(int actionPoints){
 		this.actionPoints = actionPoints;
 	}
@@ -347,11 +360,15 @@ public class Worm {
 	 * 
 	 * @param 	angle
 	 * 			The angle we would like given worm to turn.
+	 * @pre		You must have sufficient amount of ActionPoints
+	 * 		  |	canTurn = true;
 	 * @effect	The worm will turn given angle.
+	 * @post	The worm will be facing at a new angle consisting of the previous angle
+	 * 			with the angle specified as parameter added to it.
 	 */
 	
 	public void turn(double angle){
-		if(canTurn(angle)){ //TODO: Add turncost
+		if(canTurn(angle)){
 		setOrientation(getOrientation()+angle);
 		setActionPoints(getActionPoints()-(Math.abs((int)(angle*(60/(2*Math.PI))))));
 		}
@@ -364,9 +381,9 @@ public class Worm {
 	 * 		  |	result == ((5*actionPoints)+(mass*9.80665))
 	 */
 	
-	@Basic
+	@Basic @Raw
 	public double getJumpForce(){
-		return ((5*actionPoints)+(getMass()*9.80665));
+		return ((5*getActionPoints())+(getMass()*9.80665));
 	}
 
 	/**
@@ -376,7 +393,7 @@ public class Worm {
 	 * 		  |	result == distance/(initialVelocity*cos(initialDirection))
 	 */
 	
-	@Basic
+	@Basic @Raw
 	public double getJumpTime(){
 		double initialVelocity = ((getJumpForce()*0.5)/getMass());
 		double distance = (((initialVelocity*initialVelocity)*Math.sin(2*getOrientation()))/9.80665);
@@ -392,7 +409,7 @@ public class Worm {
 	 * 		  | result == positionPerTime[]
 	 */
 	
-	@Basic
+	@Basic @Raw
 	public double[] getJumpStep(double time){
 		double[] positionPerTime = new double[2];
 		double initialXVelocity = (((getJumpForce()*0.5)/getMass())*Math.cos(getOrientation()));
@@ -405,20 +422,35 @@ public class Worm {
 	/**
 	 * Make a worm jump in a physical trajectory according to gravitation.
 	 * 
-	 * @effect	The worm will have jumped unless he was facing downwards.	
+	 * @pre		The angle at which the worm is going to jump must be a value between 0 and 2 pi.
+	 * 		  |	if(getOrientation > Math.PI){
+	 * 		  | 	setOrientation(getOrientation() + 2*Math.PI);}
+	 * 		  |	else if(getOrientation < Math.PI{
+	 * 		  | 	setOrientation(getOrientation() - 2*Math.PI);}	
+	 * @effect	The worm will jump.
+	 * @post 	The worm will have a new position according to the jumpforce and actionpoints.	
 	 */
 	
 	public void jump() throws IllegalArgumentException{
 		double initialVelocity = ((getJumpForce()*0.5)/getMass());
 		double distance = (((initialVelocity*initialVelocity)*Math.sin(2*getOrientation()))/9.80665);
+		double placeboDirection = getOrientation();
+		
+		if(placeboDirection > Math.PI){
+			placeboDirection = placeboDirection - (2*Math.PI);
+		}
+		else if(placeboDirection < -Math.PI){
+			placeboDirection = placeboDirection + (2*Math.PI);
+		}
+		
 		while(canJump() == true){
-		if(getOrientation()>=0 && getOrientation()<(Math.PI)) {
+		if(placeboDirection>=0 && placeboDirection<(Math.PI)) {
 			setX(getX() + distance);
 			setActionPoints(0);
 		}
 
 		else{
-				throw new ModelException("Unable to jump");
+				throw new IllegalArgumentException("Cannot make a jump a this angle");
 			}
 		}
 	}
@@ -432,6 +464,7 @@ public class Worm {
 	 * 		  | else{return true;}	
 	 */
 	
+	@Basic @Raw
 	public boolean canJump(){
 		boolean canJump = true;
 		if(getActionPoints() == 0){

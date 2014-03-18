@@ -12,14 +12,10 @@ public class Facade implements IFacade {
 
 	
 	@Override
-	public Worm createWorm(double x, double y, double direction, double radius, String name) throws IllegalArgumentException{
-		try {
+	public Worm createWorm(double x, double y, double direction, double radius, String name){
+
 			Worm newWorm = new Worm(x, y, direction, radius, name);
 			return newWorm;
-			}
-		catch(IllegalArgumentException e){
-			throw new ModelException("Unable to create this worm with given arguments.");
-		}
 	}
 
 	@Override
@@ -28,8 +24,13 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public void move(Worm worm, int nbSteps) {
-		worm.move(nbSteps);
+	public void move(Worm worm, int nbSteps) throws IllegalArgumentException{
+		try{
+			worm.move(nbSteps);
+		}
+		catch(IllegalArgumentException e){
+			throw new ModelException("Invalid move");
+		}
 	}
 
 	@Override
@@ -43,8 +44,13 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public void jump(Worm worm){
-			worm.jump();
+	public void jump(Worm worm) throws IllegalArgumentException{
+			try{
+				worm.jump();
+			}
+			catch(IllegalArgumentException e){
+				throw new ModelException("Unable to jump");
+			}
 	}
 
 	@Override
@@ -103,8 +109,13 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public void rename(Worm worm, String newName) {
-		worm.rename(newName);
+	public void rename(Worm worm, String newName) throws IllegalArgumentException {
+		try{
+			worm.rename(newName);
+		}
+		catch(IllegalArgumentException e){
+			throw new ModelException("This is not a valid name");
+		}
 	}
 
 	@Override
