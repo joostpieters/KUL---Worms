@@ -353,6 +353,7 @@ public class Worm {
 	public void turn(double angle){
 		if(canTurn(angle)){ //TODO: Add turncost
 		setOrientation(getOrientation()+angle);
+		setActionPoints(getActionPoints()-(Math.abs((int)(angle*(60/(2*Math.PI))))));
 		}
 	}
 	
