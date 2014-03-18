@@ -3,9 +3,11 @@ package worms.model;
 /**
  * Class used to implement the IFacade-class.
  * 
- * @version 1.0
- * @author Kristof Achten <kristof.achten@student.kuleuven.be>
- *
+ * @version   1.0
+ * @author 	  Kristof Achten <kristof.achten@student.kuleuven.be>
+ * GitHub: 	  https://github.com/Divyak156/OGPProject.git
+ * StudentNr: r0462748 - 1ste Bachelor informatica
+ * 
  */
 
 public class Facade implements IFacade {

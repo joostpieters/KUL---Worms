@@ -1,10 +1,19 @@
 package worms.model;
-import static org.junit.Assert.*;
 
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-
 import worms.util.Util;
+
+/**
+ * Class used to test the Worm class.
+ * 
+ * @version   1.0
+ * @author 	  Kristof Achten <kristof.achten@student.kuleuven.be>
+ * GitHub:	  https://github.com/Divyak156/OGPProject.git
+ * StudentNr: r0462748 - 1ste Bachelor informatica
+ */
+
 
 public class WormTest {
 	
