@@ -16,7 +16,7 @@ import java.util.Random;
 public class Facade implements IFacade {
 
 	
-	@Override
+	/**@Override
 	public Worm createWorm(double x, double y, double direction, double radius, String name){
 
 			Worm newWorm = new Worm(x, y, direction, radius, name);
@@ -36,7 +36,7 @@ public class Facade implements IFacade {
 		catch(IllegalArgumentException e){
 			throw new ModelException("Invalid move");
 		}
-	}
+	}*/
 
 	@Override
 	public boolean canTurn(Worm worm, double angle) {
@@ -48,7 +48,7 @@ public class Facade implements IFacade {
 		worm.turn(angle);
 	}
 
-	@Override
+/*	@Override
 	public void jump(Worm worm) throws ModelException{
 			try{
 				worm.jump();
@@ -61,11 +61,17 @@ public class Facade implements IFacade {
 	@Override
 	public double getJumpTime(Worm worm) {
 		return worm.getJumpTime();
-	}
+	}*/
 
 	@Override
-	public double[] getJumpStep(Worm worm, double t) {
-		return worm.getJumpStep(t);
+	public double[] getJumpStep(Worm worm, double t) throws ModelException {
+		try{
+			return worm.getJumpStep(t);
+		}
+		catch(Exception e){
+			throw new ModelException("Unable to perform a jump");
+		}
+		
 	}
 
 	@Override
@@ -167,8 +173,8 @@ public class Facade implements IFacade {
 	@Override
 	public World createWorld(double width, double height,
 			boolean[][] passableMap, Random random) {
-		// TODO Auto-generated method stub
-		return null;
+
+		return new World(width, height, passableMap, random);
 	}
 
 	@Override
@@ -234,8 +240,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public double getRadius(Food food) {
-		// TODO Auto-generated method stub
-		return 0;
+		return food.getRadius();
 	}
 
 	@Override
@@ -270,8 +275,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public double getX(Food food) {
-		// TODO Auto-generated method stub
-		return 0;
+		return food.getX();
 	}
 
 	@Override
@@ -282,8 +286,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public double getY(Food food) {
-		// TODO Auto-generated method stub
-		return 0;
+		return food.getY();
 	}
 
 	@Override
@@ -306,8 +309,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public boolean isAdjacent(World world, double x, double y, double radius) {
-		// TODO Auto-generated method stub
-		return false;
+		return world.isAdjacent(x, y, radius);
 	}
 
 	@Override
@@ -324,8 +326,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public boolean isImpassable(World world, double x, double y, double radius) {
-		// TODO Auto-generated method stub
-		return false;
+		return world.isImpassable(x, y, radius);
 	}
 
 	@Override
