@@ -21,12 +21,8 @@ public class Facade implements IFacade {
 	@Override
 	public Worm createWorm(World world, double x, double y, double direction, double radius, String name) throws ModelException{
 
-			try{
-				return new Worm(x, y, direction, radius, name);
-			}
-			catch(Exception e){
-				throw new ModelException("Invalid parameters.");
-			}
+			Worm newWorm = new Worm(x, y, direction, radius, name);
+			return newWorm;
 	}
 
 	/**@Override
@@ -126,13 +122,8 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public void rename(Worm worm, String newName) throws ModelException {
-		try{
+	public void rename(Worm worm, String newName){
 			worm.rename(newName);
-		}
-		catch(IllegalNameException e){
-			throw new ModelException("This is not a valid name");
-		}
 	}
 
 	@Override
@@ -259,14 +250,12 @@ public class Facade implements IFacade {
 
 	@Override
 	public String getWinner(World world) {
-		// TODO Auto-generated method stub
-		return null;
+		return world.getWinner();
 	}
 
 	@Override
 	public Collection<Worm> getWorms(World world) {
-		// TODO Auto-generated method stub
-		return null;
+		return world.getWorms();
 	}
 
 	@Override
@@ -316,8 +305,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public boolean isGameFinished(World world) {
-		// TODO Auto-generated method stub
-		return false;
+		return world.isFinished();
 	}
 
 	@Override
@@ -357,14 +345,12 @@ public class Facade implements IFacade {
 
 	@Override
 	public void startGame(World world) {
-		// TODO Auto-generated method stub
-		
+		world = new World(world.getHeight(), world.getWidth(), world.getPassable(), r);
 	}
 
 	@Override
 	public void startNextTurn(World world) {
-		// TODO Auto-generated method stub
-		
+		world.nextTurn();
 	}
 
 }

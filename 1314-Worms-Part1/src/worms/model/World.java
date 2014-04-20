@@ -12,10 +12,11 @@ import java.util.Random;
 
 public class World {
 	
-	public ArrayList<Worm> worms;
+	public ArrayList<Worm> wormsList;
 	public ArrayList<Food> foodlist;
 	public ArrayList<Teams> teamsList;
 	public ArrayList<Projectile> projList;
+	Worm worm;
 	private int alt;
 	private double width;
 	private double height;
@@ -30,7 +31,7 @@ public class World {
 		this.width = width;
 		this.height = height;
 		this.passable = passable;
-		worms = new ArrayList<Worm>();
+		wormsList = new ArrayList<Worm>();
 		foodlist = new ArrayList<Food>();
 		teamsList = new ArrayList<Teams>();
 		projList = new ArrayList<Projectile>();
@@ -86,6 +87,10 @@ public class World {
 		return passable[(int) x][(int) y];
 	}
 	
+	public boolean[][] getPassable(){
+		return passable;
+	}
+	
 	/**
 	 * could be improved with a for loop that goes about 360°, although not really necessary atm.
 	 */
@@ -114,7 +119,7 @@ public class World {
 	}
 	
 	public void addWorm(Worm worm){
-		worms.add(worm);
+		wormsList.add(worm);
 	}
 	
 	public void addFood(Food food){
@@ -134,7 +139,7 @@ public class World {
 	}
 	
 	public Worm currentWorm(){
-		return worms.get(getAlt());
+		return wormsList.get(getAlt());
 	}
 	
 	public int getAlt(){
@@ -147,6 +152,35 @@ public class World {
 	
 	public ArrayList<Food> getFood(){
 		return foodlist;
+	}
+	
+	public ArrayList<Worm> getWorms(){
+		return wormsList;
+	}
+	
+	public String getWinner(){
+		if(teamsList.size() == 1){
+			return teamsList.get(0).getTName();
+		}
+		else{
+			return null;
+		}
+	}
+	
+	public boolean isFinished(){
+		if(teamsList.size() == 1){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
+	public void nextTurn(){
+		this.setAlt(getAlt() + 1);
+		worm = currentWorm();
+		currentWorm().setActionPoints(currentWorm().getMaxActionPoints());
+		currentWorm().setHitPoints(currentWorm().getHitPoints() + 10);
 	}
 
 }

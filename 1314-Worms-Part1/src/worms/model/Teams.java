@@ -16,24 +16,21 @@ public class Teams {
 		this.world = world;
 	}
 	
-	public void addTeam(String newName) throws IllegalNameException{
-		setTName(newName);
-		teamlist.add(name);
-	}
-	
 	public void setTName(String newName) throws IllegalNameException{
 		if(!Worm.isValidName(newName)){
 			throw new IllegalNameException(newName);
 		}
-		name = newName;
+		this.name = newName;
 	}
 	
-	public String getTName(int alt){
-		return teamlist.get(alt);
+	public String getTName(){
+		return name;
 	}
 	
-	public ArrayList<String> returnTeams(){
-		return teamlist;
+	public World getTWorld(){
+		return world;
 	}
+
+	
 
 }

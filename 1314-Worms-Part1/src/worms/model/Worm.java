@@ -59,14 +59,11 @@ public class Worm {
 	 */
 	
 	@Raw
-	public Worm(double x, double y, double direction, double radius, String name) throws IllegalRadiusException, IllegalNameException{
+	public Worm(double x, double y, double direction, double radius, String name){
 	
 		setX(x);
 		setY(y);
 		setOrientation(direction);
-		if(!isValidName(name)){
-			throw new IllegalNameException(name);
-		}
 		rename(name);
 		if(!isValidRadius(radius)){
 			throw new IllegalRadiusException(radius);
@@ -321,13 +318,11 @@ public class Worm {
 	 * 		  |	new.getName() == newName;
 	 */
 	
-	public void rename(String newName) throws IllegalNameException{
-			if(isValidName(newName)){
-				name = newName;
+	public void rename(String newName) throws IllegalArgumentException{
+			if(!isValidName(newName)){
+				throw new IllegalArgumentException(name);
 			}
-			else{
-				throw new IllegalNameException(name);
-			}
+			this.name = newName;
 		
 	}
 	
