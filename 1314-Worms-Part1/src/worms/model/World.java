@@ -1,5 +1,6 @@
 package worms.model;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -11,6 +12,11 @@ import java.util.Random;
 
 public class World {
 	
+	public ArrayList<Worm> worms;
+	public ArrayList<Food> foodlist;
+	public ArrayList<Teams> teamsList;
+	public ArrayList<Projectile> projList;
+	private int alt;
 	private double width;
 	private double height;
 	private double maxX = Double.MAX_VALUE;
@@ -24,6 +30,10 @@ public class World {
 		this.width = width;
 		this.height = height;
 		this.passable = passable;
+		worms = new ArrayList<Worm>();
+		foodlist = new ArrayList<Food>();
+		teamsList = new ArrayList<Teams>();
+		projList = new ArrayList<Projectile>();
 	}
 	
 	public boolean validWidth(double xWidth){
@@ -101,6 +111,42 @@ public class World {
 	public boolean isAdjacent(double x, double y, double radius){
 		double newRadius = radius*0.1;
 		return(!isImpassable(x, y, 0) && isImpassable(x, y, newRadius));
+	}
+	
+	public void addWorm(Worm worm){
+		worms.add(worm);
+	}
+	
+	public void addFood(Food food){
+		foodlist.add(food);
+	}
+	
+	public void addTeam(Teams team){
+		teamsList.add(team);
+	}
+	
+	public void addProjectile(Projectile proj){
+		projList.add(proj);
+	}
+	
+	public ArrayList<Projectile> getProjectile(){
+		return projList;
+	}
+	
+	public Worm currentWorm(){
+		return worms.get(getAlt());
+	}
+	
+	public int getAlt(){
+		return alt;
+	}
+	
+	public void setAlt(int alt){
+		this.alt = alt;
+	}
+	
+	public ArrayList<Food> getFood(){
+		return foodlist;
 	}
 
 }

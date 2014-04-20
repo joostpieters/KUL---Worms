@@ -14,16 +14,22 @@ import java.util.Random;
  */
 
 public class Facade implements IFacade {
+	
+	private Random r = new Random();
 
 	
-	/**@Override
-	public Worm createWorm(double x, double y, double direction, double radius, String name){
+	@Override
+	public Worm createWorm(World world, double x, double y, double direction, double radius, String name) throws ModelException{
 
-			Worm newWorm = new Worm(x, y, direction, radius, name);
-			return newWorm;
+			try{
+				return new Worm(x, y, direction, radius, name);
+			}
+			catch(Exception e){
+				throw new ModelException("Invalid parameters.");
+			}
 	}
 
-	@Override
+	/**@Override
 	public boolean canMove(Worm worm, int nbSteps) {
 		return worm.canMove(nbSteps);
 	}
@@ -135,21 +141,23 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public void addEmptyTeam(World world, String newName) {
-		// TODO Auto-generated method stub
-		
+	public void addEmptyTeam(World world, String newName){
+		try{
+			world.addTeam(new Teams(world, newName));
+		}
+		catch(IllegalNameException name){
+			throw new ModelException("Invalid name for the team");
+		}
 	}
 
 	@Override
 	public void addNewFood(World world) {
-		// TODO Auto-generated method stub
-		
+		world.addFood(createFood(world, r.nextDouble(), r.nextDouble()));
 	}
 
 	@Override
 	public void addNewWorm(World world) {
-		// TODO Auto-generated method stub
-		
+		world.addWorm(createWorm(world, r.nextDouble(), r.nextDouble(), r.nextDouble(), r.nextDouble(), "CHANGEME"));
 	}
 
 	@Override
@@ -166,8 +174,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public Food createFood(World world, double x, double y) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Food(world, x, y);
 	}
 
 	@Override
@@ -177,12 +184,6 @@ public class Facade implements IFacade {
 		return new World(width, height, passableMap, random);
 	}
 
-	@Override
-	public Worm createWorm(World world, double x, double y, double direction,
-			double radius, String name) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public void fall(Worm worm) {
@@ -192,26 +193,22 @@ public class Facade implements IFacade {
 
 	@Override
 	public Projectile getActiveProjectile(World world) {
-		// TODO Auto-generated method stub
-		return null;
+		return world.getProjectile().get(0);
 	}
 
 	@Override
 	public Worm getCurrentWorm(World world) {
-		// TODO Auto-generated method stub
-		return null;
+		return world.currentWorm();
 	}
 
 	@Override
 	public Collection<Food> getFood(World world) {
-		// TODO Auto-generated method stub
-		return null;
+		return world.getFood();
 	}
 
 	@Override
 	public int getHitPoints(Worm worm) {
-		// TODO Auto-generated method stub
-		return 0;
+		return worm.getHitPoints();
 	}
 
 	@Override
@@ -234,8 +231,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public int getMaxHitPoints(Worm worm) {
-		// TODO Auto-generated method stub
-		return 0;
+		return worm.getMaxHitPoints();
 	}
 
 	@Override

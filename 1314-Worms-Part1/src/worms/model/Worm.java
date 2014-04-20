@@ -29,6 +29,7 @@ public class Worm {
 	private String name = " ";
 	private static double minimalRadius = 0.25;
 	private int actionPoints = 0;
+	private int hitPoints; 
 
 	/*
 	 * Initialize a Worm with given position, direction, radius and name.
@@ -72,6 +73,7 @@ public class Worm {
 		}
 		setRadius(radius);
 		setActionPoints(getMaxActionPoints());
+		setHitPoints(getMaxHitPoints());
 
 	}
 	
@@ -110,7 +112,7 @@ public class Worm {
 	
 	@Raw
 	public static boolean isValidName(String name){
-		String validLetters = "\"\' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		String validLetters = "\"\' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 		boolean validName = true;
 		int lenght = name.length();
 		for(int i = 0; i < lenght; i++){
@@ -277,6 +279,29 @@ public class Worm {
 	}
 	
 	/**
+	 * Return the maximum number of hitpoints.
+	 *
+	 * @return 	The maximum mount of hitpoints a worm can have.
+	 * @post	The maximum amount of hitpoints will equal the mass rounded up.
+	 * 		  |	getMaxHitPoints() == Math.round(getMass());
+	 */
+	@Raw
+	public int getMaxHitPoints(){
+		return (int) Math.round(getMass());
+	}
+	
+	/**
+	 * Return the current number of hitPoints.
+	 * 
+	 * @return	The current number of hitpoints for a worm.
+	 */
+	
+	@Raw @Basic 
+	public int getHitPoints(){
+		return hitPoints;
+	}
+	
+	/**
 	 * Return the current actionpoints of a worm that are left.
 	 * 
 	 * @return	The current number of actionpoints given worm has.
@@ -367,6 +392,22 @@ public class Worm {
 			return;
 		}
 		this.actionPoints = actionPoints;
+	}
+	
+	/**
+	 * Change the amount of hitpoints of a worm.
+	 * 
+	 * @param 	hitPoints
+	 * 			The new amount of hitpoints.
+	 * @post 	The amount of hitPoints will equal the parameter hitPoints.
+	 */
+	
+	@Model @Raw
+	public void setHitPoints(int hitPoints){
+		if(hitPoints < 0 || hitPoints > getMaxHitPoints()){
+			return;
+		}
+		this.hitPoints = hitPoints;
 	}
 	
 	/**
