@@ -14,7 +14,7 @@ public class Food {
 		}
 		this.x = x;
 		this.y = y;
-		world.setFood(this);
+		//world.setFood(this);
 		collection.add(this);
 		
 	}
