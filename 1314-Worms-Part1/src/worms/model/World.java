@@ -26,6 +26,7 @@ public class World {
 	private double maxX = Double.MAX_VALUE;
 	private double maxY = Double.MAX_VALUE;
 	private boolean[][] passable;
+	private Teams activeTeam;
 
 	public World(double width, double height, boolean[][] passable, Random random) throws IllegalArgumentException{
 		if((!validWidth(width) || !validHeight(height))){
@@ -42,6 +43,7 @@ public class World {
 		foodlist = new ArrayList<Food>();
 		teamsList = new ArrayList<Teams>();
 		projList = new ArrayList<Projectile>();
+		setActiveTeam(null);
 	}
 	
 	public boolean validWidth(double xWidth){
@@ -148,6 +150,7 @@ public class World {
 	
 	public void addTeam(Teams team){
 		teamsList.add(team);
+		setActiveTeam(team);
 	}
 	
 	public void addProjectile(Projectile proj){
@@ -206,4 +209,16 @@ public class World {
 		currentWorm().setHitPoints(currentWorm().getHitPoints() + 10);
 	}
 
+	public Teams getActiveTeam(){
+		return activeTeam;
+	}
+	
+	public void setActiveTeam(Teams team){
+		this.activeTeam = team;
+	}
+
+	public boolean location(Worm worm2) {
+		return true;
+	}
+	
 }

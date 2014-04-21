@@ -18,12 +18,13 @@ import worms.util.Util;
 public class WormTest {
 	
 	private Worm testWorm;
+	private World world;
 	private static final double EPS = Util.DEFAULT_EPSILON;
 
 	
 	@Before
 	public void setup() throws IllegalArgumentException{
-		testWorm = new Worm(8, 5, Math.PI, 0.5, "Matt");
+		testWorm = new Worm(world, 8, 5, Math.PI, 0.5, "Matt");
 	}
 	
 	@Test

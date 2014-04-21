@@ -21,7 +21,7 @@ public class Facade implements IFacade {
 	@Override
 	public Worm createWorm(World world, double x, double y, double direction, double radius, String name) throws ModelException{
 
-			Worm newWorm = new Worm(x, y, direction, radius, name);
+			Worm newWorm = new Worm(world, x, y, direction, radius, name);
 			return newWorm;
 	}
 
@@ -154,23 +154,22 @@ public class Facade implements IFacade {
 	@Override
 	public void addNewWorm(World world) {
 		try{
-			world.addWorm(createWorm(world, r.nextDouble(), r.nextDouble(), r.nextDouble(), r.nextDouble(), "CHANGEME"));
+			Worm worm = new Worm(world);
+			//world.addWorm(worm);
 		}
 		catch(Exception e){
-			throw new ModelException(e.getMessage());
+			System.out.println("Could not create worm :(");
 		}
 	}
 
 	@Override
 	public boolean canFall(Worm worm) {
-		// TODO Auto-generated method stub
-		return false;
+		return worm.canFall();
 	}
 
 	@Override
 	public boolean canMove(Worm worm) {
-		// TODO Auto-generated method stub
-		return false;
+		return worm.canMove();
 	}
 
 	@Override
@@ -188,8 +187,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public void fall(Worm worm) {
-		// TODO Auto-generated method stub
-		
+		worm.fall();
 	}
 
 	@Override
@@ -224,7 +222,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public double getJumpTime(Worm worm, double timeStep) {
-		return 0;
+		return worm.getJumpTime(timeStep);
 	}
 
 	@Override
@@ -250,8 +248,8 @@ public class Facade implements IFacade {
 
 	@Override
 	public String getTeamName(Worm worm) {
-		// TODO Auto-generated method stub
-		return null;
+		Teams team = worm.getTeam();
+		return team.getTName();
 	}
 
 	@Override
@@ -286,13 +284,12 @@ public class Facade implements IFacade {
 
 	@Override
 	public boolean isActive(Food food) {
-		// TODO Auto-generated method stub
-		return false;
+		return (!food.isRemoved());
 	}
 
 	@Override
 	public boolean isActive(Projectile projectile) {
-		return projectile.isActive();
+		return (!projectile.isRemoved());
 	}
 
 	@Override
@@ -302,8 +299,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public boolean isAlive(Worm worm) {
-		// TODO Auto-generated method stub
-		return false;
+		return (!worm.isRemoved());
 	}
 
 	@Override

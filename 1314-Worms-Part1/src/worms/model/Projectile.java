@@ -3,6 +3,7 @@ package worms.model;
 public class Projectile {
 	
 	private double time, x, y, mass, force, radius;
+	private boolean removed;
 	World world;
 	Worm current = world.currentWorm();
 	
@@ -108,15 +109,18 @@ public class Projectile {
 	}
 	
 	public void remove(){
-		boolean removed = false;
-		if(!removed){
+		if(!isRemoved()){
 			World thisWorld = getWorld();
 			if(thisWorld.getProjectile().contains(this)){
 				thisWorld.getProjectile().remove(this);
-				removed = true;
+				this.removed = true;
 			}
 			this.world = null;
 		}
+	}
+	
+	public boolean isRemoved(){
+		return removed;
 	}
 	
 }

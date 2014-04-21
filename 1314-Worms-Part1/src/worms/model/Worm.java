@@ -26,10 +26,13 @@ public class Worm {
 	private double direction;
 	private double radius = 0.25;
 	private double mass = 0;
+	private World world;
 	private String name = " ";
 	private static double minimalRadius = 0.25;
 	private int actionPoints = 0;
-	private int hitPoints; 
+	private int hitPoints;
+	private Teams team;
+	private boolean removed; 
 
 	/*
 	 * Initialize a Worm with given position, direction, radius and name.
@@ -59,7 +62,7 @@ public class Worm {
 	 */
 	
 	@Raw
-	public Worm(double x, double y, double direction, double radius, String name){
+	public Worm(World world, double x, double y, double direction, double radius, String name){
 	
 		setX(x);
 		setY(y);
@@ -71,9 +74,22 @@ public class Worm {
 		setRadius(radius);
 		setActionPoints(getMaxActionPoints());
 		setHitPoints(getMaxHitPoints());
-
+		setWorld(world);
+		try{
+			setTeam(world.getActiveTeam());
+		}
+		catch(Exception e){
+			
+		}
 	}
 	
+	public Worm(World world) {
+		this(world, getMinimalRadius(), getMinimalRadius(), 0.0, getMinimalRadius(), "Test");
+		if(!world.location(this)){
+			throw new IllegalStateException("Unable to put a worm in that position.");
+		}
+	}
+
 	/**
 	 * Change the X coordinate of a worm
 	 * 
@@ -187,7 +203,7 @@ public class Worm {
 	 */
 	
 	@Basic
-	public double getMinimalRadius(){
+	public static double getMinimalRadius(){
 		return minimalRadius;
 	}
 	
@@ -473,10 +489,30 @@ public class Worm {
 	 * 		  |	result == distance/(initialVelocity*cos(initialDirection))
 	 */
 	
-	public double getJumpTime(){
-		double initialVelocity = ((getJumpForce()*0.5)/getMass());
-		double distance = (((initialVelocity*initialVelocity)*Math.sin(2*getOrientation()))/9.80665);
-		return distance/(initialVelocity*Math.cos(getOrientation()));
+	public double getJumpTime(double timeStep){
+		double[] newPos = new double[2];
+		if(getActionPoints() == 0 || getOrientation() >= Math.PI || getOrientation() == 0){
+			return 0;
+		}
+		boolean cannotPass = false;
+		int cnt = 0;
+		while(!cannotPass && !getWorld().objectInWorld(getX(), getY(), getRadius())){
+			cnt++;
+			newPos = getJumpStep(cnt*timeStep);
+			if(getWorld().isImpassable(newPos[0], newPos[1], getRadius())){
+				cannotPass = true;
+			}
+		}
+		boolean adPos = false;
+		while((!adPos && cannotPass && !getWorld().objectInWorld(newPos[0], newPos[1], getRadius()))){
+			cnt--;
+			newPos = getJumpStep(cnt*timeStep);			
+			if(getWorld().isAdjacent(newPos[0], newPos[1], getRadius())){
+				adPos = true;
+				return cnt*timeStep;
+			}
+		}
+		return cnt*timeStep;
 	}
 	
 	/**
@@ -569,5 +605,66 @@ public class Worm {
 	
 	public boolean isValidDirection(double direction){
 		return ((direction >= 0) && (direction < 2*Math.PI));
+	}
+	
+	public boolean canFall(){
+		return (!getWorld().isImpassable(getX(), getY(), getRadius()) && !getWorld().isAdjacent(getX(), getY(), getRadius()));
+	}
+	
+	public void setWorld(World world){
+		this.world = world;
+	}
+	
+	public World getWorld(){
+		return this.world;
+	}
+	
+	public boolean canMove(){
+		if(getActionPoints() <= 0){
+			return false;
+		}
+		return true;
+	}
+	
+	public void fall() throws IllegalStateException{
+		if(!canFall()){
+			throw new IllegalStateException();
+		}
+		boolean landed = false;
+		if(getWorld().isAdjacent(getX(), getY(), getRadius())){
+			landed = true;
+		}
+		double initialY = getY();
+		while((!landed) && !getWorld().objectInWorld(getX(), getY(), getRadius()) ){
+			double newY = getY()-0.05*getRadius();
+			if(getWorld().isAdjacent(getX(), newY, getRadius())){
+				this.setY(newY);
+				this.setHitPoints((int)(getHitPoints() - (3*(initialY-newY))));
+				landed = true;
+			}
+		}
+	}
+	
+	public void setTeam(Teams team){
+		this.team = team;
+	}
+	
+	public Teams getTeam(){
+		return this.team;
+	}
+	
+	public void remove(){
+		if(!isRemoved()){
+			World thisWorld = getWorld();
+			if(thisWorld.getWorms().contains(this)){
+				thisWorld.getWorms().remove(this);
+				removed = true;
+			}
+			this.world = null;
+		}
+	}
+	
+	public boolean isRemoved(){
+		return removed;
 	}
 }

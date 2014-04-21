@@ -3,6 +3,7 @@ package worms.model;
 public class Food {
 
 	private double x, y;
+	private boolean removed;
 	private World world;
 	private final static double RADIUS = 0.20;
 	
@@ -20,8 +21,7 @@ public class Food {
 	}
 	
 	public void remove(){
-		boolean removed = false;
-		if(!removed){
+		if(!isRemoved()){
 			World thisWorld = getWorld();
 			if(thisWorld.getFood().contains(this)){
 				thisWorld.getFood().remove(this);
@@ -65,5 +65,8 @@ public class Food {
 		return RADIUS;
 	}
 
+	public boolean isRemoved(){
+		return removed;
+	}
 
 }
