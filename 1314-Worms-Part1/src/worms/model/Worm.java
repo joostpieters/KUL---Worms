@@ -66,7 +66,7 @@ public class Worm {
 		setOrientation(direction);
 		rename(name);
 		if(!isValidRadius(radius)){
-			throw new IllegalRadiusException(radius);
+			throw new IllegalArgumentException();
 		}
 		setRadius(radius);
 		setActionPoints(getMaxActionPoints());
@@ -137,9 +137,9 @@ public class Worm {
 	 */
 	
 	@Raw
-	public void setRadius(double newRadius) throws IllegalRadiusException{
+	public void setRadius(double newRadius) throws IllegalArgumentException{
 		if(!isValidRadius(newRadius)){
-			throw new IllegalRadiusException(radius);
+			throw new IllegalArgumentException();
 		}
 		this.radius = newRadius;
 		calcMass();
@@ -490,12 +490,12 @@ public class Worm {
 	 * @throws IllegalDirectionException(getOrientation())	Invalid direction.
 	 */
 	
-	public double[] getJumpStep(double time) throws IllegalAPException, IllegalDirectionException{
+	public double[] getJumpStep(double time) throws IllegalArgumentException{
 		if(!canJump()){
-			throw new IllegalAPException(getActionPoints());
+			throw new IllegalArgumentException();
 		}
 		if(!isValidDirection(getOrientation())){
-			throw new IllegalDirectionException(getOrientation());
+			throw new IllegalArgumentException();
 			}
 	
 		
@@ -515,12 +515,12 @@ public class Worm {
 	 * @throws IllegalDirectionException(getOrientation())	Invalid direction.
 	 */
 	
-	public void jump() throws IllegalAPException, IllegalDirectionException{
+	public void jump() throws IllegalArgumentException{
 		if(!canJump()){
-			throw new IllegalAPException(getActionPoints());
+			throw new IllegalArgumentException();
 		}
 		if(!isValidDirection(getOrientation())){
-			throw new IllegalDirectionException(getOrientation());
+			throw new IllegalArgumentException();
 		}
 		
 		double initialVelocity = ((getJumpForce()*0.5)/getMass());

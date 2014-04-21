@@ -22,7 +22,7 @@ public class WormTest {
 
 	
 	@Before
-	public void setup() throws IllegalRadiusException, IllegalNameException{
+	public void setup() throws IllegalArgumentException{
 		testWorm = new Worm(8, 5, Math.PI, 0.5, "Matt");
 	}
 	
@@ -61,7 +61,7 @@ public class WormTest {
 	}
 	
 	@Test
-	public void testRename() throws IllegalNameException{
+	public void testRename() throws IllegalArgumentException{
 		testWorm.rename("Geoff");
 		assertTrue("Name is not correct", testWorm.getName().equals("Geoff"));
 	}
@@ -87,7 +87,7 @@ public class WormTest {
 			testWorm.setRadius(0.10);
 			fail();
 		}
-		catch(IllegalRadiusException e){
+		catch(IllegalArgumentException e){
 			
 		}
 		testWorm.setRadius(0.70);
@@ -129,7 +129,7 @@ public class WormTest {
 	}
 	
 	@Test
-	public void testMoveHorizontal() throws IllegalRadiusException, IllegalNameException {
+	public void testMoveHorizontal() throws IllegalArgumentException {
 		Worm worm = new Worm(0, 0, 0, 1, "Jan");
 		worm.move(5);
 		assertEquals(5, worm.getX(), EPS);
@@ -137,7 +137,7 @@ public class WormTest {
 	}
 
 	@Test
-	public void testMoveVertical() throws IllegalRadiusException, IllegalNameException {
+	public void testMoveVertical() throws IllegalArgumentException {
 		Worm worm = new Worm(0, 0, Math.PI / 2,  1, "Hoet");
 		worm.move(5);
 		assertEquals(0, worm.getX(), EPS);
@@ -167,7 +167,7 @@ public class WormTest {
 	}
 	
 	@Test
-	public void testGetJumpStep() throws IllegalAPException, IllegalDirectionException{
+	public void testGetJumpStep() throws IllegalArgumentException{
 		assertArrayEquals(new double[]{4.2984766, 3.77416875}, testWorm.getJumpStep(0.5), EPS);
 	}
 	
@@ -177,7 +177,7 @@ public class WormTest {
 	}
 	
 	@Test
-	public void testJump() throws IllegalRadiusException, IllegalNameException, IllegalAPException, IllegalDirectionException{
+	public void testJump() throws IllegalArgumentException{
 		Worm worm = new Worm(0,0,(Math.PI/4),0.5,"Matt");
 		worm.jump();
 		assertEquals(5.5885649, worm.getX(), EPS);

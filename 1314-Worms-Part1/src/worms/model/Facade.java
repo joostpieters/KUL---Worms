@@ -123,7 +123,12 @@ public class Facade implements IFacade {
 
 	@Override
 	public void rename(Worm worm, String newName){
-			worm.rename(newName);
+			try{
+				worm.rename(newName);
+			}
+			catch(IllegalArgumentException e){
+				throw new ModelException(e.getMessage());
+			}
 	}
 
 	@Override
@@ -136,7 +141,7 @@ public class Facade implements IFacade {
 		try{
 			world.addTeam(new Teams(world, newName));
 		}
-		catch(IllegalNameException name){
+		catch(IllegalArgumentException name){
 			throw new ModelException("Invalid name for the team");
 		}
 	}
@@ -148,7 +153,12 @@ public class Facade implements IFacade {
 
 	@Override
 	public void addNewWorm(World world) {
-		world.addWorm(createWorm(world, r.nextDouble(), r.nextDouble(), r.nextDouble(), r.nextDouble(), "CHANGEME"));
+		try{
+			world.addWorm(createWorm(world, r.nextDouble(), r.nextDouble(), r.nextDouble(), r.nextDouble(), "CHANGEME"));
+		}
+		catch(Exception e){
+			throw new ModelException(e.getMessage());
+		}
 	}
 
 	@Override
@@ -204,19 +214,16 @@ public class Facade implements IFacade {
 
 	@Override
 	public double[] getJumpStep(Projectile projectile, double t) {
-		// TODO Auto-generated method stub
-		return null;
+		return projectile.JumpStep(t);
 	}
 
 	@Override
 	public double getJumpTime(Projectile projectile, double timeStep) {
-		// TODO Auto-generated method stub
-		return 0;
+		return projectile.jumpTime(timeStep);
 	}
 
 	@Override
 	public double getJumpTime(Worm worm, double timeStep) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -232,8 +239,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public double getRadius(Projectile projectile) {
-		// TODO Auto-generated method stub
-		return 0;
+		return projectile.getRadius();
 	}
 
 	@Override
@@ -265,8 +271,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public double getX(Projectile projectile) {
-		// TODO Auto-generated method stub
-		return 0;
+		return projectile.getX();
 	}
 
 	@Override
@@ -276,8 +281,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public double getY(Projectile projectile) {
-		// TODO Auto-generated method stub
-		return 0;
+		return projectile.getY();
 	}
 
 	@Override
@@ -288,8 +292,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public boolean isActive(Projectile projectile) {
-		// TODO Auto-generated method stub
-		return false;
+		return projectile.isActive();
 	}
 
 	@Override
@@ -315,8 +318,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public void jump(Projectile projectile, double timeStep) {
-		// TODO Auto-generated method stub
-		
+		projectile.shoot();
 	}
 
 	@Override

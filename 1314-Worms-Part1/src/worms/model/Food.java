@@ -1,22 +1,38 @@
 package worms.model;
 
-import java.util.ArrayList;
-
 public class Food {
 
-	private ArrayList<Food> collection;
 	private double x, y;
-	private final double setRadius = 0.20;
+	private World world;
+	private final static double RADIUS = 0.20;
 	
-	public Food(World world, double x, double y){
+	public Food(World world, double x, double y){		
 		if(!validPos(x) || !validPos(y)){
 			throw new IllegalArgumentException();
 		}
 		this.x = x;
 		this.y = y;
-		world.addFood(this);
-		collection.add(this);
+		this.world = world;
+		if(world.objectInWorld(x, y, RADIUS)){
+			this.remove();
+		}
 		
+	}
+	
+	public void remove(){
+		boolean removed = false;
+		if(!removed){
+			World thisWorld = getWorld();
+			if(thisWorld.getFood().contains(this)){
+				thisWorld.getFood().remove(this);
+				removed = true;
+			}
+			this.world = null;
+		}
+	}
+	
+	public World getWorld(){
+		return world;
 	}
 	
 	public boolean validPos(double x){
@@ -46,15 +62,7 @@ public class Food {
 	}
 	
 	public double getRadius(){
-		return setRadius;
-	}
-	
-	public ArrayList<Food> getFoods(){
-		return collection;
-	}
-	
-	public Food getFoodIndex(int alt){
-		return collection.get(alt);
+		return RADIUS;
 	}
 
 

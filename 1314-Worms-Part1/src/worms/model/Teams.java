@@ -8,17 +8,17 @@ public class Teams {
 	private World world;
 	public ArrayList<String> teamlist;
 	
-	public Teams(World world, String name) throws IllegalNameException{
+	public Teams(World world, String name) throws IllegalArgumentException{
 		if(!Worm.isValidName(name)){
-			throw new IllegalNameException(name);
+			throw new IllegalArgumentException(name);
 		}
 		this.name = name;
 		this.world = world;
 	}
 	
-	public void setTName(String newName) throws IllegalNameException{
+	public void setTName(String newName) throws IllegalArgumentException{
 		if(!Worm.isValidName(newName)){
-			throw new IllegalNameException(newName);
+			throw new IllegalArgumentException(newName);
 		}
 		this.name = newName;
 	}
