@@ -1,6 +1,8 @@
 package worms.model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 import worms.util.Util;
@@ -14,20 +16,24 @@ import worms.util.Util;
 
 public class World {
 	
-	public ArrayList<Worm> wormsList;
-	public ArrayList<Food> foodlist;
-	public ArrayList<Teams> teamsList;
-	public ArrayList<Projectile> projList;
+	private ArrayList<Worm> wormsList;
+	private ArrayList<Food> foodlist;
+	private ArrayList<Teams> teamsList;
+	private ArrayList<Projectile> projList;
 	Worm worm;
-	private int alt;
-	private final Random random;
+	private Iterator<Worm> switchWorm = wormsList.iterator();
+
 	private double width;
 	private double height;
 	private double maxX = Double.MAX_VALUE;
 	private double maxY = Double.MAX_VALUE;
 	private boolean[][] passable;
-	private Teams activeTeam;
 	private Projectile activeProjectile;
+	private Teams team;
+	private boolean finished = false;
+	private Worm activeWorm;
+	private boolean started;
+	private Random random;
 
 	public World(double width, double height, boolean[][] passable, Random random) throws IllegalArgumentException{
 		if((!validWidth(width) || !validHeight(height))){
@@ -35,6 +41,9 @@ public class World {
 		}
 		if(random == null){
 			throw new IllegalArgumentException("random was null, which is not a valid random");
+		}
+		if(passable == null){
+			throw new IllegalArgumentException("Passable map is null, say what!");
 		}
 		this.width = width;
 		this.height = height;
@@ -44,7 +53,6 @@ public class World {
 		foodlist = new ArrayList<Food>();
 		teamsList = new ArrayList<Teams>();
 		projList = new ArrayList<Projectile>();
-		setActiveTeam(null);
 	}
 	
 	public boolean validWidth(double xWidth){
@@ -93,10 +101,6 @@ public class World {
 		this.passable = passable;
 	}
 	
-	public boolean getPassable(double x, double y){
-		return passable[(int) x][(int) y];
-	}
-	
 	public boolean[][] getPassable(){
 		return passable;
 	}
@@ -130,48 +134,100 @@ public class World {
 		double pos2 = x - radius;
 		double pos3 = y + radius;
 		double pos4 = y - radius;
-		if(!Util.fuzzyGreaterThanOrEqualTo(pos2, 0) || !Util.fuzzyLessThanOrEqualTo(pos3, getHeight()) || !Util.fuzzyLessThanOrEqualTo(pos1, getWidth()) || Util.fuzzyGreaterThanOrEqualTo(pos4, 0)){
+		if(pos2 < 0.0 || pos3 > getHeight() || pos1 > getWidth() || pos4 < 0){
 			return false;
 		}
 		return true;
 	}
 	
 	public boolean isAdjacent(double x, double y, double radius){
-		double newRadius = radius*0.1;
+		double newRadius = radius*1.1;
 		return(!isImpassable(x, y, radius) && isImpassable(x, y, newRadius));
+	}
+	 
+	public void addObjects(Object obj){
+		if(obj instanceof Worm){
+			addWorm((Worm) obj);
+		}
+		if(obj instanceof Food){
+			addFood((Food) obj);
+		}
+		if(obj instanceof Projectile){
+			addProjectile((Projectile) obj);
+		}
 	}
 	
 	public void addWorm(Worm worm){
-		wormsList.add(worm);
+		if(worm.getWorld() == this && isAdjacent(worm.getX(), worm.getY(), worm.getRadius())){
+			wormsList.add(worm);
+		}
+	}
+	
+	public List<Object> getObjects(){
+		ArrayList<Object> all = new ArrayList<Object>();
+		for(Food food : foodlist){
+			all.add(food);
+		}
+		for(Worm worm : wormsList){
+			all.add(worm);
+		}
+		for(Projectile proj : projList){
+			all.add(proj);
+		}
+		return all;
 	}
 	
 	public void addFood(Food food){
+		if(food.getWorld() == this && isAdjacent(food.getX(), food.getY(), food.getRadius())){
 		foodlist.add(food);
-	}
-	
-	public void addTeam(Teams team){
-		teamsList.add(team);
-		setActiveTeam(team);
+		}
 	}
 	
 	public void addProjectile(Projectile proj){
+		if(proj.getWorld() == this && isAdjacent(proj.getX(), proj.getY(), proj.getRadius())){
 		projList.add(proj);
+		}
+	}
+	
+	public boolean validTeam(Teams team){
+		return (team != null && team.getAllWorms().size() != 0);
+	}
+	
+	public void addTeam(String name){
+
+		Teams newTeam = new Teams(name);
+		if(!validTeam(newTeam)){
+			throw new IllegalStateException("Not a valid team");
+		}
+		teamsList.add(newTeam);
+		if(getActiveTeam().getAllWorms().size() == 0){
+			teamsList.remove(getActiveTeam());
+		}
+		setActiveTeam(newTeam);
+	}
+	
+	public Teams getActiveTeam(){
+		return this.team;
+	}
+	
+	public void setActiveTeam(Teams team){
+		this.team = team;
+	}
+	
+	public void setActiveWorm(Worm worm){
+		this.activeWorm = worm;
+	}
+	
+	public Worm getActiveWorm(){
+		return activeWorm;
+	}
+	
+	public boolean teamExists(Teams team){
+		return teamsList.contains(team);
 	}
 	
 	public ArrayList<Projectile> getProjectile(){
 		return projList;
-	}
-	
-	public Worm currentWorm(){
-		return wormsList.get(getAlt());
-	}
-	
-	public int getAlt(){
-		return alt;
-	}
-	
-	public void setAlt(int alt){
-		this.alt = alt;
 	}
 	
 	public ArrayList<Food> getFood(){
@@ -182,40 +238,28 @@ public class World {
 		return wormsList;
 	}
 	
-	public String getWinner(){
-		if(teamsList.size() == 1){
-			return teamsList.get(0).getTName();
-		}
-		else{
-			return null;
-		}
-	}
-	
 	public boolean isFinished(){
-		if(teamsList.size() == 1){
-			return true;
-		}
-		else{
-			return false;
-		}
+		return finished ;
 	}
 	
 	public void nextTurn(){
 		if(isFinished()){
 			return;
 		}
-		this.setAlt(getAlt() + 1);
-		worm = currentWorm();
-		currentWorm().setActionPoints(currentWorm().getMaxActionPoints());
-		currentWorm().setHitPoints(currentWorm().getHitPoints() + 10);
+		if(!switchWorm.hasNext()){
+			switchWorm = wormsList.iterator();
+		}
+		setActiveWorm(switchWorm.next());
+		getActiveWorm().setActionPoints(getActiveWorm().getMaxActionPoints());
+		getActiveWorm().setHitPoints(getActiveWorm().getHitPoints() + 10);
 	}
 
-	public Teams getActiveTeam(){
-		return activeTeam;
-	}
-	
-	public void setActiveTeam(Teams team){
-		this.activeTeam = team;
+	public List<Teams> getAllTeams(){
+		List<Teams> list = new ArrayList<Teams>();
+		for(Teams teams : teamsList){
+			list.add(teams);
+		}
+		return list;
 	}
 	
 	public void setActiveProjectile(Projectile proj){
@@ -226,4 +270,39 @@ public class World {
 		return activeProjectile;
 	}
 	
+	public void start(){
+		switchWorm = wormsList.iterator();
+		if(switchWorm.hasNext()){
+			setActiveWorm(switchWorm.next());
+		}
+		setStarted();
+		setActiveTeam(null);
+	}
+	
+	public void setStarted(){
+		started = true;
+		if(getWorms().size() == 1){
+			setFinished();
+		}
+		if(teamsList.size() == 1){
+			setFinished();
+		}
+	}
+	
+	public void setFinished(){
+		setActiveWorm(null);
+		setActiveTeam(null);
+		finished = true;
+	}
+	
+	public String getWinner(){
+		if(teamsList.size() != 0){
+			return teamsList.get(0).getTName();
+		}
+		else{
+			String winners = wormsList.get(0).getName();
+			winners += ".";
+			return winners;
+		}
+	}
 }

@@ -25,7 +25,7 @@ import be.kuleuven.cs.som.annotate.*;
  *
  */
 
-public class Worm {
+public class Worm extends Jump {
 	
 	private double x = 0;
 	private double y = 0;
@@ -72,26 +72,16 @@ public class Worm {
 	
 	@Raw
 	public Worm(World world, double x, double y, double direction, double radius, String name){
-	
-		if(!isValidRadius(radius)){
-			throw new IllegalArgumentException();
-		}
-		if(world.isImpassable(x, y, radius)){
-			throw new IllegalArgumentException();
-		}
-		setX(x);
-		setY(y);
+		super(world, x, y, radius);
 		setOrientation(direction);
 		rename(name);
-		setRadius(radius);
 		setActionPoints(getMaxActionPoints());
 		setHitPoints(getMaxHitPoints());
-		setWorld(world);
-		try{
-			setTeam(world.getActiveTeam());
+		setTeam(world.getActiveTeam());
+		if (getTeam() != null){
+			getTeam().addWorm(this);
 		}
-		catch(Exception e){
-		}
+
 
 	}
 
@@ -160,13 +150,13 @@ public class Worm {
 	@Raw
 	public void setRadius(double newRadius) throws IllegalArgumentException{
 		if(!isValidRadius(newRadius)){
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException(newRadius + " is an illegal value for the radius");
 		}
-		this.radius = newRadius;
-		calcMass();
+		super.setRadius(newRadius);
+		if(getActionPoints() > getMaxActionPoints()){
+			setActionPoints(getMaxActionPoints());
+		}
 	}
-	
-	
 
 	/**
 	 * Calculate and set the mass for this worm.
@@ -221,7 +211,7 @@ public class Worm {
 	
 	@Raw
 	public static boolean isValidRadius(double rad){
-		return (rad >= minimalRadius);
+		return (rad >= getMinimalRadius() && !Double.isNaN(rad));
 	}
 
 	
@@ -236,7 +226,19 @@ public class Worm {
 	
 	@Raw
 	public void setOrientation(double direction){
-		this.direction = direction;
+		if(!Double.isNaN(direction)){
+			if(direction <= 0.0){
+				direction += 2*Math.PI;
+				setOrientation(direction);
+			}
+			else if(direction > 2*Math.PI){
+				direction -= 2*Math.PI;
+				setOrientation(direction);
+			}
+			else{
+				this.direction = direction;
+			}
+		}
 	}
 	
 	/**
@@ -341,7 +343,7 @@ public class Worm {
 	
 	public void rename(String newName) throws IllegalArgumentException{
 			if(!isValidName(newName)){
-				throw new IllegalArgumentException(name);
+				throw new IllegalArgumentException(name + " is not a valid name!");
 			}
 			this.name = newName;
 		
@@ -350,23 +352,16 @@ public class Worm {
 	/**
 	 * Check whether a worm is able to move.
 	 * 
-	 * @param 	steps
-	 * 			The amount of steps the worm want to make
 	 * @return	True if the amount of steps times the cost each step takes is smaller than the available actionpoints.
 	 * 		  |	result == ((steps*stepCost) <= actionPoints)
 	 */
 	
 	@Raw
-	public boolean canMove(int steps){
-		boolean canMove;
-		int stepCost = (int)(Math.abs(Math.cos(getOrientation()))+(Math.abs(Math.sin(getOrientation())*4)));
-		if((steps*stepCost) > getActionPoints()){
-			canMove = false;
+	public boolean canMove(){
+		if(!isRemoved() && getActionPoints() > 0){
+			return true;
 		}
-		else{
-			canMove = true;
-		}
-		return canMove;
+		return false;
 	}
 	
 	/**
@@ -381,7 +376,7 @@ public class Worm {
 	
 	public void move() throws IllegalStateException{
 		if(!canMove()){
-			throw new IllegalArgumentException("The number of steps is invalid");
+			throw new IllegalStateException("Unable to move");
 		}
 		
 	
@@ -439,10 +434,15 @@ public class Worm {
 	
 	@Model @Raw
 	public void setActionPoints(int actionPoints){
-		if(actionPoints < 0 || actionPoints > getMaxActionPoints()){
-			return;
+		if(actionPoints < 0){
+			this.actionPoints = 0;
 		}
-		this.actionPoints = actionPoints;
+		else if(actionPoints > getMaxActionPoints()){
+			this.actionPoints = getMaxActionPoints();
+		}
+		else{
+			this.actionPoints = actionPoints;
+		}
 	}
 	
 	/**
@@ -455,10 +455,15 @@ public class Worm {
 	
 	@Model @Raw
 	public void setHitPoints(int hitPoints){
-		if(hitPoints < 0 || hitPoints > getMaxHitPoints()){
-			return;
+		if(hitPoints < 0){
+			this.hitPoints = 0;
 		}
-		this.hitPoints = hitPoints;
+		else if(hitPoints > getMaxHitPoints()){
+			this.hitPoints = getMaxHitPoints();
+		}
+		else{
+			this.hitPoints = hitPoints;
+		}
 	}
 	
 	/**
@@ -588,28 +593,11 @@ public class Worm {
 	
 	public void jump(double timeStep) throws IllegalStateException{
 		if(!canJump()){
-			throw new IllegalStateException();
+			throw new IllegalStateException("can't perform jump :(");
 		}
-		if(!isValidDirection(getOrientation())){
-			throw new IllegalStateException();
-		}
-		
-		double placeboDirection = getOrientation();
-		
-		if(placeboDirection > Math.PI){
-			placeboDirection = placeboDirection - (2*Math.PI);
-		}
-		else if(placeboDirection < -Math.PI){
-			placeboDirection = placeboDirection + (2*Math.PI);
-		}
-		
-		while(canJump() == true){
-		if(placeboDirection>=0 && placeboDirection<(Math.PI)) {
-			setX(getJumpStep(timeStep)[0]);
-			setY(getJumpStep(timeStep)[1]);
-			setActionPoints(0);
-		}
-		}
+		super.jump(timeStep);
+		setActionPoints(0);
+		eat();
 	}
 	
 	/**
@@ -642,7 +630,7 @@ public class Worm {
 	}
 	
 	public boolean canFall(){
-		return (!getWorld().isImpassable(getX(), getY(), getRadius()) && !getWorld().isAdjacent(getX(), getY(), getRadius()));
+		return (!removed() && !getWorld().isImpassable(getX(), getY(), getRadius()) && !getWorld().isAdjacent(getX(), getY(), getRadius()));
 	}
 	
 	public void setWorld(World world){
@@ -653,16 +641,9 @@ public class Worm {
 		return this.world;
 	}
 	
-	public boolean canMove(){
-		if(getActionPoints() <= 0){
-			return false;
-		}
-		return true;
-	}
-	
 	public void fall() throws IllegalStateException{
 		if(!canFall()){
-			throw new IllegalStateException();
+			throw new IllegalStateException("Not able to fall");
 		}
 		boolean landed = false;
 		if(getWorld().isAdjacent(getX(), getY(), getRadius())){
@@ -677,6 +658,10 @@ public class Worm {
 				landed = true;
 			}
 		}
+		if(!landed && (getWorld().objectInWorld(getX(), getY(), getRadius()))){
+			remove();
+		}
+		eat();
 	}
 	
 	public void setTeam(Teams team){
@@ -684,18 +669,7 @@ public class Worm {
 	}
 	
 	public Teams getTeam(){
-		return this.team;
-	}
-	
-	public void remove(){
-		if(!isRemoved()){
-			World thisWorld = getWorld();
-			if(thisWorld.getWorms().contains(this)){
-				thisWorld.getWorms().remove(this);
-				removed = true;
-			}
-			this.world = null;
-		}
+		return team;
 	}
 	
 	public boolean isRemoved(){
@@ -719,24 +693,60 @@ public class Worm {
 	}
 	
 	public boolean canShoot(){
-		return (!(getActionPoints() == 0) && (!getWorld().isImpassable(getX(), getY(), getRadius())));
+		return (!(getActionPoints() == 0) && (!getWorld().isImpassable(getX(), getY(), getRadius()) && !removed()));
 	}
 	
 	public void shoot(int yield){
 		if(!canShoot()){
-			throw new IllegalStateException();
+			throw new IllegalStateException("Not able to fire. Get into the bunkers!");
 		}
 		double shootX = this.getX()+Math.cos(this.getOrientation())*getRadius();
 		double shootY = this.getY()+Math.sin(this.getOrientation())*getRadius();
-		Projectile proj;
-		if(getWeapon() == "Rifle"){
-			proj = new Projectile(getWorld(), shootX, shootY);
-		}
+		Projectile proj = null;
 		if(getWeapon() == "Bazooka"){
-			proj = new Projectile(getWorld(), shootX, shootY);
+			proj = new Bazooka(getWorld(), shootX, shootY, yield);
 		}
-		//getWorld().setActiveProjectile(proj);
-		//setActionPoints(getActionPoints()-proj.getAP());
+		if(getWeapon() == "Rifle"){
+			proj = new Rifle(getWorld(), shootX, shootY);
+		}
+		proj.setCurrentWorm(this);
+		setActionPoints(getActionPoints()-proj.getAP());
+		getWorld().setActiveProjectile(proj);
 
+	}
+	
+	public void joinTeam(Teams team){
+		team.addWorm(this);
+	}
+
+	@Override
+	public double getDirection() {
+		return getOrientation();
+	}
+
+	@Override
+	public double getForce() {
+		return ((5*getActionPoints()) + (getMass()*9.80665));
+	}
+	
+	public void remove(){
+		super.remove();
+		try{
+			getTeam().removeWorm(this);
+		}
+		catch(Exception e){
+			
+		}
+	}
+	
+	public void eat(){
+		if(!removed()){
+			for(Food food : getWorld().getFood()){
+				if(overlaps(food)){
+					setRadius(1.1*getRadius());
+					food.remove();
+				}
+			}
+		}
 	}
 }

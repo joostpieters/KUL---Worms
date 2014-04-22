@@ -19,7 +19,7 @@ public class Facade implements IFacade {
 
 	
 	@Override
-	public Worm createWorm(World world, double x, double y, double direction, double radius, String name) throws ModelException{
+	public Worm createWorm(World world, double x, double y, double direction, double radius, String name){
 
 			return new Worm(world, x, y, direction, radius, name);
 	}
@@ -65,14 +65,8 @@ public class Facade implements IFacade {
 	}*/
 
 	@Override
-	public double[] getJumpStep(Worm worm, double t) throws ModelException {
-		try{
-			return worm.getJumpStep(t);
-		}
-		catch(Exception e){
-			throw new ModelException("Unable to perform a jump");
-		}
-		
+	public double[] getJumpStep(Worm worm, double t){
+		return worm.getJumpStep(t);
 	}
 
 	@Override
@@ -97,7 +91,12 @@ public class Facade implements IFacade {
 
 	@Override
 	public void setRadius(Worm worm, double newRadius) {
-		worm.setRadius(newRadius);
+		try{
+			worm.setRadius(newRadius);
+		}
+		catch(Exception e){
+			throw new ModelException("Something wrong with this radius: "+e.getMessage());
+		}
 	}
 
 	@Override
@@ -125,8 +124,8 @@ public class Facade implements IFacade {
 			try{
 				worm.rename(newName);
 			}
-			catch(IllegalArgumentException e){
-				throw new ModelException(e.getMessage());
+			catch(Exception e){
+				throw new ModelException("Something wrong with this name: "+e.getMessage());
 			}
 	}
 
@@ -137,42 +136,32 @@ public class Facade implements IFacade {
 
 	@Override
 	public void addEmptyTeam(World world, String newName){
-		try{
-			world.addTeam(new Teams(world, newName));
-		}
-		catch(IllegalArgumentException name){
-			throw new ModelException("Invalid name for the team");
-		}
+			try{
+				world.addTeam(newName);
+			}
+			catch(Exception e){
+				throw new ModelException("Somethine went wront while creating a new team: "+e.getMessage());
+			}
+
 	}
 
 	@Override
 	public void addNewFood(World world) {
-			boolean placed = false;
-			while(!placed){
 				try{
+					@SuppressWarnings("unused")
 					Food food = new Food(world, world.getWidth()/r.nextInt((int)world.getWidth()), world.getHeight()/r.nextInt((int)world.getHeight()));
-					world.addFood(food);
-					placed = true;
 				}
 				catch(Exception e){
-					placed = false;
 				}
-			}
 	}
 
 	@Override
 	public void addNewWorm(World world) {
-		boolean placed = false;
-		while(!placed){
 			try{
 				Worm worm = new Worm(world, world.getWidth()/r.nextInt((int)world.getWidth()), world.getHeight()/r.nextInt((int)world.getHeight()), Math.PI/4, 0.30, "Name");
-				world.addWorm(worm);
-				placed = true;
 			}
 			catch(Exception e){
-				placed = false;
 			}
-		}
 	}
 
 	@Override
@@ -205,12 +194,12 @@ public class Facade implements IFacade {
 
 	@Override
 	public Projectile getActiveProjectile(World world) {
-		return world.getProjectile().get(0);
+		return world.getActiveProjectile();
 	}
 
 	@Override
 	public Worm getCurrentWorm(World world) {
-		return world.currentWorm();
+		return world.getActiveWorm();
 	}
 
 	@Override
@@ -225,7 +214,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public double[] getJumpStep(Projectile projectile, double t) {
-		return projectile.JumpStep(t);
+		return projectile.jumpStep(t);
 	}
 
 	@Override
@@ -260,9 +249,10 @@ public class Facade implements IFacade {
 
 	@Override
 	public String getTeamName(Worm worm) {
-		//Teams team = worm.getTeam();
-		//return team.getTName();
-		return "geoff";
+		if(worm.getTeam() != null){
+			return worm.getTeam().getTName();
+		}
+		else return null;
 	}
 
 	@Override
@@ -297,12 +287,12 @@ public class Facade implements IFacade {
 
 	@Override
 	public boolean isActive(Food food) {
-		return (!food.isRemoved());
+		return (!food.removed());
 	}
 
 	@Override
 	public boolean isActive(Projectile projectile) {
-		return (!projectile.isRemoved());
+		return (!projectile.removed());
 	}
 
 	@Override
@@ -312,7 +302,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public boolean isAlive(Worm worm) {
-		return (!worm.isRemoved());
+		return (!worm.removed());
 	}
 
 	@Override
@@ -327,7 +317,12 @@ public class Facade implements IFacade {
 
 	@Override
 	public void jump(Projectile projectile, double timeStep) {
-		projectile.shoot();
+		try{
+			projectile.shoot(timeStep);
+		}
+		catch(Exception e){
+			throw new ModelException("Not able to shoot with following error: "+e.getMessage());
+		}
 	}
 
 	@Override
@@ -336,7 +331,7 @@ public class Facade implements IFacade {
 			worm.jump(timeStep);
 		}
 		catch(Exception e){
-			throw new ModelException("Can't jump");
+			throw new ModelException("Can't jump: "+e.getMessage());
 		}
 	}
 
@@ -346,7 +341,7 @@ public class Facade implements IFacade {
 			worm.move();
 			}
 		catch(Exception e){
-			throw new ModelException("Not able to move there.");
+			throw new ModelException("Not able to move: "+e.getMessage());
 		}
 	}
 
@@ -357,12 +352,17 @@ public class Facade implements IFacade {
 
 	@Override
 	public void shoot(Worm worm, int yield) {
-		worm.shoot(yield);
+		try{
+			worm.shoot(yield);
+		}
+		catch(Exception e){
+			throw new ModelException("Not able to shoot with following error: "+e.getMessage());
+		}
 	}
 
 	@Override
 	public void startGame(World world) {
-		world = new World(world.getHeight(), world.getWidth(), world.getPassable(), r);
+		world.start();
 	}
 
 	@Override
