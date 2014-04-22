@@ -8,14 +8,17 @@ public class Food {
 	private final static double RADIUS = 0.20;
 	
 	public Food(World world, double x, double y){		
-		if(!validPos(x) || !validPos(y)){
+		if(!validPos(x, y, world)){
 			throw new IllegalArgumentException();
 		}
 		this.x = x;
 		this.y = y;
 		this.world = world;
-		if(world.objectInWorld(x, y, RADIUS)){
+		if(world.objectInWorld(x, y, RADIUS) || world.isImpassable(x, y, RADIUS)){
 			this.remove();
+		}
+		if(!world.foodLocation(this)){
+			throw new IllegalStateException("Not able to put food there.");
 		}
 		
 	}
@@ -33,6 +36,10 @@ public class Food {
 	
 	public World getWorld(){
 		return world;
+	}
+	
+	public boolean validPos(double x, double y, World world){
+		return(!Double.isNaN(x) && !Double.isNaN(y) && !world.isImpassable(x, y, 0.20) );
 	}
 	
 	public boolean validPos(double x){

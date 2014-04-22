@@ -21,8 +21,7 @@ public class Facade implements IFacade {
 	@Override
 	public Worm createWorm(World world, double x, double y, double direction, double radius, String name) throws ModelException{
 
-			Worm newWorm = new Worm(world, x, y, direction, radius, name);
-			return newWorm;
+			return new Worm(world, x, y, direction, radius, name);
 	}
 
 	/**@Override
@@ -103,7 +102,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public double getMinimalRadius(Worm worm) {
-		return worm.getMinimalRadius();
+		return Worm.getMinimalRadius();
 	}
 
 	@Override
@@ -148,17 +147,31 @@ public class Facade implements IFacade {
 
 	@Override
 	public void addNewFood(World world) {
-		world.addFood(createFood(world, r.nextDouble(), r.nextDouble()));
+			boolean placed = false;
+			while(!placed){
+				try{
+					Food food = new Food(world, world.getWidth()/r.nextInt((int)world.getWidth()), world.getHeight()/r.nextInt((int)world.getHeight()));
+					world.addFood(food);
+					placed = true;
+				}
+				catch(Exception e){
+					placed = false;
+				}
+			}
 	}
 
 	@Override
 	public void addNewWorm(World world) {
-		try{
-			Worm worm = new Worm(world);
-			//world.addWorm(worm);
-		}
-		catch(Exception e){
-			System.out.println("Could not create worm :(");
+		boolean placed = false;
+		while(!placed){
+			try{
+				Worm worm = new Worm(world, world.getWidth()/r.nextInt((int)world.getWidth()), world.getHeight()/r.nextInt((int)world.getHeight()), Math.PI/4, 0.30, "Name");
+				world.addWorm(worm);
+				placed = true;
+			}
+			catch(Exception e){
+				placed = false;
+			}
 		}
 	}
 
@@ -248,8 +261,9 @@ public class Facade implements IFacade {
 
 	@Override
 	public String getTeamName(Worm worm) {
-		Teams team = worm.getTeam();
-		return team.getTName();
+		//Teams team = worm.getTeam();
+		//return team.getTName();
+		return "geoff";
 	}
 
 	@Override

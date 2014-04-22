@@ -1,5 +1,7 @@
 package worms.model;
 
+import java.util.Random;
+
 import be.kuleuven.cs.som.annotate.*;
 
 /**
@@ -29,6 +31,7 @@ public class Worm {
 	private World world;
 	private String name = " ";
 	private static double minimalRadius = 0.25;
+	private static Random r;
 	private int actionPoints = 0;
 	private int hitPoints;
 	private Teams team;
@@ -64,13 +67,16 @@ public class Worm {
 	@Raw
 	public Worm(World world, double x, double y, double direction, double radius, String name){
 	
+		if(!isValidRadius(radius)){
+			throw new IllegalArgumentException();
+		}
+		if(world.isImpassable(x, y, radius)){
+			throw new IllegalArgumentException();
+		}
 		setX(x);
 		setY(y);
 		setOrientation(direction);
 		rename(name);
-		if(!isValidRadius(radius)){
-			throw new IllegalArgumentException();
-		}
 		setRadius(radius);
 		setActionPoints(getMaxActionPoints());
 		setHitPoints(getMaxHitPoints());
@@ -79,15 +85,8 @@ public class Worm {
 			setTeam(world.getActiveTeam());
 		}
 		catch(Exception e){
-			
 		}
-	}
-	
-	public Worm(World world) {
-		this(world, getMinimalRadius(), getMinimalRadius(), 0.0, getMinimalRadius(), "Test");
-		if(!world.location(this)){
-			throw new IllegalStateException("Unable to put a worm in that position.");
-		}
+
 	}
 
 	/**
