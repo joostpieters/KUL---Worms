@@ -1,5 +1,7 @@
 package worms.model;
 
+import worms.model.superclasses.Object;
+
 public class Food extends Object {
 
 	private final static double RADIUS = 0.20;

@@ -1,4 +1,7 @@
-package worms.model;
+package worms.model.weapons;
+
+import worms.model.Projectile;
+import worms.model.World;
 
 public class Rifle extends Projectile {
 	

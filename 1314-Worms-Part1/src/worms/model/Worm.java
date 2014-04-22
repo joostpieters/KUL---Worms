@@ -6,6 +6,9 @@ import java.util.LinkedHashSet;
 import java.util.Random;
 import java.util.Set;
 
+import worms.model.superclasses.Jump;
+import worms.model.weapons.Bazooka;
+import worms.model.weapons.Rifle;
 import be.kuleuven.cs.som.annotate.*;
 
 /**

@@ -1,4 +1,6 @@
-package worms.model;
+package worms.model.superclasses;
+
+import worms.model.World;
 
 public abstract class Object {
 	

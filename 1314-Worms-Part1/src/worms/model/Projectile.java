@@ -1,9 +1,10 @@
 package worms.model;
 
+import worms.model.superclasses.Jump;
+
 public abstract class Projectile extends Jump{
 	
 	private Worm worm;
-	private double radius;
 	private final int DENSITY = 7800;
 
 	public Projectile(World world, double xPos, double yPos){
