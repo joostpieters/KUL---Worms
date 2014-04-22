@@ -255,8 +255,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public String getSelectedWeapon(Worm worm) {
-		// TODO Auto-generated method stub
-		return null;
+		return worm.getWeapon();
 	}
 
 	@Override
@@ -333,26 +332,32 @@ public class Facade implements IFacade {
 
 	@Override
 	public void jump(Worm worm, double timeStep) {
-		// TODO Auto-generated method stub
-		
+		try{
+			worm.jump(timeStep);
+		}
+		catch(Exception e){
+			throw new ModelException("Can't jump");
+		}
 	}
 
 	@Override
 	public void move(Worm worm) {
-		// TODO Auto-generated method stub
-		
+		try{
+			worm.move();
+			}
+		catch(Exception e){
+			throw new ModelException("Not able to move there.");
+		}
 	}
 
 	@Override
 	public void selectNextWeapon(Worm worm) {
-		// TODO Auto-generated method stub
-		
+		worm.selectNextWeapon();
 	}
 
 	@Override
 	public void shoot(Worm worm, int yield) {
-		// TODO Auto-generated method stub
-		
+		worm.shoot(yield);
 	}
 
 	@Override

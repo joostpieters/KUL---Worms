@@ -16,11 +16,7 @@ public class Food {
 		this.world = world;
 		if(world.objectInWorld(x, y, RADIUS) || world.isImpassable(x, y, RADIUS)){
 			this.remove();
-		}
-		if(!world.foodLocation(this)){
-			throw new IllegalStateException("Not able to put food there.");
-		}
-		
+		}		
 	}
 	
 	public void remove(){

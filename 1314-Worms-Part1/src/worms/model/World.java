@@ -27,6 +27,7 @@ public class World {
 	private double maxY = Double.MAX_VALUE;
 	private boolean[][] passable;
 	private Teams activeTeam;
+	private Projectile activeProjectile;
 
 	public World(double width, double height, boolean[][] passable, Random random) throws IllegalArgumentException{
 		if((!validWidth(width) || !validHeight(height))){
@@ -216,61 +217,13 @@ public class World {
 	public void setActiveTeam(Teams team){
 		this.activeTeam = team;
 	}
-
-	public boolean location(Worm worm) {
-		double newX, newY;
-		boolean found = false;
-		for(int i = 0; i < 20; i++){
-			switch(random.nextInt(3)){
-			case 0:
-				newX = 0.0 + worm.getRadius();
-				newY = random.nextDouble()*(getHeight()-worm.getRadius());
-				break;
-			case 1:
-				newX = getWidth() - worm.getRadius();
-				newY = random.nextDouble()*(getHeight()-worm.getRadius());
-				break;
-			default:
-				newX = random.nextDouble()*(getWidth() - worm.getRadius());
-				newY = 0.0 + worm.getRadius();
-				break;
-			}
-			if(isAdjacent(newX, newY, worm.getRadius())){
-				worm.setX(newX);
-				worm.setY(newY);
-				found = true;
-			}
-			
-		}
-		return true;
+	
+	public void setActiveProjectile(Projectile proj){
+		activeProjectile = proj;
 	}
 	
-	public boolean foodLocation(Food food) {
-		double newX, newY;
-		boolean found = true;
-		for(int i = 0; i < 20; i++){
-			switch(random.nextInt(2)){
-			case 0:
-				newX = 0.0 + (food.getRadius()*1.1);
-				newY = random.nextDouble()*(getHeight()-(food.getRadius()*1.1));
-				break;
-			case 1:
-				newX = getWidth() - (food.getRadius()*1.1);
-				newY = random.nextDouble()*(getHeight()-(food.getRadius()*1.1));
-				break;
-			default:
-				newX = random.nextDouble()*(getWidth() - (food.getRadius()*1.1));
-				newY = 0.0 + (food.getRadius()*1.1);
-				break;
-			}
-			if(isAdjacent(newX, newY, (food.getRadius()*1.1))){
-				food.setX(newX);
-				food.setY(newY);
-				found = true;
-			}
-			
-		}
-		return found;
+	public Projectile getActiveProjectile(){
+		return activeProjectile;
 	}
 	
 }

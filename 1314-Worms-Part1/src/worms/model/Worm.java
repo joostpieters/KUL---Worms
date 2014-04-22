@@ -1,6 +1,10 @@
 package worms.model;
 
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Random;
+import java.util.Set;
 
 import be.kuleuven.cs.som.annotate.*;
 
@@ -31,11 +35,13 @@ public class Worm {
 	private World world;
 	private String name = " ";
 	private static double minimalRadius = 0.25;
-	private static Random r;
 	private int actionPoints = 0;
 	private int hitPoints;
 	private Teams team;
 	private boolean removed; 
+	private Set<String> weapons = new LinkedHashSet<String>(Arrays.asList(new String[] {"Rifle", "Bazooka"}));
+	private Iterator<String> switchWeapon = weapons.iterator();
+	private String weapon;
 
 	/*
 	 * Initialize a Worm with given position, direction, radius and name.
@@ -373,19 +379,54 @@ public class Worm {
 	 * 		  |	!canMove(steps);
 	 */
 	
-	public void move(int steps) throws IllegalArgumentException{
-		if(!canMove(steps)){
+	public void move() throws IllegalStateException{
+		if(!canMove()){
 			throw new IllegalArgumentException("The number of steps is invalid");
 		}
 		
-		if(canMove(steps)){
-			int stepCost = (int)(Math.abs(Math.cos(getOrientation()))+(Math.abs(Math.sin(getOrientation())*4)));
-			setActionPoints(getActionPoints() - (steps*stepCost));
-			setX(getX() + (steps*Math.cos(getOrientation())*getRadius()));
-			setY(getY() + (steps*Math.sin(getOrientation())*getRadius()));
+	
+		int stepCost = (int)(Math.abs(Math.cos(getOrientation()))+(Math.abs(Math.sin(getOrientation())*4)));
+		setActionPoints(getActionPoints() - (stepCost));
+		setX(getBestPos()[0]);
+		setY(getBestPos()[1]);
+	
+	}
+	
+	private double[] getBestPos(){
+		int times = 10;
+		double pos[] = new double[2];
+		double step = (1.0/times)*(getRadius()-0.1);
+		double angle = Double.NaN;
+		
+		for(int i = 10; i >= 0; i--){
+			for(double div = 0; div <= 0.7875; div = div + 00175){
+				pos[0] = 0.1+i*step*getRadius();
+				pos[1] = getOrientation()+div;
+				if(!getWorld().isImpassable(pos[0], pos[1], getRadius()) && getWorld().isImpassable(pos[0], pos[1], getRadius()*1.1)){
+					return pos;
+				}
+				if(angle != Double.NaN && !getWorld().isImpassable(pos[0], pos[1], getRadius())){
+					angle = pos[1];
+				}
+				
+				pos[1] = getOrientation()-div;
+				pos[0] = getX()+pos[0]*Math.cos(pos[1]);
+				pos[1] = getY()+pos[0]*Math.sin(pos[1]);
+				
+				if(!getWorld().isImpassable(pos[0], pos[1], getRadius()) && getWorld().isImpassable(pos[0], pos[1], getRadius()*1.1)){
+					return pos;
+				}
+				
+				if(angle != Double.NaN && !getWorld().isImpassable(pos[0], pos[1], getRadius())){
+					angle = pos[1];
+				}
+			}
 		}
-
-
+		
+		pos[0] = 0.1;
+		pos[1] = angle;
+		return pos;
+		
 	}
 	
 	/**
@@ -529,11 +570,6 @@ public class Worm {
 		if(!canJump()){
 			throw new IllegalArgumentException();
 		}
-		if(!isValidDirection(getOrientation())){
-			throw new IllegalArgumentException();
-			}
-	
-		
 		double[] positionPerTime = new double[2];
 		double initialXVelocity = (((getJumpForce()*0.5)/getMass())*Math.cos(getOrientation()));
 		double initialYVelocity = (((getJumpForce()*0.5)/getMass())*Math.sin(getOrientation()));
@@ -550,16 +586,14 @@ public class Worm {
 	 * @throws IllegalDirectionException(getOrientation())	Invalid direction.
 	 */
 	
-	public void jump() throws IllegalArgumentException{
+	public void jump(double timeStep) throws IllegalStateException{
 		if(!canJump()){
-			throw new IllegalArgumentException();
+			throw new IllegalStateException();
 		}
 		if(!isValidDirection(getOrientation())){
-			throw new IllegalArgumentException();
+			throw new IllegalStateException();
 		}
 		
-		double initialVelocity = ((getJumpForce()*0.5)/getMass());
-		double distance = (((initialVelocity*initialVelocity)*Math.sin(2*getOrientation()))/9.80665);
 		double placeboDirection = getOrientation();
 		
 		if(placeboDirection > Math.PI){
@@ -571,7 +605,8 @@ public class Worm {
 		
 		while(canJump() == true){
 		if(placeboDirection>=0 && placeboDirection<(Math.PI)) {
-			setX(getX() + distance);
+			setX(getJumpStep(timeStep)[0]);
+			setY(getJumpStep(timeStep)[1]);
 			setActionPoints(0);
 		}
 		}
@@ -588,7 +623,7 @@ public class Worm {
 
 	public boolean canJump(){
 		boolean canJump = true;
-		if(getActionPoints() == 0){
+		if(getActionPoints() == 0 || getWorld().isImpassable(getX(), getY(), getRadius())){
 			canJump = false;
 		}
 		return canJump;
@@ -665,5 +700,43 @@ public class Worm {
 	
 	public boolean isRemoved(){
 		return removed;
+	}
+
+	
+	public void selectNextWeapon(){
+		if(!switchWeapon.hasNext()){
+			switchWeapon = weapons.iterator();
+		}
+		setWeapon(switchWeapon.next());
+	}
+	
+	public String getWeapon(){
+		return weapon;
+	}
+	
+	public void setWeapon(String weapon){
+		this.weapon = weapon;
+	}
+	
+	public boolean canShoot(){
+		return (!(getActionPoints() == 0) && (!getWorld().isImpassable(getX(), getY(), getRadius())));
+	}
+	
+	public void shoot(int yield){
+		if(!canShoot()){
+			throw new IllegalStateException();
+		}
+		double shootX = this.getX()+Math.cos(this.getOrientation())*getRadius();
+		double shootY = this.getY()+Math.sin(this.getOrientation())*getRadius();
+		Projectile proj;
+		if(getWeapon() == "Rifle"){
+			proj = new Projectile(getWorld(), shootX, shootY);
+		}
+		if(getWeapon() == "Bazooka"){
+			proj = new Projectile(getWorld(), shootX, shootY);
+		}
+		//getWorld().setActiveProjectile(proj);
+		//setActionPoints(getActionPoints()-proj.getAP());
+
 	}
 }
