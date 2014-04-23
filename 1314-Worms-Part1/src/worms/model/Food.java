@@ -9,6 +9,7 @@
  */
 
 package worms.model;
+import be.kuleuven.cs.som.annotate.*;
 import worms.model.superclasses.Object;
 
 public class Food extends Object {
@@ -31,10 +32,12 @@ public class Food extends Object {
 	 * @effect	The superclass Object will be called using the parameters and a static radius.
 	 * 		  |	super(world, x, y RADIUS);
 	 */
+	@Raw
 	public Food(World world, double x, double y){		
 		super(world, x, y, RADIUS);
 	}
 	
+	@Basic @Raw
 	public static double getR(){
 		return RADIUS;
 	}

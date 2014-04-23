@@ -15,8 +15,9 @@
 
 package worms.model;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+
+import be.kuleuven.cs.som.annotate.*;
 
 public class Teams {
 	
@@ -41,6 +42,8 @@ public class Teams {
 	 * 		  |	allWorms = new HashSet<Worm>();
 	 * 
 	 */
+	
+	@Raw
 	public Teams(String name) throws IllegalArgumentException{
 		if(!Worm.isValidName(name)){
 			throw new IllegalArgumentException(name);
@@ -57,6 +60,7 @@ public class Teams {
 	 * @post	The given worm will be a part of this team.
 	 * 		  |	getAllWorms().contains(worm) == true;
 	 */
+	
 	
 	public void addWorm(Worm worm){
 		allWorms.add(worm);
@@ -90,6 +94,7 @@ public class Teams {
 	 * 
 	 */
 	
+	@Basic 
 	public World getWorld(){
 		return this.world;
 	}
@@ -103,6 +108,7 @@ public class Teams {
 	 * 		  |	getWorld() == world;
 	 */
 	
+	@Basic @Raw
 	public void setWorld(World world){
 			this.world = world;
 	}
@@ -114,6 +120,7 @@ public class Teams {
 	 * 			The list containing all the worms that are a part of this team.
 	 */
 	
+	@Basic
 	public Set<Worm> getAllWorms(){
 		return allWorms;
 	}
@@ -125,6 +132,7 @@ public class Teams {
 	 * 			The name of this team.
 	 */
 
+	@Basic
 	public String getTName(){
 		return this.name;
 	}

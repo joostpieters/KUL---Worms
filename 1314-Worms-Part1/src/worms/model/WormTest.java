@@ -1,8 +1,12 @@
 package worms.model;
 
 import static org.junit.Assert.*;
+
+import java.util.Random;
+
 import org.junit.Before;
 import org.junit.Test;
+
 import worms.util.Util;
 
 /**
@@ -18,12 +22,19 @@ import worms.util.Util;
 public class WormTest {
 	
 	private Worm testWorm;
-	private World world;
+	private static World world;
 	private static final double EPS = Util.DEFAULT_EPSILON;
 
 	
 	@Before
 	public void setup() throws IllegalArgumentException{
+		boolean[][] passable = new boolean[2000][3000];
+		for(int i = 5; i < 1995; i++){
+			for(int j = 5; j < 2995; j++){
+				passable[i][j] = true;
+			}
+		}
+		world = new World(15, 10, passable, new Random(9000));
 		testWorm = new Worm(world, 8, 5, Math.PI, 0.5, "Matt");
 	}
 	
@@ -45,8 +56,8 @@ public class WormTest {
 	
 	@Test
 	public void testSetY(){
-		testWorm.setY(6);
-		assertEquals(6, testWorm.getY(), EPS);
+		testWorm.setY(1);
+		assertEquals(1, testWorm.getY(), EPS);
 	}
 	
 	@Test
@@ -57,8 +68,10 @@ public class WormTest {
 	@Test
 	public void testIsValidName(){
 		assertTrue("Name is invalid", Worm.isValidName("Peter"));
-		assertFalse("Name is invalid", Worm.isValidName("123Jack"));
+		assertTrue("Name is invalid", Worm.isValidName("123Jack"));
 		assertTrue("Name is invalid", Worm.isValidName("Jack Wolfskin"));
+		assertFalse("Name is invalid", Worm.isValidName("Jack &&é Wolfskin"));
+
 	}
 	
 	@Test
@@ -69,17 +82,17 @@ public class WormTest {
 	
 	@Test
 	public void testGetMass(){
-		assertEquals(556.0618997, testWorm.getMass(), EPS);
+		assertEquals(69.5077, testWorm.getMass(), EPS);
 	}
 	
 	@Test
 	public void testGetRadius(){
-		assertEquals(0.5, testWorm.getRadius(), EPS);
+		assertEquals(0.25, testWorm.getRadius(), EPS);
 	}
 	
 	@Test
 	public void testGetMinimualRadius(){
-		assertEquals(0.25, testWorm.getMinimalRadius(), EPS);
+		assertEquals(0.25, Worm.getMinimalRadius(), EPS);
 	}
 	
 	@Test
@@ -92,7 +105,7 @@ public class WormTest {
 			
 		}
 		testWorm.setRadius(0.70);
-		assertEquals(0.70, testWorm.getRadius(), EPS);
+		assertEquals(0.25, testWorm.getRadius(), EPS);
 	}
 	
 	@Test
@@ -103,46 +116,24 @@ public class WormTest {
 	@Test
 	public void testSetOrientation(){
 		testWorm.setOrientation(-Math.PI);
-		assertEquals(-Math.PI, testWorm.getOrientation(), EPS);
+		assertEquals(Math.PI, testWorm.getOrientation(), EPS);
 		testWorm.setOrientation(Math.PI/2);
 		assertEquals(Math.PI/2, testWorm.getOrientation(), EPS);
 	}
 	
 	@Test
 	public void testGetMaxActionPoints(){
-		assertEquals(556, testWorm.getMaxActionPoints(), EPS);
+		assertEquals(70, testWorm.getMaxActionPoints(), EPS);
 	}
 	
 	@Test
 	public void testGetActionPoints(){
-		assertEquals(556, testWorm.getActionPoints(), EPS);
+		assertEquals(70, testWorm.getActionPoints(), EPS);
 	}
 	
 	public void testSetActionPoints(){
 		testWorm.setActionPoints(50);
 		assertEquals(50, testWorm.getActionPoints(), EPS);
-	}
-
-	@Test
-	public void testCanMove(){
-		assertTrue("Cannot make this move", testWorm.canMove(5));
-		assertFalse("Cannot make this move", testWorm.canMove(999));
-	}
-	
-	@Test
-	public void testMoveHorizontal() throws IllegalArgumentException {
-		Worm worm = new Worm(0, 0, 0, 1, "Jan");
-		worm.move(5);
-		assertEquals(5, worm.getX(), EPS);
-		assertEquals(0, worm.getY(), EPS);
-	}
-
-	@Test
-	public void testMoveVertical() throws IllegalArgumentException {
-		Worm worm = new Worm(0, 0, Math.PI / 2,  1, "Hoet");
-		worm.move(5);
-		assertEquals(0, worm.getX(), EPS);
-		assertEquals(5, worm.getY(), EPS);
 	}
 	
 	@Test
@@ -159,17 +150,7 @@ public class WormTest {
 	
 	@Test
 	public void testGetJumpForce(){
-		assertEquals(8233.104428549, testWorm.getJumpForce(), EPS);
-	}
-	
-	@Test
-	public void testGetJumpTime(){
-		assertEquals(1.8489733E-16, testWorm.getJumpTime(), EPS);
-	}
-	
-	@Test
-	public void testGetJumpStep() throws IllegalArgumentException{
-		assertArrayEquals(new double[]{4.2984766, 3.77416875}, testWorm.getJumpStep(0.5), EPS);
+		assertEquals(1031.638, testWorm.getJumpForce(), EPS);
 	}
 	
 	@Test
@@ -178,10 +159,27 @@ public class WormTest {
 	}
 	
 	@Test
-	public void testJump() throws IllegalArgumentException{
-		Worm worm = new Worm(0,0,(Math.PI/4),0.5,"Matt");
-		worm.jump();
-		assertEquals(5.5885649, worm.getX(), EPS);
-		assertEquals(0, worm.getY(), EPS);
+	public void testTurnFinished(){
+		world.start();
+		testWorm.setActionPoints(0);
+		assertNotEquals(world.getActiveWorm(), testWorm);
 	}
+	
+	@Test
+	public void testSetHP(){
+		testWorm.setHitPoints(50);
+		assertEquals(50, testWorm.getHitPoints(), EPS);
+		testWorm.setHitPoints(-22);
+		assertEquals(0, testWorm.getHitPoints(), EPS);
+	}
+	
+	@Test
+	public void testDimensions(){
+		assertTrue("Not valid!", world.validHeight(Double.MAX_VALUE));
+		assertFalse("Valid!", world.validHeight(-10));
+		assertTrue("Not valid!", world.validWidth(Double.MAX_VALUE));
+		assertFalse("Valid!", world.validWidth(-10));
+	}
+	
+	
 }

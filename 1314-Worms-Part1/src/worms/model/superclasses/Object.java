@@ -148,9 +148,7 @@ public abstract class Object {
 		if(!Double.isNaN(newY)){
 			this.y = newY;
 		}
-		if(getWorld().objectInWorld(getX(), getY(), getRadius())){
-			this.remove();
-		}
+	
 	}
 	
 	/**

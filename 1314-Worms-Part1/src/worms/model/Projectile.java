@@ -14,6 +14,7 @@
  */
 
 package worms.model;
+import be.kuleuven.cs.som.annotate.*;
 import worms.model.superclasses.Jump;
 
 public abstract class Projectile extends Jump{
@@ -37,6 +38,7 @@ public abstract class Projectile extends Jump{
 	 * @effect	Will call the Object superclass in model.superclasses.
 	 */
 	
+	@Raw
 	public Projectile(World world, double xPos, double yPos){
 		super(world, xPos, yPos, 0.0);
 		this.setRadius(getRadius());
@@ -53,6 +55,7 @@ public abstract class Projectile extends Jump{
 	 * 		  |	worm != null;
 	 */
 	
+	@Raw
 	public void setCurrentWorm(Worm worm){
 		if(worm == null){
 			throw new IllegalArgumentException("The worm you're trying to set as owner is null.");
@@ -67,6 +70,7 @@ public abstract class Projectile extends Jump{
 	 * 		  |	result == this.worm;
 	 */
 	
+	@Basic
 	public Worm currentWorm(){
 		return this.worm;
 	}
@@ -79,6 +83,7 @@ public abstract class Projectile extends Jump{
 	 * 		  |	result == getWorm().getOrientation();
 	 */
 	
+	@Basic @Raw
 	public double getDirection(){
 		return this.currentWorm().getOrientation();
 	}
@@ -90,6 +95,7 @@ public abstract class Projectile extends Jump{
 	 * 		  |	result == Math.cbrt((this.getMass()*0.75)/(DENSITY*Math.PI));
 	 */
 	
+	@Basic @Raw
 	public double getRadius(){
 		return Math.cbrt((this.getMass()*0.75)/(DENSITY*Math.PI));
 	}

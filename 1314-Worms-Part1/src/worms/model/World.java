@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import be.kuleuven.cs.som.annotate.*;
 import worms.model.superclasses.Object;
 import worms.util.Util;
 
@@ -78,6 +79,7 @@ public class World {
 	 * 			
 	 */
 	
+	@Raw
 	public World(double width, double height, boolean[][] passable, Random random) throws IllegalArgumentException{
 		if((!validWidth(width) || !validHeight(height))){
 			throw new IllegalArgumentException("Dimensions are not valid!");
@@ -143,6 +145,7 @@ public class World {
 	 * @return The width.
 	 */
 	
+	@Basic @Raw
 	public double getWidth(){
 		return width;
 	}
@@ -158,6 +161,7 @@ public class World {
 	 * 		  | !validWidth(width);
 	 */
 	
+	@Raw
 	public void setWidth(double width){
 		if(!validWidth(width)){
 			throw new IllegalArgumentException();
@@ -176,6 +180,7 @@ public class World {
 	 * 		  | !validWidth(height);
 	 */
 	
+	@Raw
 	public void setHeight(double height){
 		if(!validHeight(height)){
 			throw new IllegalArgumentException();
@@ -189,6 +194,7 @@ public class World {
 	 * @return The height.
 	 */
 	
+	@Basic @Raw
 	public double getHeight(){
 		return height;
 	}
@@ -198,7 +204,7 @@ public class World {
 	 * 
 	 * @return	The passable map
 	 */
-	
+	@Basic @Raw
 	public boolean[][] getPassable(){
 		return passable;
 	}
@@ -209,6 +215,7 @@ public class World {
 	 * @return	The random generator.
 	 */
 	
+	@Basic @Raw
 	public Random getRandom(){
 		return this.random;
 	}
@@ -225,6 +232,7 @@ public class World {
 	 * @return	True if the area provided by the parameters can't be passed through.
 	 */
 	
+	@Model
 	public boolean isImpassable(double x, double y, double radius){
 
 		int altX = (int) (x/getWidth()*getPassable()[0].length);
@@ -358,6 +366,7 @@ public class World {
 	 * 		  |	getObjects().contains(obj);
 	 */
 	
+	@Basic
 	public boolean contains(Object obj){
 		return getObjects().contains(obj);
 	}
@@ -464,6 +473,7 @@ public class World {
 	 * @return	All the Worms, Projectiles and Food in this world.
 	 */
 	
+	@Basic
 	public List<Object> getObjects(){
 		ArrayList<Object> all = new ArrayList<Object>();
 		for(Food food : foodlist){
@@ -565,6 +575,7 @@ public class World {
 	 * 		  |	getProjectiles().add(proj);
 	 */
 	
+
 	public void addProjectile(Projectile proj){
 		if(proj.getWorld() == this){
 		projList.add(proj);
@@ -595,6 +606,7 @@ public class World {
 	 * 		  |	getActiveTeam() != null;
 	 */
 	
+	@Basic @Raw
 	public boolean validTeam(Teams team){
 		return (team != null);
 	}
@@ -624,6 +636,7 @@ public class World {
 	 * @return The active team.
 	 */
 	
+	@Basic @Raw
 	public Teams getActiveTeam(){
 		return this.team;
 	}
@@ -637,6 +650,7 @@ public class World {
 	 * 		  |	getActiveTeam() == team;
 	 */
 	
+	@Basic @Raw
 	public void setActiveTeam(Teams team){
 		this.team = team;
 	}
@@ -651,6 +665,7 @@ public class World {
 	 * 			
 	 */
 	
+	@Basic @Raw
 	public void setActiveWorm(Worm worm){
 		this.activeWorm = worm;
 	}
@@ -661,6 +676,7 @@ public class World {
 	 * @return The active worm.
 	 */
 	
+	@Basic @Raw
 	public Worm getActiveWorm(){
 		return activeWorm;
 	}
@@ -671,6 +687,7 @@ public class World {
 	 * @return Set of projectiles.
 	 */
 	
+	@Basic
 	public Set<Projectile> getProjectile(){
 		return projList;
 	}
@@ -681,6 +698,7 @@ public class World {
 	 * @return Set of food.
 	 */
 	
+	@Basic
 	public Set<Food> getFood(){
 		return foodlist;
 	}
@@ -691,6 +709,7 @@ public class World {
 	 * @return Set of worms.
 	 */
 	
+	@Basic
 	public Set<Worm> getWorms(){
 		return wormsList;
 	}
@@ -701,6 +720,7 @@ public class World {
 	 * @return	True if the game is finished.
 	 */
 	
+	@Basic @Raw
 	public boolean isFinished(){
 		return finished ;
 	}
@@ -735,6 +755,7 @@ public class World {
 	 * @return	List of teams.
 	 */
 	
+	@Basic
 	public List<Teams> getAllTeams(){
 		List<Teams> list = new ArrayList<Teams>();
 		for(Teams teams : teamsList){
@@ -752,6 +773,7 @@ public class World {
 	 * 		  |	getActiveProjectile() == proj
 	 */
 	
+	@Basic @Raw
 	public void setActiveProjectile(Projectile proj){
 		activeProjectile = proj;
 	}
@@ -762,6 +784,7 @@ public class World {
 	 * @return	the active projectile.
 	 */
 	
+	@Basic @Raw
 	public Projectile getActiveProjectile(){
 		return activeProjectile;
 	}
@@ -794,7 +817,7 @@ public class World {
 	 * 		  |	if(getWorms().size()<=1){setFinished()};
 	 */
 	
-	public void setStarted(){
+	private void setStarted(){
 		started = true;
 		if(getWorms().size() <= 1){
 			setFinished();
@@ -814,7 +837,7 @@ public class World {
 	 * @effect	The boolean finished will be set to true. 
 	 */
 	
-	public void setFinished(){
+	private void setFinished(){
 		setActiveWorm(null);
 		setActiveTeam(null);
 		finished = true;
@@ -860,6 +883,7 @@ public class World {
 	 * 		  | getPassable()[0].length;
 	 */
 	
+	@Basic
 	public int PXLWidth(){
 		return passable[0].length;
 	}
@@ -871,6 +895,7 @@ public class World {
 	 * 		  | getPassable().length;
 	 */
 	
+	@Basic
 	public int PXLHeight(){
 		return passable.length;
 	}
@@ -882,6 +907,7 @@ public class World {
 	 * 		  | getHeight()/PXLHeight();
 	 */
 	
+	@Raw
 	public double heightPXL(){
 		return getHeight()/PXLHeight();
 	}
@@ -893,6 +919,7 @@ public class World {
 	 * 		  | getHeight()/PXLWidth();
 	 */
 	
+	@Raw
 	public double widthPXL(){
 		return getWidth()/PXLWidth();
 	}
