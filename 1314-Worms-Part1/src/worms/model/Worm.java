@@ -44,7 +44,7 @@ public class Worm extends Jump {
 	private int hitPoints;
 	private Teams team;
 	private Set<String> weapons = new LinkedHashSet<String>(Arrays.asList(new String[] {"Rifle", "Bazooka"}));
-	private Iterator<String> switchWeapon;
+	private Iterator<String> switchWeapon = weapons.iterator();
 	private String weapon;
 
 	/*

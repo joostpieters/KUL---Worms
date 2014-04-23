@@ -19,7 +19,7 @@ import worms.util.Util;
  */
 
 
-public class WormTest {
+public class AllTest {
 	
 	private Worm testWorm;
 	private static World world;
@@ -156,6 +156,8 @@ public class WormTest {
 	@Test
 	public void testCanJump(){
 		assertTrue("Cannot jump", testWorm.canJump());
+		testWorm.setActionPoints(0);
+		assertFalse("wrong!", testWorm.canJump());
 	}
 	
 	@Test
@@ -181,5 +183,28 @@ public class WormTest {
 		assertFalse("Valid!", world.validWidth(-10));
 	}
 	
+	@Test
+	public void testTeams(){
+		Teams team = new Teams("TestTeam");
+		testWorm.setTeam(team);
+		assertEquals("TestTeam", testWorm.getTeam().getTName());
+	}
+	
+	@Test
+	public void testWeapons(){
+		assertEquals("Rifle", testWorm.getWeapon());
+	}
+
+	@Test
+	public void testGame(){
+		Teams team2 = new Teams("Test2");
+		world.addWorm();
+		world.addWorm();
+		world.addWorm();
+		world.start();
+		assertFalse("Wrong!", world.isFinished());
+		assertFalse("Wrong!", world.getWorms().isEmpty());
+		assertFalse("Wrong!", world.getActiveWorm() == null);
+	}
 	
 }
