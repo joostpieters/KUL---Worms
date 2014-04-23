@@ -167,7 +167,7 @@ public class Worm extends Jump {
 	 */
 	
 	public void calcMass(){
-		mass = (1062*((4*Math.PI*Math.pow(getRadius(), 3))/3));
+		mass = (1062*(4.0/3.0)*Math.PI*(Math.pow(getRadius(),3)));
 	}
 	
 	/**
@@ -430,7 +430,6 @@ public class Worm extends Jump {
 			}
 			currentDistance = getRadius();
 			while (newLocation == null && currentDistance>=0.1){
-				System.out.println("fallekeleggen");
 				newLocation = searchFallLocation(currentDistance);
 				currentDistance -= 0.01;
 			}
@@ -485,7 +484,6 @@ public class Worm extends Jump {
 		public void fallPixel(){
 			double distance = getWorld().heightPXL();
 			setY(getY() - distance);
-			System.out.println(this.getY());
 		}
 
 	/**
