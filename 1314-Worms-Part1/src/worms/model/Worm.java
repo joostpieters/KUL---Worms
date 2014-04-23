@@ -39,6 +39,7 @@ public class Worm extends Jump {
 	private World world;
 	private String name = " ";
 	private static double minimalRadius = 0.25;
+	private static Random random;
 	private int actionPoints = 0;
 	private int hitPoints;
 	private Teams team;
@@ -87,11 +88,8 @@ public class Worm extends Jump {
 		}
 	}
 	
-	public Worm(World world) throws Exception{
-		this(world, 0.0, 0.0, Math.PI/2, getMinimalRadius(), names[(int)Math.random()*(names.length-1)]);
-		if(!world.suitablePos(this)){
-			throw new Exception("Worm has not been placed! Cannot find a suitable position.");
-		}
+	public Worm(World world, double x, double y){
+		this(world, x, y, Math.PI/2, getMinimalRadius(), names[(int)Math.floor(Math.random()*names.length)]);
 	}
 	
 	/**
@@ -557,9 +555,9 @@ public class Worm extends Jump {
 	 */
 	
 	public double[] getJumpStep(double time) throws IllegalArgumentException{
-		if(!canJump()){
+/*		if(!canJump()){
 			throw new IllegalArgumentException();
-		}
+		}*/
 		double[] positionPerTime = new double[2];
 		double initialXVelocity = (((getJumpForce()*0.5)/getMass())*Math.cos(getOrientation()));
 		double initialYVelocity = (((getJumpForce()*0.5)/getMass())*Math.sin(getOrientation()));
@@ -627,24 +625,17 @@ public class Worm extends Jump {
 	}
 	
 	public void fall() throws IllegalStateException{
-		if(!canFall()){
-			throw new IllegalStateException("Not able to fall");
+		double y = getY();
+		while(!getWorld().isAdjacent(getX(), getY(), getRadius()) && !getWorld().objectInWorld(getX(), getY(), getRadius()) && !getWorld().isImpassable(getX(), getY(), getRadius())){
+			double distance = getWorld().heightPXL();
+			setY(getY()-distance);
 		}
-		boolean landed = false;
-		if(getWorld().isAdjacent(getX(), getY(), getRadius())){
-			landed = true;
-		}
-		double initialY = getY();
-		while((!landed) && !getWorld().objectInWorld(getX(), getY(), getRadius()) ){
-			double newY = getY()-0.05*getRadius();
-			if(getWorld().isAdjacent(getX(), newY, getRadius())){
-				this.setY(newY);
-				this.setHitPoints((int)(getHitPoints() - (3*(initialY-newY))));
-				landed = true;
+		if(!getWorld().objectInWorld(getX(), getY(), getRadius())){
+			int dist = (int) (y - getY());
+			setHitPoints(getHitPoints()-3*dist);
+			if(getHitPoints() < 0){
+				setHitPoints(0);
 			}
-		}
-		if(!landed && (getWorld().objectInWorld(getX(), getY(), getRadius()))){
-			remove();
 		}
 		eat();
 	}

@@ -127,13 +127,8 @@ public class Facade implements IFacade {
 
 	@Override
 	public void addNewWorm(World world) {
-			try{
-				Worm worm = new Worm(world);
-			}
-			catch(Exception e){
-				System.out.println("debug: "+e.getMessage());
-
-			}
+				world.addWorm();
+	
 	}
 
 	@Override

@@ -1,15 +1,46 @@
-package worms.model;
+/**
+ * A class of Teams containing worms.
+ * 
+ * @invar	World must always exist.
+ * 		 |	getWorld() != null
+ * @invar	The name of a Team must be a valid name.
+ * 		 |	Worm.isValidName(getTName());
+ * 
+ * @version 1.0
+ * @author 	Kristof Achten <kristof.achten@student.kuleuven.be>
+ * GitHub: https://github.com/Divyak156/OGPProject.git
+ * StudentNr: r0462748 - 1ste Bachelor informatica
+ *
+ */
 
+package worms.model;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class Teams {
 	
+	/**
+	 * All of the variables and constants used in this class.
+	 */
+	
 	private String name;
 	private World world;
 	private Set<Worm> allWorms;
 	
+	/**
+	 * Constructor for the teams.
+	 * 
+	 * @param 	name
+	 * 			The name we want the team to have.
+	 * @throws 	IllegalArgumentException The name of this Team contains characters other than all numbers, quotationmarks, spaces or letters.
+	 * 		  |	!Worm.isValidName(name);
+	 * @effect	The team's name is set to the parameter name.
+	 * 		  | setTName(name);
+	 * @effect	A new list is created that will later on contain the members of this team.
+	 * 		  |	allWorms = new HashSet<Worm>();
+	 * 
+	 */
 	public Teams(String name) throws IllegalArgumentException{
 		if(!Worm.isValidName(name)){
 			throw new IllegalArgumentException(name);
@@ -18,9 +49,29 @@ public class Teams {
 		this.allWorms = new HashSet<Worm>();
 	}
 	
+	/**
+	 * Method to add a worm to this team.
+	 * 
+	 * @param 	worm
+	 * 			The worm we want to add.
+	 * @post	The given worm will be a part of this team.
+	 * 		  |	getAllWorms().contains(worm) == true;
+	 */
+	
 	public void addWorm(Worm worm){
 		allWorms.add(worm);
 	}
+	
+	/**
+	 * Method to remove a worm from this team.
+	 * 
+	 * @param 	worm
+	 * 			The worm we want to remove.
+	 * @post	The given worm will no longer be part of this team.
+	 * 		  | getAllWorms().contains(worm) == false;
+	 * @effect	If the team is empty, it will be removed.
+	 * 		  | getWorld().removeTeam(this);	
+	 */
 	
 	public void removeWorm(Worm worm){
 		if(allWorms.size() != 0){
@@ -31,21 +82,63 @@ public class Teams {
 		}
 	}
 	
+	/**
+	 * Get the world this Team belongs to.
+	 * 
+	 * @return 	world
+	 * 			The current world.
+	 * 
+	 */
+	
 	public World getWorld(){
 		return this.world;
 	}
+	
+	/**
+	 * Method to set the world this team belongs to.
+	 * 
+	 * @param 	world
+	 * 			The world we want this team to be in.
+	 * @post	The world will equal this world.
+	 * 		  |	getWorld() == world;
+	 */
 	
 	public void setWorld(World world){
 			this.world = world;
 	}
 	
+	/**
+	 * Return a list of all members of this team.
+	 * 
+	 * @return	allWorms
+	 * 			The list containing all the worms that are a part of this team.
+	 */
+	
 	public Set<Worm> getAllWorms(){
 		return allWorms;
 	}
 
+	/**
+	 * Return the name of this team.
+	 *
+	 * @return	name
+	 * 			The name of this team.
+	 */
+
 	public String getTName(){
 		return this.name;
 	}
+	
+	/**
+	 * Method to set the name of this team.
+	 * 
+	 * @param 	newName
+	 * 			The new name.
+	 * @post	The current name will equal the parameter name.
+	 * 		  |	getTName().equals(name);
+	 * @throws	IllegalArgumentException This name contains symbols other than spaces, quotationmarks, letters and numbers.
+	 * 		  |	!Worm.isValidName(newName);
+	 */
 	
 	public void setTName(String newName){
 		if(!Worm.isValidName(newName)){
