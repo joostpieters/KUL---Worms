@@ -31,15 +31,12 @@ import be.kuleuven.cs.som.annotate.*;
 public class Worm extends Jump {
 	
 	private static String[] names = { "John", "Geoff", "Jennifer", "Philip", "Captain", "Ted", "Lily", "Marshall", "Barney", "Robin", "Zoe", "Frank", "Bill", "McSoap", "Chris", "Sam", "Lau", "Don", "Jim", "Andy", "James O'Hare", "2Slo", "2Pro", "Peter", "Bart", "Sensei", "Robb", "Arya", "Ann", "Ghost", "Solfatare", "Dietrich", "Lars", "Tom", "McAwesome", "Ayden", "Berta", "Daniel", "Matt", "David", "Hamish", "Capaldi", "Romero", "Calvin", "Bondi"};
-	private double x = 0;
-	private double y = 0;
 	private double direction;
 	private double radius = 0.25;
 	private double mass = 0;
 	private World world;
 	private String name = " ";
 	private static double minimalRadius = 0.25;
-	private static Random random;
 	private int actionPoints = 0;
 	private int hitPoints;
 	private Teams team;
@@ -66,13 +63,19 @@ public class Worm extends Jump {
 	 * @pre		The initial radius must be bigger than the minimal radius.
 	 * 		  | radius >= getMinimalRadius()
 	 * @effect	The new x-coordinate will equal x.
+	 * 		  |	getX() == x;
 	 * @effect	The new y-coordinate will equal y.
+	 * 		  |	getY() == y;
 	 * @effect	The new orientation will equal the direction.
+	 * 		  |	getOrientation() == direction;
 	 * @effect 	The new radius will equal the radius.
+	 * 		  |	getRadius() == radius;
 	 * @effect	The new name will equal the name.
+	 * 		  |	getName() == name;
 	 * @effect	The new amount of actionpoints will equal the maximum amount of actionpoints.
-	 * @throws 	IllegalNameException The given name is not according to prereqs.
-	 * @throws	IllegalRadiusException The given radius is not valid.
+	 * 		  |	getActionPoints() == getMaxActionPoints()
+	 * @effect	The superclass Object will be called with given parameters.
+	 * 		  |	super(world, x, y, radius);
 	 */
 	
 	@Raw
@@ -88,6 +91,20 @@ public class Worm extends Jump {
 		}
 	}
 	
+	/**
+	 * Slightly compacter constructor to create a worm with a random position.
+	 * 
+	 * @param 	world
+	 * 			The world this worm will be created in.
+	 * @param 	x
+	 * 			The x-coordinate of this worm.
+	 * @param 	y
+	 * 			The y-coordinate of this worm.
+	 * @effect	A worm will be created with a radius equal to the minimal radius and a random name from the nameslist.
+	 * 		  |	this(world, x, y, Math.PI/2, getMinimalRadius(), names[(int)Math.floor(Math.random()*names.length)]);
+	 */
+	
+	@Raw
 	public Worm(World world, double x, double y){
 		this(world, x, y, Math.PI/2, getMinimalRadius(), names[(int)Math.floor(Math.random()*names.length)]);
 	}
@@ -159,6 +176,7 @@ public class Worm extends Jump {
 	
 	@Basic @Raw
 	public double getMass(){
+		calcMass();
 		return mass ;
 	}
 	
@@ -185,8 +203,10 @@ public class Worm extends Jump {
 	}
 	
 	/**
+	 * Method to check whether the radius is a valid radius.
 	 * 
-	 * @param rad
+	 * @param 	rad
+	 * 			The radius that is going to be checked.
 	 * @return	True if the radius is bigger than the minimal radius.
 	 * 		  |	result == rad>=getMinimalRadius();
 	 */
@@ -316,13 +336,13 @@ public class Worm extends Jump {
 	 * 		  |	result == ((steps*stepCost) <= actionPoints)
 	 */
 	
-	@Raw
-	public boolean canMove(){
-		if(!isRemoved() && getActionPoints() > 0){
-			return true;
-		}
-		return false;
-	}
+//	@Raw
+//	public boolean canMove(){
+//		if(!removed() && getActionPoints() > 0){
+//			return true;
+//		}
+//		return false;
+//	}
 	
 	/**
 	 * Make a worm move a certain amount of steps conform to his current orientation.
@@ -333,80 +353,252 @@ public class Worm extends Jump {
 	 * @throws 	IllegalArgumentException() The number of steps is invalid.
 	 * 		  |	!canMove(steps);
 	 */
-	
-	public void move() throws IllegalStateException{
-		if(!canMove()){
-			throw new IllegalStateException("Unable to move");
+	//YOLOSTART
+	//TODO: Formal specification
+		/**
+		 * Check whether the worm can move one step.
+		 * @return True if and only if searchFitLocation can find a fit location in the worms current direction.
+		 * 		| 
+		 */
+		public boolean canMove(){
+			double currentDistance = getRadius();
+			double[] newLocation = null;
+			while (newLocation == null && currentDistance >= 0.1){
+				newLocation = searchFallLocation(currentDistance);
+				currentDistance -= 0.01;
+			}
+			if (newLocation == null){
+				System.out.println("partyhard");
+				return false;}
+			System.out.println("partysoft");
+			return true;
 		}
 		
-	
-		int stepCost = (int)(Math.abs(Math.cos(getOrientation()))+(Math.abs(Math.sin(getOrientation())*4)));
-		setActionPoints(getActionPoints() - (stepCost));
-		setX(getBestPos()[0]);
-		setY(getBestPos()[1]);
-	
-	}
-	
-	private Double[] getBestPos(){
-		Double[] bestPos = new Double[]{getX(), getY()};
-		double shortestDistance = 0;
-		double shortestDiv = -0.7875;
-		double div = -0.7875;
-		
-		while(div <= 0.7875){
-			if(getFurthest(getOrientation()+div) != null){
-				double furthX = getFurthest(getOrientation()+div)[0];
-				double furthY = getFurthest(getOrientation()+div)[1];
-				double furthDist = Math.sqrt(Math.pow(getX()-furthX,2)+Math.pow(getY() - furthY,2));
-				if(div != 0 || div == 0 && getWorld().isAdjacent(furthX, furthY, getRadius()) && div >= Math.abs(shortestDiv) && furthDist == shortestDistance){
-					bestPos[0] = furthX;
-					bestPos[1] = furthY;
-					shortestDiv = div;
-				}
-				if(furthDist > shortestDistance){
-					bestPos[0] = furthX;
-					bestPos[1] = furthY;
-					shortestDiv = div;
-					shortestDistance = furthDist;
-				}
+		/**
+		 * Method to search a location which is adjacent to impassable terrain on a quarter circle, a given distance from the
+		 * center of the Worm. The method shall search for fit locations, beginning in the current  direction of the Worm. When
+		 * none is found, the method shall alternately add or remove 0.0175 radians from the optimal angle.
+		 * @param distance
+		 * 		The at which the method will search for adjacent locations.
+		 * @return The coordinate which is adjacent to impassable terrain and closest to the optimal angle, if one is found. 
+		 * 		   If none is found, the method will return null.
+		 */
+		public double[] searchFitLocation(double distance) {
+			double thetaUp = this.getDirection();
+			double thetaDown = this.getDirection();
+			double tempX = this.getX() + distance*Math.cos(this.getDirection());
+			double tempY = this.getY() + distance*Math.sin(this.getDirection());
+			while ((Math.abs(thetaUp-getDirection()) < 0.7875) && (! this.getWorld().isAdjacent(tempX,tempY,this.getRadius()))){
+				thetaUp += 0.0175;
+				tempX = this.getX() + distance*Math.cos(thetaUp);
+			    tempY = this.getY() + distance*Math.sin(thetaUp);
+		        if(!(this.getWorld().isAdjacent(tempX, tempY,getRadius()))){	
+					thetaDown -= 0.0175;
+				    tempX = this.getX() + distance*Math.cos(thetaDown);
+			        tempY = this.getY() + distance*Math.sin(thetaDown); 
+		        }
+		    }
+			if (this.getWorld().isAdjacent(tempX,tempY,getRadius())){
+				return new double[] {tempX,tempY};	
 			}
-			div = div + 0.0175;
-		}
-		return bestPos;
-	}
-	
-	public Double[] getFurthest(double angle){
-		boolean impFound = false;
-		boolean adFound = false;
-		Double[] pos = new Double[]{getX()+getRadius()*Math.cos(angle)*0.1, getY()+getRadius()*Math.sin(angle)*0.1};
-		if(getWorld().isImpassable(pos[0], pos[1], getRadius()) && !getWorld().isImpassable(getX(),	 getY(), getRadius())){
-			impFound = true;
-			return null;
-		}
-		while(!impFound && (Math.sqrt(Math.pow(getX()-pos[0],2)+Math.pow(getY() - pos[1],2))) <= getRadius()){
-			pos[0] = pos[0] + 0.05*Math.cos(angle)*getRadius();
-			pos[1] = pos[1] + 0.05*Math.sin(angle)*getRadius();
-			if(getWorld().isImpassable(pos[0], pos[1], getRadius())){
-				impFound = true;
-			}
-		}
-		while(!adFound && impFound && (Math.sqrt(Math.pow(getX()-pos[0],2)+Math.pow(getY() - pos[1],2))) > 0 && !getWorld().objectInWorld(pos[0], pos[1], getRadius())){
-			pos[0] = pos[0] - 0.05*Math.cos(angle)*getRadius();
-			pos[1] = pos[1] - 0.05*Math.sin(angle)*getRadius();
-			if(getWorld().isAdjacent(pos[0], pos[1], getRadius())){
-				adFound = true;
-				return pos;
-			}
-		}
-		Double[] furthest = new Double[]{getX()+Math.cos(angle)*getRadius(), getY()+Math.sin(angle)*getRadius()};
-		if(getWorld().isAdjacent(furthest[0], furthest[1], getRadius()) || angle == getOrientation()){
-			return furthest;
-		}
-		else{
 			return null;
 		}
 		
-	}
+		/**
+		 * Method to search a location which is on passable terrain on a quarter circle, a given distance from the
+		 * center of the Worm. The method shall search for fit locations, beginning in the current  direction of the Worm. When
+		 * none is found, the method shall alternately add or remove 0.0175 radians from the optimal angle.
+		 * @param distance
+		 * 		The at which the method will search for adjacent locations.
+		 * @return The coordinate which is on passable terrain and closest to the optimal angle, if one is found. 
+		 * 		   If none is found, the method will return null.
+		 */
+		public double[] searchFallLocation(double distance) {
+			double thetaUp = this.getDirection();
+			double thetaDown = this.getDirection();
+			double tempX = this.getX() + distance*Math.cos(this.getDirection());
+			double tempY = this.getY() + distance*Math.sin(this.getDirection());
+			System.out.println("falltest");
+			System.out.println(this.getWorld().isImpassable(tempX,tempY,this.getRadius()));
+			while ((Math.abs(thetaUp-getDirection()) < 0.7875) && (! this.getWorld().isImpassable(tempX,tempY,this.getRadius()))){
+				thetaUp += 0.0175;
+				tempX = this.getX() + distance*Math.cos(thetaUp);
+			    tempY = this.getY() + distance*Math.sin(thetaUp);
+		        if(!(this.getWorld().isImpassable(tempX, tempY,getRadius()))){	
+					thetaDown -= 0.0175;
+				    tempX = this.getX() + distance*Math.cos(thetaDown);
+			        tempY = this.getY() + distance*Math.sin(thetaDown); 
+		        }
+		    }
+			if (this.getWorld().isImpassable(tempX,tempY,getRadius())){
+
+				return new double[] {tempX,tempY};	
+			}
+			return null;
+		}
+		
+		//TODO:implementation using slope + currentDistance - 0.01?
+		/**
+		 * Method to move the worm one step, in its current direction.
+		 */
+		public void move() throws IllegalStateException{
+			double currentDistance = getRadius();
+			double[] newLocation = null;
+			System.out.println("lijst van x en y coordinaat");
+			System.out.println(getX());
+			System.out.println(getY());
+			while (newLocation == null && currentDistance>=0.1){
+				newLocation = searchFitLocation(currentDistance);
+				currentDistance -= 0.01;
+			}
+			currentDistance = getRadius();
+			while (newLocation == null && currentDistance>=0.1){
+				System.out.println("fallekeleggen");
+				newLocation = searchFallLocation(currentDistance);
+				currentDistance -= 0.01;
+			}
+			if (!(newLocation == null)){
+				double newX = newLocation[0];
+				double newY = newLocation[1];
+				double slope = Math.atan((getY() - newY)/(getX() - newX));
+				int newAP = (int) Math.round(getActionPoints() - (Math.abs(Math.cos(slope)) + Math.abs(4*Math.sin(slope))));
+				if (newAP >= 0){
+					setX(newX);
+					setY(newY);
+					setActionPoints(newAP);
+				}
+				else
+					throw new IllegalStateException("Not enough actionpoints");
+			}
+			
+			
+			//if (! getWorld().isAdjacent(getX(),getY(),getRadius()))
+			//		fall();
+			eat();
+		}
+		
+		//TODO: specification 'if'
+		/**
+		 * Method to make the given worm fall until he hits impassable terrain, or is no longer within the boundries of its world.
+		 * The worm shall lose hitpoints, according to the distance he has fallen.
+		 * @effect If there is impassable terrain under the worm, the worm shall move to that location, without changing its x coordinate
+		 * 		and only by lowering its y coordinate.
+		 * 		| isAdjacent(new.getY(),new.getX(),new.getRadius())
+		 * 		| new.getY() < this.getY()
+		 * @effect If there is impassable terrain under the worm, the worm shall lose hitPoints. The worm shall lose three times the
+		 * 		amount of meters it has fallen (rounded down) worth of hitPoints.
+		 * 		| new.getHitPoints() == this.getHitPoints() - 3*distance
+		 * @effect If the new hitPoints are less than zero, the hitpoints will be set to zero. The worm will thus leave
+		 * 		the world he belonged to.
+		 * 		| if(this.getHitPoints() - 3*distance < 0)
+		 * 		|	new.getHitPoints() == 0
+		 * @effect If there is no impassable terrain under the worm, its hitPoints will be set to zero. The worm will thus leave the world
+		 * 		he belonged to.
+		 * 		| setHitPoints(0)
+		 */
+		public void fall(){
+			double oldY = getY();
+			while (! (getWorld().isAdjacent(getX(),getY(),getRadius()))&& ! (getWorld().objectInWorld(getX(), getY(),getRadius())) && this.getWorld().isImpassable(getX(), getY(), getRadius()))
+				fallPixel();
+			if (! getWorld().objectInWorld(getX(), getY(),getRadius())){
+				int distance = (int) (oldY - getY());
+				int newHitPoints = getHitPoints() - 3*distance;
+				if (newHitPoints >= 0)
+					setHitPoints(newHitPoints);
+			}
+			else
+				setHitPoints(0);
+		}
+		
+		/**
+		 * Method to make the given worm fall down the distance of one pixel.
+		 * @effect The new y coordinate will be its old y coordinate, minus the distance of one pixel.
+		 * 		| new.getY() = this.getY() - getWorld.getHeightScale();
+		 */
+		public void fallPixel(){
+			System.out.println("voor de val");
+			System.out.println(this.getX());
+			System.out.println(this.getY());
+			double distance = getWorld().heightPXL();
+			setY(getY() - distance);
+			System.out.println(this.getY());
+		}
+		//YOLOEIND
+		
+		
+//	public void move() throws IllegalStateException{
+//		if(!canMove()){
+//			throw new IllegalStateException("Unable to move");
+//		}
+//		
+//	
+//		int stepCost = (int)(Math.abs(Math.cos(getOrientation()))+(Math.abs(Math.sin(getOrientation())*4)));
+//		setActionPoints(getActionPoints() - (stepCost));
+//		setX(getBestPos()[0]);
+//		setY(getBestPos()[1]);
+//	
+//	}
+	
+//	private Double[] getBestPos(){
+//		Double[] bestPos = new Double[]{getX(), getY()};
+//		double shortestDistance = 0;
+//		double shortestDiv = -0.7875;
+//		double div = -0.7875;
+//		
+//		while(div <= 0.7875){
+//			if(getFurthest(getOrientation()+div) != null){
+//				double furthX = getFurthest(getOrientation()+div)[0];
+//				double furthY = getFurthest(getOrientation()+div)[1];
+//				double furthDist = Math.sqrt(Math.pow(getX()-furthX,2)+Math.pow(getY() - furthY,2));
+//				if(div != 0 || div == 0 && getWorld().isAdjacent(furthX, furthY, getRadius()) && div >= Math.abs(shortestDiv) && furthDist == shortestDistance){
+//					bestPos[0] = furthX;
+//					bestPos[1] = furthY;
+//					shortestDiv = div;
+//				}
+//				if(furthDist > shortestDistance){
+//					bestPos[0] = furthX;
+//					bestPos[1] = furthY;
+//					shortestDiv = div;
+//					shortestDistance = furthDist;
+//				}
+//			}
+//			div = div + 0.0175;
+//		}
+//		return bestPos;
+//	}
+	
+//	public Double[] getFurthest(double angle){
+//		boolean impFound = false;
+//		boolean adFound = false;
+//		Double[] pos = new Double[]{getX()+getRadius()*Math.cos(angle)*0.1, getY()+getRadius()*Math.sin(angle)*0.1};
+//		if(getWorld().isImpassable(pos[0], pos[1], getRadius()) && !getWorld().isImpassable(getX(),	 getY(), getRadius())){
+//			impFound = true;
+//			return null;
+//		}
+//		while(!impFound && (Math.sqrt(Math.pow(getX()-pos[0],2)+Math.pow(getY() - pos[1],2))) <= getRadius()){
+//			pos[0] = pos[0] + 0.05*Math.cos(angle)*getRadius();
+//			pos[1] = pos[1] + 0.05*Math.sin(angle)*getRadius();
+//			if(getWorld().isImpassable(pos[0], pos[1], getRadius())){
+//				impFound = true;
+//			}
+//		}
+//		while(!adFound && impFound && (Math.sqrt(Math.pow(getX()-pos[0],2)+Math.pow(getY() - pos[1],2))) > 0 && !getWorld().objectInWorld(pos[0], pos[1], getRadius())){
+//			pos[0] = pos[0] - 0.05*Math.cos(angle)*getRadius();
+//			pos[1] = pos[1] - 0.05*Math.sin(angle)*getRadius();
+//			if(getWorld().isAdjacent(pos[0], pos[1], getRadius())){
+//				adFound = true;
+//				return pos;
+//			}
+//		}
+//		Double[] furthest = new Double[]{getX()+Math.cos(angle)*getRadius(), getY()+Math.sin(angle)*getRadius()};
+//		if(getWorld().isAdjacent(furthest[0], furthest[1], getRadius()) || angle == getOrientation()){
+//			return furthest;
+//		}
+//		else{
+//			return null;
+//		}
+//		
+//	}
 	/**
 	 * Change the Actionpoints of a worm.
 	 * 
@@ -526,7 +718,7 @@ public class Worm extends Jump {
 		int cnt = 0;
 		while(!cannotPass && !getWorld().objectInWorld(getX(), getY(), getRadius())){
 			cnt++;
-			newPos = getJumpStep(cnt*timeStep);
+			newPos = jumpStep(cnt*timeStep);
 			if(getWorld().isImpassable(newPos[0], newPos[1], getRadius())){
 				cannotPass = true;
 			}
@@ -534,7 +726,7 @@ public class Worm extends Jump {
 		boolean adPos = false;
 		while((!adPos && cannotPass && !getWorld().objectInWorld(newPos[0], newPos[1], getRadius()))){
 			cnt--;
-			newPos = getJumpStep(cnt*timeStep);			
+			newPos = jumpStep(cnt*timeStep);			
 			if(getWorld().isAdjacent(newPos[0], newPos[1], getRadius())){
 				adPos = true;
 				return cnt*timeStep;
@@ -553,20 +745,8 @@ public class Worm extends Jump {
 	 * @throws IllegalAPException(getActionPoints())	Invalid amount of actionpoints left.
 	 * @throws IllegalDirectionException(getOrientation())	Invalid direction.
 	 */
-	
-	public double[] getJumpStep(double time) throws IllegalArgumentException{
-/*		if(!canJump()){
-			throw new IllegalArgumentException();
-		}*/
-		double[] positionPerTime = new double[2];
-		double initialXVelocity = (((getJumpForce()*0.5)/getMass())*Math.cos(getOrientation()));
-		double initialYVelocity = (((getJumpForce()*0.5)/getMass())*Math.sin(getOrientation()));
-		positionPerTime[0] = (getX()+(initialXVelocity*time));
-		positionPerTime[1] = (getY()+((initialYVelocity*time)-((9.80665*time*time/2))));
-		return positionPerTime;
-	}
-	
-	/**
+
+		/**
 	 * Make a worm jump in a physical trajectory according to gravitation.
 	 * 
 	 * @post 	The worm will have a new position according to the jumpforce and actionpoints.	
@@ -624,21 +804,21 @@ public class Worm extends Jump {
 		return this.world;
 	}
 	
-	public void fall() throws IllegalStateException{
-		double y = getY();
-		while(!getWorld().isAdjacent(getX(), getY(), getRadius()) && !getWorld().objectInWorld(getX(), getY(), getRadius()) && !getWorld().isImpassable(getX(), getY(), getRadius())){
-			double distance = getWorld().heightPXL();
-			setY(getY()-distance);
-		}
-		if(!getWorld().objectInWorld(getX(), getY(), getRadius())){
-			int dist = (int) (y - getY());
-			setHitPoints(getHitPoints()-3*dist);
-			if(getHitPoints() < 0){
-				setHitPoints(0);
-			}
-		}
-		eat();
-	}
+//	public void fall() throws IllegalStateException{
+//		double y = getY();
+//		while(!getWorld().isAdjacent(getX(), getY(), getRadius()) && !getWorld().objectInWorld(getX(), getY(), getRadius()) && !getWorld().isImpassable(getX(), getY(), getRadius())){
+//			double distance = getWorld().heightPXL();
+//			setY(getY()-distance);
+//		}
+//		if(!getWorld().objectInWorld(getX(), getY(), getRadius())){
+//			int dist = (int) (y - getY());
+//			setHitPoints(getHitPoints()-3*dist);
+//			if(getHitPoints() < 0){
+//				setHitPoints(0);
+//			}
+//		}
+//		eat();
+//	}
 	
 	public void setTeam(Teams team){
 		this.team = team;

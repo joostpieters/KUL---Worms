@@ -15,13 +15,14 @@ import java.util.Random;
 
 public class Facade implements IFacade {
 	
-	private Random r = new Random();
-
 	
 	@Override
 	public Worm createWorm(World world, double x, double y, double direction, double radius, String name){
 
-			return new Worm(world, x, y, direction, radius, name);
+			Worm worm = new Worm(world, x, y, direction, radius, name);
+			world.addAWorm(worm);
+			worm.setWorld(world);
+			return worm;
 	}
 
 	@Override
@@ -31,12 +32,15 @@ public class Facade implements IFacade {
 
 	@Override
 	public void turn(Worm worm, double angle) {
+		if(!worm.canTurn(angle)){
+			throw new ModelException("Not enough actionpoints left to perform this turn.");
+		}
 		worm.turn(angle);
 	}
 
 	@Override
 	public double[] getJumpStep(Worm worm, double t){
-		return worm.getJumpStep(t);
+		return worm.jumpStep(t);
 	}
 
 	@Override
@@ -117,12 +121,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public void addNewFood(World world) {
-				try{
-					Food food = new Food(world);
-				}
-				catch(IllegalStateException e){
-					System.out.println("debug: "+e.getMessage());
-				}
+				world.spawnFood();
 	}
 
 	@Override
@@ -133,7 +132,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public boolean canFall(Worm worm) {
-		return worm.canFall();
+		return !(worm.getWorld().isAdjacent(worm.getX(), worm.getY(), worm.getRadius()));
 	}
 
 	@Override
@@ -143,12 +142,20 @@ public class Facade implements IFacade {
 
 	@Override
 	public Food createFood(World world, double x, double y) {
-		return new Food(world, x, y);
+		Food food = new Food(world, x, y);
+		food.setWorld(world);
+		world.addFood(food);
+		return food;
 	}
 
 	@Override
 	public World createWorld(double width, double height, boolean[][] passableMap, Random random) {
-		return new World(width, height, passableMap, random);
+		try{
+			return new World(width, height, passableMap, random);
+		}
+		catch(Exception e){
+			throw new ModelException("Could not create this world: "+e.getMessage());
+		}
 	}
 
 	@Override

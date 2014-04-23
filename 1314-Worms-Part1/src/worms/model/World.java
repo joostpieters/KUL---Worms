@@ -319,9 +319,6 @@ public class World {
 		if(obj instanceof Food){
 			addFood((Food) obj);
 		}
-/*		if(obj instanceof Worm){
-			addWorm((Worm) obj);
-		}*/
 		if(obj instanceof Projectile){
 			addProjectile((Projectile) obj);
 		}
@@ -389,12 +386,33 @@ public class World {
 		}
 	}
 	
+	/**
+	 * Method to spawn a worm in the world.
+	 * 
+	 * @param 	x
+	 * 			The worms x-coordinate.
+	 * @param 	y
+	 * 			The worms y-coordinate
+	 * @return	The worm.
+	 * @effect	The worm will have been added to the wormslist.
+	 * 		  |	getAllWorms.contains(this) == true;
+	 * @effect	The world for this worm will be set as this world.
+	 * 		  |	worm.setWorld(this);
+	 */
+	
 	public Worm spawnWorm(double x, double y){
 		Worm worm = new Worm(this, x, y);
 		worm.setWorld(this);
 		addAWorm(worm);
 		return worm;
 	}
+	
+	/**
+	 * Method to add a worm to the list of worms in this world.
+	 * 
+	 * @param 	worm
+	 * 			The worm to add.
+	 */
 	
 	public void addAWorm(Worm worm){
 		if(worm == null){
@@ -475,6 +493,51 @@ public class World {
 		if(food.getWorld() == this && isAdjacent(food.getX(), food.getY(), food.getRadius())){
 		foodlist.add(food);
 		}
+	}
+	
+	/**
+	 * Method to spawn food into the world at a random location.
+	 * 
+	 * @param 	x
+	 * 			The food's x-coordinate.
+	 * @param 	y
+	 * 			The food's y-coordinate
+	 * @return	The food.
+	 * @post	The food will have been added to the foodlist.
+	 * 		  |	getAllFood.contains(this) == true;
+	 */
+	
+	public void spawnFood(){
+		Double[] location = new Double[]{0.0,0.0};
+		while(location[0] == 0.0 && location[1] == 0.0){
+			double xPos = random.nextFloat()*getWidth();
+			double yPos = random.nextFloat()*getHeight();
+			if((xPos != 0.0 || yPos != 0.0) && !isImpassable(xPos, yPos, Food.getR()) && !(xPos + Food.getR() > getWidth()) && !(xPos-Food.getR() < 0) && !(yPos+Food.getR()>getHeight()) && !(yPos - Food.getR() < 0)){
+				location[0] = xPos;
+				location[1] = yPos;
+			}
+			spawnFoodInWorld(location[0], location[1]);
+		}
+	}
+	
+	/**
+	 * Method to create food and add it to the list of food in this world.
+	 * 
+	 * @param 	x
+	 * 			The x-coordinate for the food to add.
+	 * @param 	y
+	 * 			The y-coordinate for the food to add.
+	 * @effect	A new food object will be created.
+	 * 		  | Food food = new Food(this, x, y);
+	 * @effect	This food will be added to the list of food in this world.
+	 * 		  |	addFood(food);
+	 */
+	
+	
+	public Food spawnFoodInWorld(double x, double y){
+		Food food = new Food(this, x, y);
+		addFood(food);	
+		return food;
 	}
 	
 	/**
@@ -776,60 +839,6 @@ public class World {
 			return winnerWorm.getName();
 		}
 	}
-/*	
-	public boolean suitablePos(Object obj) {
-		boolean found = false;
-		double curX = obj.getX();
-		double curY = obj.getY();
-		
-		for (int i=0; i<10; i++) {
-
-			switch (random.nextInt(4)) {
-			case 0:
-				curX = 0.0+obj.getRadius()*1.1;
-				curY = random.nextDouble()*(getHeight()-2*obj.getRadius()*1.1) + obj.getRadius()*1.1;
-				break;
-			case 1:
-				curX = getWidth()-obj.getRadius()*1.1;
-				curY = random.nextDouble()*(getHeight()-2*obj.getRadius()*1.1) + obj.getRadius()*1.1;
-				break;
-			case 2:
-				curX = random.nextDouble()*(getWidth()-2*obj.getRadius()*1.1) + obj.getRadius()*1.1;
-				curY = 0.0+obj.getRadius()*1.1;
-				break;
-			default:
-				curX = random.nextDouble()*(getWidth()-2*obj.getRadius()*1.1) + obj.getRadius()*1.1;
-				curY = getHeight()-obj.getRadius()*1.1;
-			}
-			if (isAdjacent(curX,curY,obj.getRadius())){
-				obj.setX(curX);
-				obj.setY(curY);
-				found = true;
-				}
-			double slope = slope(curX, curY, getWidth()/2, getHeight()/2);
-			while (!found && !objectInWorld(curX,curY,obj.getRadius()))
-				{
-				curX = curX-0.05*Math.cos(slope)*obj.getRadius();
-				curY = curY-0.05*Math.sin(slope)*obj.getRadius();
-				if (isAdjacent(curX,curY,obj.getRadius())){
-					obj.setX(curX);
-					obj.setY(curY);
-					found = true;
-					}
-				}		
-		}
-		return found;
-	}*/
-	
-/*	public double slope(double x, double y, double x1, double y1){
-		double s = Math.atan((y-y1)/(x-x1));
-		if((x-x1) >= 0.0){
-			return s;
-		}
-		else{
-			return s + Math.PI;
-		}
-	}*/
 	
 	/**
 	 * Method to remove a team.

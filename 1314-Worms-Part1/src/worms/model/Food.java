@@ -35,23 +35,8 @@ public class Food extends Object {
 		super(world, x, y, RADIUS);
 	}
 	
-	/**
-	 * A more compact constructor for Food, used to give it a random spawn position.
-	 * 
-	 * @param 	world
-	 * 			The world this food will belong to and is spawned in.
-	 * @effect	The food will have a random spawn position.
-	 * 		  |	suitablePos(this);
-	 * @effect	The other constructor will be called with given parameters and initial position at the origin.
-	 * 		  |	this(world, 0.0, 0.0)
-	 * @throws 	IllegalStateException A suitable position could not be found.
-	 */
-	
-	public Food(World world){
-		this(world, 0.0, 0.0);
-		setWorld(world);
-		if(!world.suitablePos(this)){
-			throw new IllegalStateException("Couldn't find a suitable position.");
-		}
+	public static double getR(){
+		return RADIUS;
 	}
+
 }

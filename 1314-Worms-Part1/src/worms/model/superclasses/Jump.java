@@ -1,12 +1,45 @@
+/**
+ * A super-class for jumping.
+ * 
+ * @version 1.0
+ * @author 	Kristof Achten <kristof.achten@student.kuleuven.be>
+ * GitHub: https://github.com/Divyak156/OGPProject.git
+ * StudentNr: r0462748 - 1ste Bachelor informatica
+ *
+ */
+
 package worms.model.superclasses;
 
 import worms.model.World;
 
 public abstract class Jump extends Object{
 
+	/**
+	 * Constructor to create the object that we are going to jump with.
+	 * 
+	 * @param 	world
+	 * 			The world of this object.
+	 * @param 	xPos
+	 * 			The x-coordinate.
+	 * @param 	yPos
+	 * 			The y-coordinate.
+	 * @param 	radius
+	 * 			The radius of this object.
+	 * @effect 	Call the object superclass with given parameters.
+	 * 		  | super(world, xPos, yPos, radius);
+	 */
+	
 	public Jump(World world, double xPos, double yPos, double radius){
 		super(world, xPos, yPos, radius);
 	}
+	
+	/**
+	 * Method to calculate the position an object would be after performing a jump.
+	 * 
+	 * @param 	time
+	 * 			The time the jump is executed for.
+	 * @return	2 Dimensional array containing the position.
+	 */
 	
 	public double[] jumpStep(double time){
 		if(getDirection() == 0 || getDirection() == Math.PI || getDirection() == 2*Math.PI || getDirection() == Math.PI/2){
@@ -22,6 +55,16 @@ public abstract class Jump extends Object{
 		return positionPerTime;
 	}
 	
+	/**
+	 * Method to perform a jump.
+	 * 
+	 * @param 	timeS
+	 * 			The timestep
+	 * @effect	The position will have changed according to jumpStep.
+	 * 		  | setX(jumpStep(jumpTime(timeS))[0]);
+			  | setY(jumpStep(jumpTime(timeS))[1]);
+	 */
+	
 	public void jump(double timeS){
 		if(getDirection() == 0 || getDirection() == Math.PI || getDirection() == 2*Math.PI || getDirection() == Math.PI/2){
 			throw new IllegalStateException("Can't jump at the current angle!");
@@ -31,6 +74,14 @@ public abstract class Jump extends Object{
 
 		
 	}
+	
+	/**
+	 * Method to calculate the time needed for this jump.
+	 * 
+	 * @param 	timeS
+	 * 			The timestep.
+	 * @return	The time that a jump will be executed for.
+	 */
 	
 	public double jumpTime(double timeS){
 		if(getDirection() == 0 || getDirection() == Math.PI || getDirection() == 2*Math.PI || getDirection() == Math.PI/2){
@@ -57,7 +108,22 @@ public abstract class Jump extends Object{
 		return 0;
 	}
 	
-	public abstract double getDirection();
-	public abstract double getForce();
+	/**
+	 * Gets the mass of this specific projectile from the weapons-classes.
+	 */
+	
 	public abstract double getMass();
+	
+	/**
+	 * Gets the Force exerted on this projectile from the weapons-classes.
+	 */
+	
+	public abstract double getForce();
+	
+	/**
+	 * gets the direction of the worm.
+	 */
+	
+	public abstract double getDirection();
+
 }
