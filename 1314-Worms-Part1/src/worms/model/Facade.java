@@ -140,7 +140,7 @@ public class Facade implements IFacade {
 				world.addTeam(newName);
 			}
 			catch(Exception e){
-				throw new ModelException("Somethine went wront while creating a new team: "+e.getMessage());
+				throw new ModelException("Something went wront while creating a new team: "+e.getMessage());
 			}
 
 	}
@@ -148,10 +148,10 @@ public class Facade implements IFacade {
 	@Override
 	public void addNewFood(World world) {
 				try{
-					@SuppressWarnings("unused")
-					Food food = new Food(world, world.getWidth()/r.nextInt((int)world.getWidth()), world.getHeight()/r.nextInt((int)world.getHeight()));
+					Food food = new Food(world);
 				}
-				catch(Exception e){
+				catch(IllegalStateException e){
+					System.out.println("debug"+e.getMessage());
 				}
 	}
 
@@ -180,12 +180,9 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public World createWorld(double width, double height,
-			boolean[][] passableMap, Random random) {
-
+	public World createWorld(double width, double height, boolean[][] passableMap, Random random) {
 		return new World(width, height, passableMap, random);
 	}
-
 
 	@Override
 	public void fall(Worm worm) {

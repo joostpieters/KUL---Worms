@@ -13,8 +13,8 @@ public abstract class Object {
 		if(!isValidPos(xPos, yPos)){
 			throw new IllegalArgumentException("This is not a valid position.");
 		}
-		setX(xPos);
-		setY(yPos);
+		this.x = xPos;
+		this.y = yPos;
 		setRadius(radius);
 		setWorld(world);
 		if(world.objectInWorld(getX(), getY(), getRadius())){
@@ -82,8 +82,8 @@ public abstract class Object {
 	
 	public void remove(){
 		if(!removed()){
-			World ex = getWorld();
-			isRemoved = true;
+			World ex = this.getWorld();
+			this.isRemoved = true;
 			if(ex.getObjects().contains(this)){
 				ex.getObjects().remove(this);
 			}

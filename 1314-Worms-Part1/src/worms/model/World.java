@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-
 import worms.model.superclasses.Object;
 import worms.util.Util;
 
@@ -21,8 +20,7 @@ public class World {
 	private ArrayList<Food> foodlist;
 	private ArrayList<Teams> teamsList;
 	private ArrayList<Projectile> projList;
-	Worm worm;
-	private Iterator<Worm> switchWorm = wormsList.iterator();
+	private Iterator<Worm> switchWorm;
 
 	private double width;
 	private double height;
@@ -33,8 +31,8 @@ public class World {
 	private Teams team;
 	private boolean finished = false;
 	private Worm activeWorm;
-	private boolean started;
 	private Random random;
+	private boolean started;
 
 	public World(double width, double height, boolean[][] passable, Random random) throws IllegalArgumentException{
 		if((!validWidth(width) || !validHeight(height))){
@@ -44,7 +42,7 @@ public class World {
 			throw new IllegalArgumentException("random was null, which is not a valid random");
 		}
 		if(passable == null){
-			throw new IllegalArgumentException("Passable map is null, say what!");
+			throw new IllegalArgumentException("Passable map is null!");
 		}
 		this.width = width;
 		this.height = height;
@@ -96,10 +94,6 @@ public class World {
 	
 	public double getHeight(){
 		return height;
-	}
-	
-	public void setPassable(boolean[][] passable){
-		this.passable = passable;
 	}
 	
 	public boolean[][] getPassable(){
@@ -191,7 +185,7 @@ public class World {
 	}
 	
 	public boolean validTeam(Teams team){
-		return (team != null && team.getAllWorms().size() != 0);
+		return (team != null);
 	}
 	
 	public void addTeam(String name){
@@ -201,9 +195,6 @@ public class World {
 			throw new IllegalStateException("Not a valid team");
 		}
 		teamsList.add(newTeam);
-		if(getActiveTeam().getAllWorms().size() == 0){
-			teamsList.remove(getActiveTeam());
-		}
 		setActiveTeam(newTeam);
 	}
 	
@@ -221,10 +212,6 @@ public class World {
 	
 	public Worm getActiveWorm(){
 		return activeWorm;
-	}
-	
-	public boolean teamExists(Teams team){
-		return teamsList.contains(team);
 	}
 	
 	public ArrayList<Projectile> getProjectile(){
@@ -304,6 +291,60 @@ public class World {
 			String winners = wormsList.get(0).getName();
 			winners += ".";
 			return winners;
+		}
+	}
+	
+	public boolean suitablePos(Object obj) {
+		boolean found = false;
+		double curX = obj.getX();
+		double curY = obj.getY();
+		
+		for (int i=0; i<10; i++) {
+
+			switch (random.nextInt(4)) {
+			case 0:
+				curX = 0.0+obj.getRadius()*1.1;
+				curY = random.nextDouble()*(getHeight()-2*obj.getRadius()*1.1) + obj.getRadius()*1.1;
+				break;
+			case 1:
+				curX = getWidth()-obj.getRadius()*1.1;
+				curY = random.nextDouble()*(getHeight()-2*obj.getRadius()*1.1) + obj.getRadius()*1.1;
+				break;
+			case 2:
+				curX = random.nextDouble()*(getWidth()-2*obj.getRadius()*1.1) + obj.getRadius()*1.1;
+				curY = 0.0+obj.getRadius()*1.1;
+				break;
+			default:
+				curX = random.nextDouble()*(getWidth()-2*obj.getRadius()*1.1) + obj.getRadius()*1.1;
+				curY = getHeight()-obj.getRadius()*1.1;
+			}
+			if (isAdjacent(curX,curY,obj.getRadius())){
+				obj.setX(curX);
+				obj.setY(curY);
+				found = true;
+				}
+			double slope = slope(curX, curY, getWidth()/2, getHeight()/2);
+			while (!found && !objectInWorld(curX,curY,obj.getRadius()))
+				{
+				curX = curX-0.05*Math.cos(slope)*obj.getRadius();
+				curY = curY-0.05*Math.sin(slope)*obj.getRadius();
+				if (isAdjacent(curX,curY,obj.getRadius())){
+					obj.setX(curX);
+					obj.setY(curY);
+					found = true;
+					}
+				}		
+		}
+		return found;
+	}
+	
+	public double slope(double x, double y, double x1, double y1){
+		double s = Math.atan((y-y1)/(x-x1));
+		if((x-x1) >= 0.0){
+			return s;
+		}
+		else{
+			return s + Math.PI;
 		}
 	}
 }
