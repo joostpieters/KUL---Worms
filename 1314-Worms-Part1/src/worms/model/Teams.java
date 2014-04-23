@@ -2,12 +2,13 @@ package worms.model;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Teams {
 	
 	private String name;
 	private World world;
-	private HashSet<Worm> allWorms;
+	private Set<Worm> allWorms;
 	
 	public Teams(String name) throws IllegalArgumentException{
 		if(!Worm.isValidName(name)){
@@ -26,7 +27,7 @@ public class Teams {
 			allWorms.remove(worm);
 		}
 		else{
-			getWorld(removeTeam(this));
+			getWorld().removeTeam(this);
 		}
 	}
 	
@@ -35,12 +36,10 @@ public class Teams {
 	}
 	
 	public void setWorld(World world){
-		if(world != null){
 			this.world = world;
-		}
 	}
 	
-	public HashSet<Worm> getAllWorms(){
+	public Set<Worm> getAllWorms(){
 		return allWorms;
 	}
 
@@ -52,6 +51,6 @@ public class Teams {
 		if(!Worm.isValidName(newName)){
 			throw new IllegalArgumentException("This is not a valid name: "+newName);
 		}
-		name = newName;
+		this.name = newName;
 	}
 }

@@ -30,6 +30,7 @@ import be.kuleuven.cs.som.annotate.*;
 
 public class Worm extends Jump {
 	
+	private static String[] names = { "John", "Geoff", "Jennifer", "Philip", "Captain", "Ted", "Lily", "Marshall", "Barney", "Robin", "Zoe", "Frank", "Bill", "McSoap", "Chris", "Sam", "Lau", "Don", "Jim", "Andy", "James O'Hare", "2Slo", "2Pro", "Peter", "Bart", "Sensei", "Robb", "Arya", "Ann", "Ghost", "Solfatare", "Dietrich", "Lars", "Tom", "McAwesome", "Ayden", "Berta", "Daniel", "Matt", "David", "Hamish", "Capaldi", "Romero", "Calvin", "Bondi"};
 	private double x = 0;
 	private double y = 0;
 	private double direction;
@@ -43,7 +44,7 @@ public class Worm extends Jump {
 	private Teams team;
 	private boolean removed; 
 	private Set<String> weapons = new LinkedHashSet<String>(Arrays.asList(new String[] {"Rifle", "Bazooka"}));
-	private Iterator<String> switchWeapon = weapons.iterator();
+	private Iterator<String> switchWeapon;
 	private String weapon;
 
 	/*
@@ -84,33 +85,13 @@ public class Worm extends Jump {
 		if (getTeam() != null){
 			getTeam().addWorm(this);
 		}
-
-
-	}
-
-	/**
-	 * Change the X coordinate of a worm
-	 * 
-	 * @param	x
-	 * 			The new X coordinate.
-	 * 
-	 */
-	
-	@Raw
-	public void setX(double x){
-		this.x = x;
 	}
 	
-	/**
-	 * Change the Y coordinate of a worm
-	 * 
-	 * @param 	y
-	 * 			The new Y coordinate.
-	 */
-	
-	@Raw
-	public void setY(double y){
-		this.y = y;
+	public Worm(World world) throws Exception{
+		this(world, 0.0, 0.0, Math.PI/2, getMinimalRadius(), names[(int)Math.random()*(names.length-1)]);
+		if(!world.suitablePos(this)){
+			throw new Exception("Worm has not been placed! Cannot find a suitable position.");
+		}
 	}
 	
 	/**
@@ -256,28 +237,6 @@ public class Worm extends Jump {
 	}
 	
 	/**
-	 * Return the X-coordinate of a worm.
-	 * 
-	 * @return 	The X-position of given worm.
-	 */
-	
-	@Basic
-	public double getX(){
-		return x;
-	}
-	
-	/**
-	 * Return the Y-coordinate of a worm.
-	 * 
-	 * @return	The Y-position of given worm.
-	 */
-	
-	@Basic
-	public double getY(){
-		return y;
-	}
-	
-	/**
 	 * Return the name of a worm.
 	 * 
 	 * @return	The name of given worm.
@@ -390,43 +349,66 @@ public class Worm extends Jump {
 	
 	}
 	
-	private double[] getBestPos(){
-		int times = 10;
-		double pos[] = new double[2];
-		double step = (1.0/times)*(getRadius()-0.1);
-		double angle = Double.NaN;
+	private Double[] getBestPos(){
+		Double[] bestPos = new Double[]{getX(), getY()};
+		double shortestDistance = 0;
+		double shortestDiv = -0.7875;
+		double div = -0.7875;
 		
-		for(int i = 10; i >= 0; i--){
-			for(double div = 0; div <= 0.7875; div = div + 00175){
-				pos[0] = 0.1+i*step*getRadius();
-				pos[1] = getOrientation()+div;
-				if(!getWorld().isImpassable(pos[0], pos[1], getRadius()) && getWorld().isImpassable(pos[0], pos[1], getRadius()*1.1)){
-					return pos;
+		while(div <= 0.7875){
+			if(getFurthest(getOrientation()+div) != null){
+				double furthX = getFurthest(getOrientation()+div)[0];
+				double furthY = getFurthest(getOrientation()+div)[1];
+				double furthDist = Math.sqrt(Math.pow(getX()-furthX,2)+Math.pow(getY() - furthY,2));
+				if(div != 0 || div == 0 && getWorld().isAdjacent(furthX, furthY, getRadius()) && div >= Math.abs(shortestDiv) && furthDist == shortestDistance){
+					bestPos[0] = furthX;
+					bestPos[1] = furthY;
+					shortestDiv = div;
 				}
-				if(angle != Double.NaN && !getWorld().isImpassable(pos[0], pos[1], getRadius())){
-					angle = pos[1];
-				}
-				
-				pos[1] = getOrientation()-div;
-				pos[0] = getX()+pos[0]*Math.cos(pos[1]);
-				pos[1] = getY()+pos[0]*Math.sin(pos[1]);
-				
-				if(!getWorld().isImpassable(pos[0], pos[1], getRadius()) && getWorld().isImpassable(pos[0], pos[1], getRadius()*1.1)){
-					return pos;
-				}
-				
-				if(angle != Double.NaN && !getWorld().isImpassable(pos[0], pos[1], getRadius())){
-					angle = pos[1];
+				if(furthDist > shortestDistance){
+					bestPos[0] = furthX;
+					bestPos[1] = furthY;
+					shortestDiv = div;
+					shortestDistance = furthDist;
 				}
 			}
+			div = div + 0.0175;
 		}
-		
-		pos[0] = 0.1;
-		pos[1] = angle;
-		return pos;
-		
+		return bestPos;
 	}
 	
+	public Double[] getFurthest(double angle){
+		boolean impFound = false;
+		boolean adFound = false;
+		Double[] pos = new Double[]{getX()+getRadius()*Math.cos(angle)*0.1, getY()+getRadius()*Math.sin(angle)*0.1};
+		if(getWorld().isImpassable(pos[0], pos[1], getRadius()) && !getWorld().isImpassable(getX(),	 getY(), getRadius())){
+			impFound = true;
+			return null;
+		}
+		while(!impFound && (Math.sqrt(Math.pow(getX()-pos[0],2)+Math.pow(getY() - pos[1],2))) <= getRadius()){
+			pos[0] = pos[0] + 0.05*Math.cos(angle)*getRadius();
+			pos[1] = pos[1] + 0.05*Math.sin(angle)*getRadius();
+			if(getWorld().isImpassable(pos[0], pos[1], getRadius())){
+				impFound = true;
+			}
+		}
+		while(!adFound && impFound && (Math.sqrt(Math.pow(getX()-pos[0],2)+Math.pow(getY() - pos[1],2))) > 0 && !getWorld().objectInWorld(pos[0], pos[1], getRadius())){
+			pos[0] = pos[0] - 0.05*Math.cos(angle)*getRadius();
+			pos[1] = pos[1] - 0.05*Math.sin(angle)*getRadius();
+			if(getWorld().isAdjacent(pos[0], pos[1], getRadius())){
+				adFound = true;
+				return pos;
+			}
+		}
+		Double[] furthest = new Double[]{getX()+Math.cos(angle)*getRadius(), getY()+Math.sin(angle)*getRadius()};
+		if(getWorld().isAdjacent(furthest[0], furthest[1], getRadius()) || angle == getOrientation()){
+			return furthest;
+		}
+		else{
+			return null;
+		}
+		
+	}
 	/**
 	 * Change the Actionpoints of a worm.
 	 * 

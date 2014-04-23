@@ -1,9 +1,13 @@
 package worms.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+
 import worms.model.superclasses.Object;
 import worms.util.Util;
 
@@ -16,10 +20,10 @@ import worms.util.Util;
 
 public class World {
 	
-	private ArrayList<Worm> wormsList;
-	private ArrayList<Food> foodlist;
-	private ArrayList<Teams> teamsList;
-	private ArrayList<Projectile> projList;
+	private Set<Worm> wormsList;
+	private Set<Food> foodlist;
+	private Set<Teams> teamsList;
+	private Set<Projectile> projList;
 	private Iterator<Worm> switchWorm;
 
 	private double width;
@@ -48,10 +52,10 @@ public class World {
 		this.height = height;
 		this.passable = passable;
 		this.random = random;
-		wormsList = new ArrayList<Worm>();
-		foodlist = new ArrayList<Food>();
-		teamsList = new ArrayList<Teams>();
-		projList = new ArrayList<Projectile>();
+		wormsList = new LinkedHashSet<Worm>();
+		foodlist = new HashSet<Food>();
+		teamsList = new LinkedHashSet<Teams>();
+		projList = new HashSet<Projectile>();
 	}
 	
 	public boolean validWidth(double xWidth){
@@ -100,6 +104,10 @@ public class World {
 		return passable;
 	}
 	
+	public Random getRandom(){
+		return this.random;
+	}
+	
 	public boolean isImpassable(double x, double y, double radius){
 
 		int altX = (int) (x/getWidth()*getPassable()[0].length);
@@ -121,14 +129,14 @@ public class World {
 	}
 	
 	private boolean reachable(int altX, int altY, int altRad){
-		return Util.fuzzyLessThanOrEqualTo(altX, altY, altRad);
+		return Util.fuzzyLessThanOrEqualTo(Math.abs(altX), Math.abs(altY), altRad);
 	}
 	
 	public boolean objectInWorld(double x, double y, double radius){
-		double pos1 = x + radius;
-		double pos2 = x - radius;
-		double pos3 = y + radius;
-		double pos4 = y - radius;
+		double pos1 = x + Math.abs(radius);
+		double pos2 = x - Math.abs(radius);
+		double pos3 = y + Math.abs(radius);
+		double pos4 = y - Math.abs(radius);
 		if(pos2 < 0.0 || pos3 > getHeight() || pos1 > getWidth() || pos4 < 0){
 			return false;
 		}
@@ -141,20 +149,58 @@ public class World {
 	}
 	 
 	public void addObjects(Object obj){
-		if(obj instanceof Worm){
-			addWorm((Worm) obj);
-		}
 		if(obj instanceof Food){
 			addFood((Food) obj);
+		}
+		if(obj instanceof Worm){
+			addWorm((Worm) obj);
 		}
 		if(obj instanceof Projectile){
 			addProjectile((Projectile) obj);
 		}
 	}
 	
+	public void delObjects(Object obj){
+		if(obj instanceof Food){
+			delFood((Food) obj);
+		}
+		if(obj instanceof Worm){
+			delWorm((Worm) obj);
+		}
+		if(obj instanceof Projectile){
+			delProjectile((Projectile) obj);
+		}
+	}
+	
+	public boolean contains(Object obj){
+		return getObjects().contains(obj);
+	}
+	
 	public void addWorm(Worm worm){
 		if(worm.getWorld() == this && isAdjacent(worm.getX(), worm.getY(), worm.getRadius())){
 			wormsList.add(worm);
+		}
+	}
+	
+	public void delWorm(Worm worm){
+		if(getWorms().contains(worm)){
+			if(getActiveWorm() != worm){
+				wormsList.remove(worm);
+				switchWorm = wormsList.iterator();
+			}
+			else if(getActiveWorm() == worm){
+				switchWorm.remove();
+				nextTurn();
+			}
+		}
+		if(!worm.removed()){
+			worm.remove();
+		}
+		if(teamsList.size() == 1){
+			setFinished();
+		}
+		else if(wormsList.size() <= 1){
+			setFinished();
 		}
 	}
 	
@@ -178,10 +224,24 @@ public class World {
 		}
 	}
 	
+	public void delFood(Food food){
+		if(!food.removed()){
+			food.remove();
+		}
+		foodlist.remove(food);
+	}
+	
 	public void addProjectile(Projectile proj){
-		if(proj.getWorld() == this && isAdjacent(proj.getX(), proj.getY(), proj.getRadius())){
+		if(proj.getWorld() == this){
 		projList.add(proj);
 		}
+	}
+	
+	public void delProjectile(Projectile proj){
+		if(!proj.removed()){
+			proj.remove();
+		}
+		projList.remove(proj);
 	}
 	
 	public boolean validTeam(Teams team){
@@ -189,11 +249,7 @@ public class World {
 	}
 	
 	public void addTeam(String name){
-
 		Teams newTeam = new Teams(name);
-		if(!validTeam(newTeam)){
-			throw new IllegalStateException("Not a valid team");
-		}
 		teamsList.add(newTeam);
 		setActiveTeam(newTeam);
 	}
@@ -214,15 +270,15 @@ public class World {
 		return activeWorm;
 	}
 	
-	public ArrayList<Projectile> getProjectile(){
+	public Set<Projectile> getProjectile(){
 		return projList;
 	}
 	
-	public ArrayList<Food> getFood(){
+	public Set<Food> getFood(){
 		return foodlist;
 	}
 	
-	public ArrayList<Worm> getWorms(){
+	public Set<Worm> getWorms(){
 		return wormsList;
 	}
 	
@@ -231,11 +287,11 @@ public class World {
 	}
 	
 	public void nextTurn(){
-		if(isFinished()){
-			return;
-		}
 		if(!switchWorm.hasNext()){
 			switchWorm = wormsList.iterator();
+		}
+		if(isFinished()){
+			return;
 		}
 		setActiveWorm(switchWorm.next());
 		getActiveWorm().setActionPoints(getActiveWorm().getMaxActionPoints());
@@ -263,13 +319,13 @@ public class World {
 		if(switchWorm.hasNext()){
 			setActiveWorm(switchWorm.next());
 		}
-		setStarted();
 		setActiveTeam(null);
+		setStarted();
 	}
 	
 	public void setStarted(){
 		started = true;
-		if(getWorms().size() == 1){
+		if(getWorms().size() <= 1){
 			setFinished();
 		}
 		if(teamsList.size() == 1){
@@ -284,13 +340,16 @@ public class World {
 	}
 	
 	public String getWinner(){
-		if(teamsList.size() != 0){
-			return teamsList.get(0).getTName();
+		if(teamsList.size() == 1){
+			java.lang.Object[] winners = getAllTeams().toArray();
+			Teams winner = (Teams)winners[0];
+			String string = "Team " + winner.getTName();
+			return string;
 		}
 		else{
-			String winners = wormsList.get(0).getName();
-			winners += ".";
-			return winners;
+			java.lang.Object[] winnersWorm = getWorms().toArray();
+			Worm winnerWorm = (Worm)winnersWorm[0];
+			return winnerWorm.getName();
 		}
 	}
 	
@@ -346,5 +405,9 @@ public class World {
 		else{
 			return s + Math.PI;
 		}
+	}
+	
+	public void removeTeam(Teams team){
+		teamsList.remove(team);
 	}
 }

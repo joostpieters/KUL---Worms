@@ -24,21 +24,6 @@ public class Facade implements IFacade {
 			return new Worm(world, x, y, direction, radius, name);
 	}
 
-	/**@Override
-	public boolean canMove(Worm worm, int nbSteps) {
-		return worm.canMove(nbSteps);
-	}
-
-	@Override
-	public void move(Worm worm, int nbSteps) throws IllegalArgumentException{
-		try{
-			worm.move(nbSteps);
-		}
-		catch(IllegalArgumentException e){
-			throw new ModelException("Invalid move");
-		}
-	}*/
-
 	@Override
 	public boolean canTurn(Worm worm, double angle) {
 		return worm.canTurn(angle);
@@ -48,21 +33,6 @@ public class Facade implements IFacade {
 	public void turn(Worm worm, double angle) {
 		worm.turn(angle);
 	}
-
-/*	@Override
-	public void jump(Worm worm) throws ModelException{
-			try{
-				worm.jump();
-			}
-			catch(Exception e){
-				throw new ModelException("Unable to jump");
-			}
-	}
-
-	@Override
-	public double getJumpTime(Worm worm) {
-		return worm.getJumpTime();
-	}*/
 
 	@Override
 	public double[] getJumpStep(Worm worm, double t){
@@ -151,16 +121,18 @@ public class Facade implements IFacade {
 					Food food = new Food(world);
 				}
 				catch(IllegalStateException e){
-					System.out.println("debug"+e.getMessage());
+					System.out.println("debug: "+e.getMessage());
 				}
 	}
 
 	@Override
 	public void addNewWorm(World world) {
 			try{
-				Worm worm = new Worm(world, world.getWidth()/r.nextInt((int)world.getWidth()), world.getHeight()/r.nextInt((int)world.getHeight()), Math.PI/4, 0.30, "Name");
+				Worm worm = new Worm(world);
 			}
 			catch(Exception e){
+				System.out.println("debug: "+e.getMessage());
+
 			}
 	}
 

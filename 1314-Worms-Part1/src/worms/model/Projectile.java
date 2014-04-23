@@ -8,13 +8,13 @@ public abstract class Projectile extends Jump{
 	private final int DENSITY = 7800;
 
 	public Projectile(World world, double xPos, double yPos){
-		super(world, xPos, yPos, 0);
+		super(world, xPos, yPos, 0.0);
 		this.setRadius(getRadius());
 	}
 	
 	public void setCurrentWorm(Worm worm){
 		if(worm == null){
-			throw new IllegalArgumentException("You're trying to add something that isn't a worm as the owner of this object.");
+			throw new IllegalArgumentException("The worm you're trying to set as owner is null.");
 		}
 		this.worm = worm;
 	}
@@ -28,20 +28,20 @@ public abstract class Projectile extends Jump{
 	}
 	
 	public double getRadius(){
-		return Math.cbrt((getMass()*0.75)/(DENSITY*Math.PI));
+		return Math.cbrt((this.getMass()*0.75)/(DENSITY*Math.PI));
 	}
 	
 	public void shoot(double time){
 		super.jump(time);
-		doDamage();
+		damage();
 		remove();
 	}
 	
-	public void doDamage(){
+	public void damage(){
 		if(!removed()){
-			for(Worm worm : getWorld().getWorms()){
+			for(Worm worm : this.getWorld().getWorms()){
 				if(this.overlaps(worm)){
-					worm.setActionPoints(worm.getActionPoints() - getDamage());
+					worm.setActionPoints(worm.getHitPoints() - this.getDamage());
 				}
 			}
 		}
