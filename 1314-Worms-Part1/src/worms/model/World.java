@@ -509,7 +509,7 @@ public class World {
 	 */
 	
 	public void addFood(Food food){
-		if(food.getWorld() == this && isAdjacent(food.getX(), food.getY(), food.getRadius())){
+		if(food.getWorld() == this){
 		foodlist.add(food);
 		}
 	}
@@ -531,12 +531,13 @@ public class World {
 		while(location[0] == 0.0 && location[1] == 0.0){
 			double xPos = random.nextFloat()*getWidth();
 			double yPos = random.nextFloat()*getHeight();
-			if((xPos != 0.0 || yPos != 0.0) && !isImpassable(xPos, yPos, Food.getR()) && !(xPos + Food.getR() > getWidth()) && !(xPos-Food.getR() < 0) && !(yPos+Food.getR()>getHeight()) && !(yPos - Food.getR() < 0)){
+			if((xPos != 0.0 || yPos != 0.0) && !isImpassable(xPos, yPos, 0.20) && !((xPos + 0.20) > getWidth()) && !((xPos-0.20) < 0) && !(yPos+0.20>getHeight()) && !(yPos - Food.getR() < 0)){
 				location[0] = xPos;
 				location[1] = yPos;
 			}
-			spawnFoodInWorld(location[0], location[1]);
 		}
+		spawnFoodInWorld(location[0], location[1]);
+
 	}
 	
 	/**
@@ -555,6 +556,7 @@ public class World {
 	
 	public Food spawnFoodInWorld(double x, double y){
 		Food food = new Food(this, x, y);
+		food.setWorld(this);
 		addFood(food);	
 		return food;
 	}
@@ -877,8 +879,13 @@ public class World {
 		}
 		else{
 			java.lang.Object[] winnersWorm = getWorms().toArray();
-			Worm winnerWorm = (Worm)winnersWorm[0];
-			return winnerWorm.getName();
+			try{
+				Worm winnerWorm = (Worm)winnersWorm[0];
+				return winnerWorm.getName();
+			}
+			catch(ArrayIndexOutOfBoundsException e){
+				return "Nobody!";
+			}
 		}
 	}
 	

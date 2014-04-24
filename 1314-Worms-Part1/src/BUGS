@@ -1,0 +1,17 @@
+**********************************
+CURRENT BUGS THAT NEED TO BE FIXED
+**********************************
+
+- HP set to 0 without falling too high or doing something really weird (Probably a problem with setMass an calcMass, so check them too)
+- Shooting isn't working, nullpointerexception because world probably isn't set correctly for this projectile.
+- Check world-setting in general.
+- Worms aren't removed even though HP is set to 0.
+- Fall doesn't work correctly.
+
+***********
+FIXED BUGS
+***********
+
+- Food is spawning, unfortunately not in the right position.
+- Stability issues fixed.
+- Better isAdjacent search algorithm.
