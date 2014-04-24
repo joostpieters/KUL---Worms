@@ -188,7 +188,7 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public double getJumpTime(Projectile projectile, double timeStep) {
+	public double getJumpTime(Projectile projectile, double timeStep) {  //setWorld not coming through for some reason :/
 		return projectile.jumpTime(timeStep);
 	}
 

@@ -750,7 +750,7 @@ public class Worm extends Jump {
 	 */
 	
 	public boolean canShoot(){
-		return (!(getActionPoints() == 0) && (!getWorld().isImpassable(getX(), getY(), getRadius()) && !removed()));
+		return (!(getActionPoints() == 0) && (!getWorld().isImpassable(getX(), getY(), getRadius()))); //add removed
 	}
 	
 	/**
