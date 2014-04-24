@@ -306,8 +306,17 @@ public class World {
 	 */
 	
 	public boolean isAdjacent(double x, double y, double radius){
-		double newRadius = radius*1.1;
-		return(!isImpassable(x, y, radius) && isImpassable(x, y, newRadius));
+		if(isImpassable(x, y, radius)){
+			return false;
+		}
+		for(double i = 0; i < 2*Math.PI; i = i + (Math.PI/40)){
+			double dx = (0.1*radius + widthPXL()) * Math.cos(i);
+			double dy = (0.1*radius + heightPXL()) * Math.sin(i);
+			if(isImpassable(x + dx, y + dy, radius*1.1) && !objectInWorld(dx, dy, radius)){
+				return true;
+			}
+		}
+		return false;
 	}
 	 
 	/**
@@ -802,9 +811,19 @@ public class World {
 		switchWorm = wormsList.iterator();
 		if(switchWorm.hasNext()){
 			setActiveWorm(switchWorm.next());
+			if(getActiveWorm().getHitPoints() == 0){
+				getActiveWorm().remove();
+				nextTurn();
+			}
 		}
 		setActiveTeam(null);
 		setStarted();
+		for(Worm worms : getWorms()){
+			int hp = worms.getHitPoints();
+			worms.fall();
+			worms.setHitPoints(hp);
+			
+		}
 	}
 	
 	/**

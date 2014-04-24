@@ -127,7 +127,6 @@ public class Facade implements IFacade {
 	@Override
 	public void addNewWorm(World world) {
 				world.addWorm();
-	
 	}
 
 	@Override
@@ -308,9 +307,10 @@ public class Facade implements IFacade {
 
 	@Override
 	public void move(Worm worm) {
+
 		try{
 			worm.move();
-			}
+		}
 		catch(Exception e){
 			throw new ModelException("Not able to move: "+e.getMessage());
 		}

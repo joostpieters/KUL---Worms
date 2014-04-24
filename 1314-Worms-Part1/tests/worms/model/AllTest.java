@@ -193,6 +193,10 @@ public class AllTest {
 	@Test
 	public void testWeapons(){
 		assertEquals("Rifle", testWorm.getWeapon());
+		testWorm.selectNextWeapon();
+		assertEquals("Bazooka", testWorm.getWeapon());
+		testWorm.selectNextWeapon();
+		assertEquals("Rifle", testWorm.getWeapon());
 	}
 
 	@Test

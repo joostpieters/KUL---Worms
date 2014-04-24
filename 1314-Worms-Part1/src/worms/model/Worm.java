@@ -43,8 +43,6 @@ public class Worm extends Jump {
 	private int actionPoints = 0;
 	private int hitPoints;
 	private Teams team;
-	private Set<String> weapons = new LinkedHashSet<String>(Arrays.asList(new String[] {"Rifle", "Bazooka"}));
-	private Iterator<String> switchWeapon = weapons.iterator();
 	private String weapon;
 
 	/*
@@ -78,6 +76,8 @@ public class Worm extends Jump {
 	 * 		  |	getActionPoints() == getMaxActionPoints()
 	 * @effect	The superclass Object will be called with given parameters.
 	 * 		  |	super(world, x, y, radius);
+	 * @effect	The worm's initial weapon will be set to Rifle.
+	 * 		  |	setWeapons("Rifle");
 	 */
 	
 	@Raw
@@ -88,6 +88,7 @@ public class Worm extends Jump {
 		setActionPoints(getMaxActionPoints());
 		setHitPoints(getMaxHitPoints());
 		setTeam(world.getActiveTeam());
+		setWeapon("Rifle");
 		if (getTeam() != null){
 			getTeam().addWorm(this);
 		}
@@ -364,7 +365,7 @@ public class Worm extends Jump {
 		double thetaDown = this.getDirection();
 		double tempX = this.getX() + distance*Math.cos(this.getDirection());
 		double tempY = this.getY() + distance*Math.sin(this.getDirection());
-		while ((Math.abs(thetaUp-getDirection()) < 0.7875) && (! this.getWorld().isAdjacent(tempX,tempY,this.getRadius()))){
+		while ((Math.abs(thetaUp-getDirection()) < 0.7875) && (this.getWorld().isAdjacent(tempX,tempY,this.getRadius()))){
 			thetaUp += 0.0175;
 			tempX = this.getX() + distance*Math.cos(thetaUp);
 		    tempY = this.getY() + distance*Math.sin(thetaUp);
@@ -374,7 +375,7 @@ public class Worm extends Jump {
 		        tempY = this.getY() + distance*Math.sin(thetaDown); 
 	        }
 	    }
-		if (this.getWorld().isAdjacent(tempX,tempY,getRadius())){
+		if (!this.getWorld().isAdjacent(tempX,tempY,getRadius())){
 			return new double[] {tempX,tempY};	
 		}
 		return null;
@@ -393,7 +394,7 @@ public class Worm extends Jump {
 			double thetaDown = this.getDirection();
 			double tempX = this.getX() + distance*Math.cos(this.getDirection());
 			double tempY = this.getY() + distance*Math.sin(this.getDirection());
-			while ((Math.abs(thetaUp-getDirection()) < 0.7875) && (! this.getWorld().isImpassable(tempX,tempY,this.getRadius()))){
+			while ((Math.abs(thetaUp-getDirection()) < 0.7875) && (this.getWorld().isImpassable(tempX,tempY,this.getRadius()))){
 				thetaUp += 0.0175;
 				tempX = this.getX() + distance*Math.cos(thetaUp);
 			    tempY = this.getY() + distance*Math.sin(thetaUp);
@@ -403,7 +404,7 @@ public class Worm extends Jump {
 			        tempY = this.getY() + distance*Math.sin(thetaDown); 
 		        }
 		    }
-			if (this.getWorld().isImpassable(tempX,tempY,getRadius())){
+			if (!this.getWorld().isImpassable(tempX,tempY,getRadius())){
 
 				return new double[] {tempX,tempY};	
 			}
@@ -462,9 +463,9 @@ public class Worm extends Jump {
 		
 		public void fall(){
 			double oldY = getY();
-			while (! (getWorld().isAdjacent(getX(),getY(),getRadius()))&& ! (getWorld().objectInWorld(getX(), getY(),getRadius())) && this.getWorld().isImpassable(getX(), getY(), getRadius()))
-				fallPixel();
-			if (! getWorld().objectInWorld(getX(), getY(),getRadius())){
+			while (! (getWorld().isAdjacent(getX(),getY(),getRadius())) && !(getWorld().objectInWorld(getX(), getY(),getRadius())) && !getWorld().isImpassable(getX(), getY(), getRadius()))
+				fallDown();
+			if (getWorld().isAdjacent(getX(), getY(), getRadius())){
 				int distance = (int) (oldY - getY());
 				int newHitPoints = getHitPoints() - 3*distance;
 				if (newHitPoints >= 0)
@@ -481,7 +482,7 @@ public class Worm extends Jump {
 	 * 		  | new.getY() = this.getY() - getWorld.heightPXL();
 	 */
 	
-		public void fallPixel(){
+		public void fallDown(){
 			double distance = getWorld().heightPXL();
 			setY(getY() - distance);
 		}
@@ -696,18 +697,24 @@ public class Worm extends Jump {
 	/**
 	 * Method to select the next weapon in the weaponslist.
 	 * 
-	 * @effect	If the current weapon was the last weapon in the list, the iterator will be restarted.
-	 * 		  | getWeapons().iterator();
-	 * @effect	The next weapon within the iterator is selected.
-	 * 		  |	setWeapons(iterator.next());
+	 * @effect	If the current weapon was the rifle then the weapon will be set to the Bazooka.
+	 * 		  | setWeapon("Bazooka");
+	 * @effect	If the current weapon was the Bazooka then the weapon will be set to the Rifle.
+	 * 		  | setWeapon("Rifle");
 	 * 
 	 */
 	
 	public void selectNextWeapon(){
-		if(!switchWeapon.hasNext()){
-			switchWeapon = weapons.iterator();
+		switch(getWeapon()){
+		case "Rifle":
+			setWeapon("Bazooka");
+			break;
+		case "Bazooka":
+			setWeapon("Rifle");
+			break;
+		default:
+			setWeapon("Rifle");
 		}
-		setWeapon(switchWeapon.next());
 	}
 	
 	/**
