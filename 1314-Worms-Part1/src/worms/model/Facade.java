@@ -129,7 +129,12 @@ public class Facade implements IFacade {
 
 	@Override
 	public boolean canFall(Worm worm) {
-		return !(worm.getWorld().isAdjacent(worm.getX(), worm.getY(), worm.getRadius()));
+		if(worm.isActive()){
+			return !(worm.getWorld().isAdjacent(worm.getX(), worm.getY(), worm.getRadius()));
+		}
+		else{
+			return false;
+		}
 	}
 
 	@Override
@@ -286,7 +291,7 @@ public class Facade implements IFacade {
 	@Override
 	public void jump(Projectile projectile, double timeStep) {
 		try{
-			projectile.shoot(timeStep);
+			projectile.shoot();
 		}
 		catch(Exception e){
 			throw new ModelException("Not able to shoot with following error: "+e.getMessage());
@@ -305,15 +310,13 @@ public class Facade implements IFacade {
 
 	@Override
 	public void move(Worm worm) {
-		
-		worm.move();
 
-//		try{
-//			worm.move();
-//		}
-//		catch(Exception e){
-//			throw new ModelException("Not able to move: "+e.getMessage());
-//		}
+	try{
+			worm.move();
+		}
+		catch(Exception e){
+			throw new ModelException("Not able to move: "+e.getMessage());
+		}
 	}
 
 	@Override

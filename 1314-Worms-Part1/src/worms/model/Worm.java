@@ -110,7 +110,7 @@ public class Worm extends Jump {
 	
 	@Raw
 	public Worm(World world, double x, double y){
-		this(world, x, y, Math.PI/2, getMinimalRadius(), names[(int)Math.floor(Math.random()*names.length)]);
+			this(world, x, y, Math.PI/2, getMinimalRadius(), names[(int)Math.floor(Math.random()*names.length)]);
 	}
 	
 	/**
@@ -340,16 +340,19 @@ public class Worm extends Jump {
 	 * 		  |	searchFallLocation(getRadius());
 	 */
 	public boolean canMove(){
-		double currentDistance = getRadius();
-		double[] newLocation = null;
-		while (newLocation == null && currentDistance >= 0.1){
-			newLocation = searchFallLocation(currentDistance);
-			currentDistance -= 0.01;
+		boolean canMove = true;
+		if(isActive()){
+			double currentDistance = getRadius();
+			double[] newLocation = null;
+			while (newLocation == null && currentDistance >= 0.1){
+				newLocation = searchFallLocation(currentDistance);
+				currentDistance -= 0.01;
+			}
+			if (newLocation == null){
+				canMove = false;
+			}
 		}
-		if (newLocation == null){
-			return false;
-		}
-		return true;
+		return canMove;
 	}
 		
 	/**
@@ -443,12 +446,16 @@ public class Worm extends Jump {
 				if (newAP >= 0){
 					setX(newX);
 					setY(newY);
-					//setActionPoints(newAP);
-					eat();
+					fall();
+					setActionPoints(newAP);
+					try{
+						eat();
+					}
+					catch(Exception e){
 					if(getHitPoints() <= 0){
 						this.remove();
-						System.out.println("REMOVED WORM");
 					}
+				}
 				}
 				else{
 					throw new IllegalStateException("Not enough actionpoints");
@@ -469,20 +476,24 @@ public class Worm extends Jump {
 		
 		public void fall(){
 			double oldY = getY();
-			while (! (getWorld().isAdjacent(getX(),getY(),getRadius())) && !(getWorld().objectInWorld(getX(), getY(),getRadius())) && !getWorld().isImpassable(getX(), getY(), getRadius()))
-				fallDown();
+			while (! (getWorld().isAdjacent(getX(),getY(),getRadius())) && (getWorld().objectInWorld(getX(), getY(),getRadius()))){
+				setY(getY() - (getWorld().heightPXL()/2));
 			if (getWorld().isAdjacent(getX(), getY(), getRadius())){
 				int distance = (int) (oldY - getY());
+				System.out.println("Distance: "+distance + " and HP: "+getHitPoints());
 				int newHitPoints = getHitPoints() - 3*distance;
-				if (newHitPoints > 0)
+				if (newHitPoints > 0){
 					setHitPoints(newHitPoints);
-				else{
-					this.remove();
-					System.out.println("Remove");
+				}
+				else if(newHitPoints <= 0){
+					setHitPoints(0);
 				}
 			}
-			else
-				setHitPoints(0);
+			}
+			if (!getWorld().objectInWorld(getX(), getY(), getRadius())){
+				this.remove();
+			}
+
 		}
 		
 	/**
@@ -493,7 +504,7 @@ public class Worm extends Jump {
 	 */
 	
 		public void fallDown(){
-			double distance = getWorld().heightPXL();
+			double distance = getWorld().heightPXL()/2;
 			setY(getY() - distance);
 		}
 
@@ -584,7 +595,7 @@ public class Worm extends Jump {
 				}
 			}
 		setOrientation(placebo);
-		//setActionPoints(getActionPoints()-(Math.abs((int)(angle*(60/(2*Math.PI))))));
+		setActionPoints(getActionPoints()-(Math.abs((int)(angle*(60/(2*Math.PI))))));
 		}
 	}
 	
@@ -631,23 +642,6 @@ public class Worm extends Jump {
 			}
 		}
 		return cnt*timeStep;
-	}
-
-	/**
-	 * Make a worm jump in a physical trajectory according to gravitation.
-	 * 
-	 * @post 	The worm will have a new position according to the jumpforce and actionpoints.	
-	 * @throws IllegalAPException(getActionPoints())	Invalid amount of actionpoints left.
-	 * @throws IllegalDirectionException(getOrientation())	Invalid direction.
-	 */
-	
-	public void jump(double timeStep) throws IllegalStateException{
-		if(!canJump()){
-			throw new IllegalStateException("can't perform jump :(");
-		}
-		super.jump(timeStep);
-		//setActionPoints(0);
-		eat();
 	}
 	
 	/**
@@ -791,12 +785,19 @@ public class Worm extends Jump {
 		Projectile proj = null;
 		if(getWeapon() == "Bazooka"){
 			proj = new Bazooka(getWorld(), shootX, shootY, yield);
-		}
+			if(proj.getWorld() != this.getWorld()){
+				proj.setWorld(getWorld());
+			}	
+			}
 		if(getWeapon() == "Rifle"){
 			proj = new Rifle(getWorld(), shootX, shootY);
+			if(proj.getWorld() != this.getWorld()){
+				proj.setWorld(getWorld());
+			}
 		}
 		proj.setCurrentWorm(this);
-		//setActionPoints(getActionPoints()-proj.getAP());
+		proj.shoot();
+		setActionPoints(getActionPoints()-proj.getAP());
 		getWorld().setActiveProjectile(proj);
 
 	}
@@ -880,4 +881,73 @@ public class Worm extends Jump {
 			}
 		}
 	}
+	
+	
+	/**
+	 * Method to calculate the time needed for this jump.
+	 * 
+	 * @param 	timeS
+	 * 			The timestep.
+	 * @return	The time that a jump will be executed for.
+	 */
+	
+	public double jumpTime(double timeS){
+		double t;
+		if(getDirection() == 0 || getDirection() == Math.PI/2){
+			throw new IllegalStateException("Not able to jump.");
+		}
+		
+		t = timeS;
+		double[] pos = new double[]{getX(), getY()};
+		while(!getWorld().isImpassable(pos[0], pos[1], getRadius())){
+			pos = jumpStep(t);
+			t = t + timeS;
+		}
+		return t;
+	}
+	
+	/**
+	 * Method to calculate the position an object would be after performing a jump.
+	 * 
+	 * @param 	time
+	 * 			The time the jump is executed for.
+	 * @return	2 Dimensional array containing the position.
+	 */
+	
+	public double[] jumpStep(double time){
+		if(getDirection() == 0 || getDirection() == Math.PI/2){
+			return new double[]{getX(), getY()};
+		}
+		double[] positionPerTime = new double[2];
+		double v0 = ((getForce()/getMass())*0.5);
+		double v0x = (v0*Math.cos(getDirection()));
+		double v0y = (v0*Math.sin(getDirection()));
+		positionPerTime[0] = (getX()+(v0x*time));
+		positionPerTime[1] = (getY()+((v0y*time)-((9.80665*time*time/2))));
+		
+		return positionPerTime;
+	}
+	
+	/**
+	 * Method to perform a jump.
+	 * 
+	 * @param 	timeS
+	 * 			The timestep
+	 * @effect	The position will have changed according to jumpStep.
+	 * 		  | setX(jumpStep(jumpTime(timeS))[0]);
+			  | setY(jumpStep(jumpTime(timeS))[1]);
+	 */
+	
+	public void jump(double timeS){
+		if(getDirection() == 0 || getDirection() == Math.PI || getDirection() == 2*Math.PI || getDirection() == Math.PI/2){
+			throw new IllegalStateException("Can't jump at the current angle!");
+		}
+		setX(jumpStep(this.jumpTime(timeS))[0]);
+		setY(jumpStep(this.jumpTime(timeS))[1]);
+		setActionPoints(0);
+		eat();
+		fall();
+		eat();
+	}
+
 }

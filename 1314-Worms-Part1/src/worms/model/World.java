@@ -392,15 +392,17 @@ public class World {
 	 */
 	
 	public void addWorm(){
-		Double[] location = new Double[]{0.0,0.0};
-		while(location[0] == 0.0 && location[1] == 0.0){
+		Double[] location = new Double[]{null,null};
+		while(location[0] == null || location[1] == null){
 			double xPos = random.nextFloat()*getWidth();
 			double yPos = random.nextFloat()*getHeight();
-			if((xPos != 0.0 || yPos != 00) && !isImpassable(xPos, yPos, Worm.getMinimalRadius()) && !(xPos + Worm.getMinimalRadius() > getWidth()) && !(xPos-Worm.getMinimalRadius() < 0) && !(yPos+Worm.getMinimalRadius()>getHeight()) && !(yPos - Worm.getMinimalRadius() < 0)){
+			if((xPos != 0.0 || yPos != 0.0) && !isImpassable(xPos, yPos, Worm.getMinimalRadius()) && !(xPos + Worm.getMinimalRadius() > getWidth()) && !(xPos-Worm.getMinimalRadius() < 0) && !(yPos+Worm.getMinimalRadius()>getHeight()) && !(yPos - Worm.getMinimalRadius() < 0)){
 				location[0] = xPos;
 				location[1] = yPos;
 			}
-			spawnWorm(location[0], location[1]);
+			if(location[0] != null && location[1] != null){
+				spawnWorm(location[0], location[1]);
+			}
 		}
 	}
 	
@@ -421,6 +423,7 @@ public class World {
 	public Worm spawnWorm(double x, double y){
 		Worm worm = new Worm(this, x, y);
 		worm.setWorld(this);
+		worm.setTeam(getActiveTeam());
 		addAWorm(worm);
 		return worm;
 	}
@@ -436,6 +439,8 @@ public class World {
 		if(worm == null){
 			throw new IllegalStateException("The worm is null");
 		}
+		worm.fall();
+		worm.setHitPoints(worm.getMaxHitPoints());
 		wormsList.add(worm);
 	}
 	
@@ -455,7 +460,6 @@ public class World {
 	 */
 	
 	public void delWorm(Worm worm){
-		if(getWorms().contains(worm)){
 			if(getActiveWorm() != worm){
 				wormsList.remove(worm);
 				switchWorm = wormsList.iterator();
@@ -464,16 +468,7 @@ public class World {
 				switchWorm.remove();
 				nextTurn();
 			}
-		}
-		if(!worm.isActive()){ //YOLO
-			worm.remove();
-		}
-		if(teamsList.size() == 1){
-			setFinished();
-		}
-		else if(wormsList.size() <= 1){
-			setFinished();
-		}
+
 	}
 	
 	/**
@@ -536,7 +531,7 @@ public class World {
 				location[1] = yPos;
 			}
 		}
-		spawnFoodInWorld(location[0], location[1]);
+		dropFood(spawnFoodInWorld(location[0], location[1]));
 
 	}
 	
@@ -559,6 +554,12 @@ public class World {
 		food.setWorld(this);
 		addFood(food);	
 		return food;
+	}
+	
+	public void dropFood(Food food){
+		while (! (food.getWorld().isAdjacent(food.getX(),food.getY(),food.getRadius())) && (food.getWorld().objectInWorld(food.getX(), food.getY(),food.getRadius()))){
+			food.setY(food.getY() - (food.getWorld().heightPXL()/2));
+		}
 	}
 	
 	/**
@@ -600,10 +601,7 @@ public class World {
 	 */
 	
 	public void delProjectile(Projectile proj){
-		if(!proj.isActive()){ //YOLO
-			proj.remove();
-		}
-		projList.remove(proj);
+			projList.remove(proj);
 	}
 	
 	/**
@@ -634,8 +632,8 @@ public class World {
 	
 	public void addTeam(String name){
 		Teams newTeam = new Teams(name);
-		teamsList.add(newTeam);
 		setActiveTeam(newTeam);
+		teamsList.add(newTeam);
 	}
 	
 	/**
@@ -817,12 +815,6 @@ public class World {
 		}
 		setActiveTeam(null);
 		setStarted();
-		for(Worm worms : getWorms()){
-			int hp = worms.getHitPoints();
-			worms.fall();
-			worms.setHitPoints(hp);
-			
-		}
 	}
 	
 	/**
@@ -837,12 +829,6 @@ public class World {
 	
 	private void setStarted(){
 		started = true;
-		if(getWorms().size() <= 1){
-			setFinished();
-		}
-		if(teamsList.size() == 1){
-			setFinished();
-		}
 	}
 	
 	/**
@@ -857,7 +843,6 @@ public class World {
 	
 	private void setFinished(){
 		setActiveWorm(null);
-		setActiveTeam(null);
 		finished = true;
 	}
 	
