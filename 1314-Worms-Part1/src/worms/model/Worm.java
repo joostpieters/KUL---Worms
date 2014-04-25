@@ -44,6 +44,7 @@ public class Worm extends Jump {
 	private int hitPoints;
 	private Teams team;
 	private String weapon;
+	private static final double DENSITY = 1062;
 
 	/*
 	 * Initialize a Worm with given position, direction, radius and name.
@@ -168,7 +169,7 @@ public class Worm extends Jump {
 	 */
 	
 	public void calcMass(){
-		mass = (1062*(4.0/3.0)*Math.PI*(Math.pow(getRadius(),3)));
+		mass = (DENSITY*((4.0*Math.PI*(this.getRadius()*this.getRadius()*this.getRadius())/3.0)));
 	}
 	
 	/**
@@ -442,12 +443,17 @@ public class Worm extends Jump {
 				if (newAP >= 0){
 					setX(newX);
 					setY(newY);
-					setActionPoints(newAP);
+					//setActionPoints(newAP);
+					eat();
+					if(getHitPoints() <= 0){
+						this.remove();
+						System.out.println("REMOVED WORM");
+					}
 				}
-				else
+				else{
 					throw new IllegalStateException("Not enough actionpoints");
+				}
 			}
-			eat();
 		}
 		
 	/**
@@ -468,8 +474,12 @@ public class Worm extends Jump {
 			if (getWorld().isAdjacent(getX(), getY(), getRadius())){
 				int distance = (int) (oldY - getY());
 				int newHitPoints = getHitPoints() - 3*distance;
-				if (newHitPoints >= 0)
+				if (newHitPoints > 0)
 					setHitPoints(newHitPoints);
+				else{
+					this.remove();
+					System.out.println("Remove");
+				}
 			}
 			else
 				setHitPoints(0);
@@ -574,7 +584,7 @@ public class Worm extends Jump {
 				}
 			}
 		setOrientation(placebo);
-		setActionPoints(getActionPoints()-(Math.abs((int)(angle*(60/(2*Math.PI))))));
+		//setActionPoints(getActionPoints()-(Math.abs((int)(angle*(60/(2*Math.PI))))));
 		}
 	}
 	
@@ -636,7 +646,7 @@ public class Worm extends Jump {
 			throw new IllegalStateException("can't perform jump :(");
 		}
 		super.jump(timeStep);
-		setActionPoints(0);
+		//setActionPoints(0);
 		eat();
 	}
 	
@@ -786,7 +796,7 @@ public class Worm extends Jump {
 			proj = new Rifle(getWorld(), shootX, shootY);
 		}
 		proj.setCurrentWorm(this);
-		setActionPoints(getActionPoints()-proj.getAP());
+		//setActionPoints(getActionPoints()-proj.getAP());
 		getWorld().setActiveProjectile(proj);
 
 	}
@@ -861,12 +871,12 @@ public class Worm extends Jump {
 	 */
 	
 	public void eat(){
-		if(!removed()){
 			for(Food food : getWorld().getFood()){
-				if(overlaps(food)){
-					setRadius(1.1*getRadius());
-					food.remove();
-				}
+			if(overlaps(food)){
+				getWorld().delFood(food);
+				setRadius(1.1*getRadius());
+				food.remove();
+				System.out.println("ATE");
 			}
 		}
 	}

@@ -18,6 +18,7 @@
 package worms.model.superclasses;
 
 import worms.model.World;
+import worms.util.Util;
 
 public abstract class Object {
 	
@@ -200,8 +201,8 @@ public abstract class Object {
 	 * @return	True if the object is removed.
 	 */
 	
-	public boolean removed(){
-		return isRemoved;
+	public boolean isActive(){
+		return !isRemoved;
 	}
 	
 	/**
@@ -214,14 +215,11 @@ public abstract class Object {
 	 */
 	
 	public void remove(){
-		if(!removed()){
 			World ex = this.getWorld();
+			ex.delObjects(this);
+			this.world = null;
 			this.isRemoved = true;
-			if(ex.getObjects().contains(this)){
-				ex.getObjects().remove(this);
-			}
-			this.world = null;	
-		}
+
 	}
 	
 	/**
@@ -234,7 +232,7 @@ public abstract class Object {
 	 */
 	
 	public boolean overlaps(Object object){
-		if((getX() - object.getX()) <= (getRadius() + object.getRadius()) || (getY() - object.getY()) <= (getRadius() + object.getRadius())){
+		if(Util.fuzzyEquals(this.getX(), object.getX(), 0.40) && Util.fuzzyEquals(this.getY(), object.getY(), 0.40)){
 			return true;
 		}
 		return false;

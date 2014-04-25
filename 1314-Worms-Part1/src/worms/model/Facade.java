@@ -20,8 +20,6 @@ public class Facade implements IFacade {
 	public Worm createWorm(World world, double x, double y, double direction, double radius, String name){
 
 			Worm worm = new Worm(world, x, y, direction, radius, name);
-			world.addAWorm(worm);
-			worm.setWorld(world);
 			return worm;
 	}
 
@@ -257,12 +255,12 @@ public class Facade implements IFacade {
 
 	@Override
 	public boolean isActive(Food food) {
-		return (!food.removed());
+		return food.isActive();
 	}
 
 	@Override
 	public boolean isActive(Projectile projectile) {
-		return (!projectile.removed());
+		return (!projectile.isActive());
 	}
 
 	@Override
@@ -272,7 +270,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public boolean isAlive(Worm worm) {
-		return (!worm.removed());
+		return (worm.isActive());
 	}
 
 	@Override
@@ -307,13 +305,15 @@ public class Facade implements IFacade {
 
 	@Override
 	public void move(Worm worm) {
+		
+		worm.move();
 
-		try{
-			worm.move();
-		}
-		catch(Exception e){
-			throw new ModelException("Not able to move: "+e.getMessage());
-		}
+//		try{
+//			worm.move();
+//		}
+//		catch(Exception e){
+//			throw new ModelException("Not able to move: "+e.getMessage());
+//		}
 	}
 
 	@Override

@@ -465,7 +465,7 @@ public class World {
 				nextTurn();
 			}
 		}
-		if(!worm.removed()){
+		if(!worm.isActive()){ //YOLO
 			worm.remove();
 		}
 		if(teamsList.size() == 1){
@@ -571,9 +571,6 @@ public class World {
 	 */
 	
 	public void delFood(Food food){
-		if(!food.removed()){
-			food.remove();
-		}
 		foodlist.remove(food);
 	}
 	
@@ -603,7 +600,7 @@ public class World {
 	 */
 	
 	public void delProjectile(Projectile proj){
-		if(!proj.removed()){
+		if(!proj.isActive()){ //YOLO
 			proj.remove();
 		}
 		projList.remove(proj);
@@ -949,4 +946,5 @@ public class World {
 	public double widthPXL(){
 		return getWidth()/PXLWidth();
 	}
+
 }

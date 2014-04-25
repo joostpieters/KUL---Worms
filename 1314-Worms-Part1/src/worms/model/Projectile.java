@@ -125,7 +125,7 @@ public abstract class Projectile extends Jump{
 	 */
 	
 	public void damage(){
-		if(!removed()){
+		if(isActive()){
 			for(Worm worm : this.getWorld().getWorms()){
 				if(this.overlaps(worm)){
 					worm.setHitPoints(worm.getHitPoints() - this.getDamage());
