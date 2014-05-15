@@ -48,8 +48,8 @@ public class World {
 	private Set<Teams> teamsList;
 	private Set<Projectile> projList;
 	private Iterator<Worm> switchWorm;
-	private double width;
-	private double height;
+	private final double width;
+	private final double height;
 	private double maxX = Double.MAX_VALUE;
 	private double maxY = Double.MAX_VALUE;
 	private boolean[][] passable;
