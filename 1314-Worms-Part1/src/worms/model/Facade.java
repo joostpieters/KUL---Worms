@@ -3,6 +3,9 @@ package worms.model;
 import java.util.Collection;
 import java.util.Random;
 
+import worms.gui.game.IActionHandler;
+import worms.model.programs.ParseOutcome;
+
 /**
  * Class used to implement the IFacade-class.
  * 
@@ -17,9 +20,9 @@ public class Facade implements IFacade {
 	
 	
 	@Override
-	public Worm createWorm(World world, double x, double y, double direction, double radius, String name){
+	public Worm createWorm(World world, double x, double y, double direction, double radius, String name, Program program){
 
-			Worm worm = new Worm(world, x, y, direction, radius, name);
+			Worm worm = new Worm(world, x, y, direction, radius, name, program);
 			return worm;
 	}
 
@@ -120,11 +123,6 @@ public class Facade implements IFacade {
 	@Override
 	public void addNewFood(World world) {
 				world.spawnFood();
-	}
-
-	@Override
-	public void addNewWorm(World world) {
-				world.addWorm();
 	}
 
 	@Override
@@ -342,6 +340,29 @@ public class Facade implements IFacade {
 	@Override
 	public void startNextTurn(World world) {
 		world.nextTurn();
+	}
+
+	@Override
+	public void addNewWorm(World world, Program program) {
+		world.addWorm(program);
+	}
+
+	@Override
+	public ParseOutcome<?> parseProgram(String programText,
+			IActionHandler handler) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean hasProgram(Worm worm) {
+		return worm.hasActiveProgram();
+	}
+
+	@Override
+	public boolean isWellFormed(Program program) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

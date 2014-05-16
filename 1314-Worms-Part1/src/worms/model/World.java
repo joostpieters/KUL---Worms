@@ -48,8 +48,8 @@ public class World {
 	private Set<Teams> teamsList;
 	private Set<Projectile> projList;
 	private Iterator<Worm> switchWorm;
-	private final double width;
-	private final double height;
+	private double width;
+	private double height;
 	private double maxX = Double.MAX_VALUE;
 	private double maxY = Double.MAX_VALUE;
 	private boolean[][] passable;
@@ -391,7 +391,7 @@ public class World {
 	 * 		  |	getWorms().add(worm);
 	 */
 	
-	public void addWorm(){
+	public void addWorm(Program prg){
 		Double[] location = new Double[]{null,null};
 		while(location[0] == null || location[1] == null){
 			double xPos = random.nextFloat()*getWidth();
@@ -401,7 +401,7 @@ public class World {
 				location[1] = yPos;
 			}
 			if(location[0] != null && location[1] != null){
-				spawnWorm(location[0], location[1]);
+				spawnWorm(location[0], location[1], prg);
 			}
 		}
 	}
@@ -420,8 +420,8 @@ public class World {
 	 * 		  |	worm.setWorld(this);
 	 */
 	
-	public Worm spawnWorm(double x, double y){
-		Worm worm = new Worm(this, x, y);
+	public Worm spawnWorm(double x, double y, Program prg){
+		Worm worm = new Worm(this, x, y, prg);
 		worm.setWorld(this);
 		worm.setTeam(getActiveTeam());
 		addAWorm(worm);

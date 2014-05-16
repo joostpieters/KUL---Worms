@@ -44,6 +44,7 @@ public class Worm extends Jump {
 	private int hitPoints;
 	private Teams team;
 	private String weapon;
+	private Program program;
 	private static final double DENSITY = 1062;
 
 	/*
@@ -82,7 +83,7 @@ public class Worm extends Jump {
 	 */
 	
 	@Raw
-	public Worm(World world, double x, double y, double direction, double radius, String name){
+	public Worm(World world, double x, double y, double direction, double radius, String name, Program prg){
 		super(world, x, y, radius);
 		setOrientation(direction);
 		rename(name);
@@ -92,6 +93,10 @@ public class Worm extends Jump {
 		setWeapon("Rifle");
 		if (getTeam() != null){
 			getTeam().addWorm(this);
+		}
+		setProgram(prg);
+		if(prg != null){
+			prg.addWorm(this);
 		}
 	}
 	
@@ -109,8 +114,8 @@ public class Worm extends Jump {
 	 */
 	
 	@Raw
-	public Worm(World world, double x, double y){
-			this(world, x, y, Math.PI/2, getMinimalRadius(), names[(int)Math.floor(Math.random()*names.length)]);
+	public Worm(World world, double x, double y, Program prg){
+			this(world, x, y, Math.PI/2, getMinimalRadius(), names[(int)Math.floor(Math.random()*names.length)], prg);
 	}
 	
 	/**
@@ -948,6 +953,18 @@ public class Worm extends Jump {
 		eat();
 		fall();
 		eat();
+	}
+	
+	public void setProgram(Program prg){
+		program = prg;
+	}
+	
+	public Program getProgram(){
+		return program;
+	}
+	
+	public boolean hasActiveProgram(){
+		return (this.program != null);
 	}
 
 }
