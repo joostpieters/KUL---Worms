@@ -443,7 +443,7 @@ public class Worm extends Jump {
 				newLocation = searchFallLocation(currentDistance);
 				currentDistance -= 0.01;
 			}
-			if (!(newLocation == null)){
+			if (!(newLocation == null) && !getWorld().isImpassable(newLocation[0], newLocation[1], getRadius())){
 				double newX = newLocation[0];
 				double newY = newLocation[1];
 				double slope = Math.atan((getY() - newY)/(getX() - newX));
@@ -451,8 +451,8 @@ public class Worm extends Jump {
 				if (newAP >= 0){
 					setX(newX);
 					setY(newY);
-					fall();
 					setActionPoints(newAP);
+					fall();
 					try{
 						eat();
 					}
@@ -485,7 +485,7 @@ public class Worm extends Jump {
 				setY(getY() - (getWorld().heightPXL()/2));
 			if (getWorld().isAdjacent(getX(), getY(), getRadius())){
 				int distance = (int) (oldY - getY());
-				System.out.println("Distance: "+distance + " and HP: "+getHitPoints());
+				//System.out.println("Distance: "+distance + " and HP: "+getHitPoints());
 				int newHitPoints = getHitPoints() - 3*distance;
 				if (newHitPoints > 0){
 					setHitPoints(newHitPoints);
@@ -955,16 +955,45 @@ public class Worm extends Jump {
 		eat();
 	}
 	
+	/**
+	 * Method to set a program for a worm.
+	 * 
+	 * @param 	prg
+	 * 			The program that is going to be executed by this worm.
+	 */
+	
 	public void setProgram(Program prg){
 		program = prg;
 	}
+	
+	/**
+	 * Method to return the program currently being executed by a worm.
+	 * 
+	 * @return	The program
+	 */
 	
 	public Program getProgram(){
 		return program;
 	}
 	
+	/**
+	 * Check whether this worm currently has an active program.
+	 * 
+	 * @return	True if there is a program active, false otherwise.
+	 */
+	
 	public boolean hasActiveProgram(){
 		return (this.program != null);
+	}
+	
+	/**
+	 * Method to start the execution of this worm's program.
+	 * @effect	The worm will act as defined in the program.
+	 * 
+	 */
+	
+	public void executeProgram(){
+		getProgram().execute();
 	}
 
 }
