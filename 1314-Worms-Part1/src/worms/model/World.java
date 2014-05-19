@@ -556,6 +556,14 @@ public class World {
 		return food;
 	}
 	
+	/**
+	 * Method to drop the food, and thus place it into a valid position.
+	 * 
+	 * @param 	food
+	 * 			The food to be dropped
+	 * @post	The food will be in a valid position according to the map.
+	 */
+	
 	public void dropFood(Food food){
 		while (! (food.getWorld().isAdjacent(food.getX(),food.getY(),food.getRadius())) && (food.getWorld().objectInWorld(food.getX(), food.getY(),food.getRadius()))){
 			food.setY(food.getY() - (food.getWorld().heightPXL()/2));
