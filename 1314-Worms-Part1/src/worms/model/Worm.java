@@ -613,40 +613,25 @@ public class Worm extends Jump {
 	
 	@Basic @Raw
 	public double getJumpForce(){
-		return ((5*getActionPoints())+(getMass()*9.80665));
+		return ((5.0*getActionPoints())+(getMass()*9.80665));
 	}
-
-	/**
-	 * Return the time it will take to potentially make a jump with respect to the worms details.
-	 * 
-	 * @return	The time a potential jump will take.
-	 * 		  |	result == distance/(initialVelocity*cos(initialDirection))
-	 */
 	
-	public double getJumpTime(double timeStep){
-		double[] newPos = new double[2];
-		if(getActionPoints() == 0 || getOrientation() >= Math.PI || getOrientation() == 0){
-			return 0;
+	private double getInitialVelocity(){
+		return (getJumpForce()/getMass() * 0.5);
+	}
+	
+	public double jumpTime(double timeS){
+		double time = (getRadius()/getInitialVelocity());
+		double[] temp = jumpStep(time);
+		double dX = temp[0];
+		double dY = temp[1];
+		while(!this.getWorld().isAdjacent(dX, dX, getRadius()) && (! getWorld().isImpassable(dX, dY, getRadius())) && (getWorld().objectInWorld(dX, dY, getRadius()))){
+			time = time + timeS;
+			temp = jumpStep(time);
+			dX = temp[0];
+			dY = temp[1];
 		}
-		boolean cannotPass = false;
-		int cnt = 0;
-		while(!cannotPass && !getWorld().objectInWorld(getX(), getY(), getRadius())){
-			cnt++;
-			newPos = jumpStep(cnt*timeStep);
-			if(getWorld().isImpassable(newPos[0], newPos[1], getRadius())){
-				cannotPass = true;
-			}
-		}
-		boolean adPos = false;
-		while((!adPos && cannotPass && !getWorld().objectInWorld(newPos[0], newPos[1], getRadius()))){
-			cnt--;
-			newPos = jumpStep(cnt*timeStep);			
-			if(getWorld().isAdjacent(newPos[0], newPos[1], getRadius())){
-				adPos = true;
-				return cnt*timeStep;
-			}
-		}
-		return cnt*timeStep;
+		return time;
 	}
 	
 	/**
@@ -659,11 +644,7 @@ public class Worm extends Jump {
 	 */
 
 	public boolean canJump(){
-		boolean canJump = true;
-		if(getActionPoints() == 0){
-			canJump = false;
-		}
-		return canJump;
+		return(getActionPoints() > 0);
 	}
 	
 	/**
@@ -887,30 +868,6 @@ public class Worm extends Jump {
 		}
 	}
 	
-	
-	/**
-	 * Method to calculate the time needed for this jump.
-	 * 
-	 * @param 	timeS
-	 * 			The timestep.
-	 * @return	The time that a jump will be executed for.
-	 */
-	
-	public double jumpTime(double timeS){
-		double t;
-		if(getDirection() == 0 || getDirection() == Math.PI/2){
-			throw new IllegalStateException("Not able to jump.");
-		}
-		
-		t = timeS;
-		double[] pos = new double[]{getX(), getY()};
-		while(!getWorld().isImpassable(pos[0], pos[1], getRadius())){
-			pos = jumpStep(t);
-			t = t + timeS;
-		}
-		return t;
-	}
-	
 	/**
 	 * Method to calculate the position an object would be after performing a jump.
 	 * 
@@ -920,17 +877,16 @@ public class Worm extends Jump {
 	 */
 	
 	public double[] jumpStep(double time){
-		if(getDirection() == 0 || getDirection() == Math.PI/2){
-			return new double[]{getX(), getY()};
+		if(time < 0){
+			throw new IllegalArgumentException("Time is less than 0");
 		}
-		double[] positionPerTime = new double[2];
-		double v0 = ((getForce()/getMass())*0.5);
-		double v0x = (v0*Math.cos(getDirection()));
-		double v0y = (v0*Math.sin(getDirection()));
-		positionPerTime[0] = (getX()+(v0x*time));
-		positionPerTime[1] = (getY()+((v0y*time)-((9.80665*time*time/2))));
-		
-		return positionPerTime;
+		double v0 = getInitialVelocity();
+		double vX = v0 * Math.cos(getOrientation());
+		double vY = v0 * Math.sin(getOrientation());
+		double dX = getX() + (vX * time);
+		double dY = getY() + (vY * time - 0.5*9.80665*Math.pow(time, 2));
+		double[] step = {dX, dY};
+		return step;
 	}
 	
 	/**
@@ -944,15 +900,29 @@ public class Worm extends Jump {
 	 */
 	
 	public void jump(double timeS){
-		if(getDirection() == 0 || getDirection() == Math.PI || getDirection() == 2*Math.PI || getDirection() == Math.PI/2){
-			throw new IllegalStateException("Can't jump at the current angle!");
+		if(!canJump()){
+			throw new IllegalStateException("Unable to jump");
 		}
-		setX(jumpStep(this.jumpTime(timeS))[0]);
-		setY(jumpStep(this.jumpTime(timeS))[1]);
-		setActionPoints(0);
-		eat();
-		fall();
-		eat();
+ 		double t = (getRadius()/(getInitialVelocity()*4));
+		double[] temp = jumpStep(t);
+		double dX = temp[0];
+		double dY = temp[1];
+		while(!getWorld().isAdjacent(dX, dY, getRadius()) && !getWorld().isImpassable(dX, dY, getRadius()) && getWorld().objectInWorld(dX, dY, getRadius())){
+			t += timeS;
+			temp = jumpStep(t);
+			dX = temp[0];
+			dY = temp[1];
+		}
+		if(!getWorld().objectInWorld(dX, dY, getRadius())){
+			setHitPoints(0);
+			this.remove();
+		}
+		else{
+			setX(dX);
+			setY(dY);
+			setActionPoints(0);
+			eat();
+		}
 	}
 	
 	/**

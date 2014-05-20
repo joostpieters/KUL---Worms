@@ -195,7 +195,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public double getJumpTime(Worm worm, double timeStep) {
-		return worm.getJumpTime(timeStep);
+		return worm.jumpTime(timeStep);
 	}
 
 	@Override
@@ -298,12 +298,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public void jump(Worm worm, double timeStep) {
-		try{
 			worm.jump(timeStep);
-		}
-		catch(Exception e){
-			throw new ModelException("Can't jump: "+e.getMessage());
-		}
 	}
 
 	@Override
