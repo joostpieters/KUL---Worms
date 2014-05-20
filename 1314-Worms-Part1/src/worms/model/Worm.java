@@ -625,7 +625,7 @@ public class Worm extends Jump {
 		double[] temp = jumpStep(time);
 		double dX = temp[0];
 		double dY = temp[1];
-		while(!this.getWorld().isAdjacent(dX, dX, getRadius()) && (! getWorld().isImpassable(dX, dY, getRadius())) && (getWorld().objectInWorld(dX, dY, getRadius()))){
+		while(!getWorld().isImpassable(dX, dY, getRadius()) && getWorld().objectInWorld(dX, dY, getRadius())){
 			time = time + timeS;
 			temp = jumpStep(time);
 			dX = temp[0];
@@ -740,7 +740,7 @@ public class Worm extends Jump {
 	 */
 	
 	public boolean canShoot(){
-		return (!(getActionPoints() == 0) && (!getWorld().isImpassable(getX(), getY(), getRadius()))); //add removed
+		return ((getActionPoints() != 0) && (!getWorld().isImpassable(getX(), getY(), getRadius()))); //add removed
 	}
 	
 	/**
@@ -907,7 +907,7 @@ public class Worm extends Jump {
 		double[] temp = jumpStep(t);
 		double dX = temp[0];
 		double dY = temp[1];
-		while(!getWorld().isAdjacent(dX, dY, getRadius()) && !getWorld().isImpassable(dX, dY, getRadius()) && getWorld().objectInWorld(dX, dY, getRadius())){
+		while(!getWorld().isImpassable(dX, dY, getRadius()) && getWorld().objectInWorld(dX, dY, getRadius())){
 			t += timeS;
 			temp = jumpStep(t);
 			dX = temp[0];

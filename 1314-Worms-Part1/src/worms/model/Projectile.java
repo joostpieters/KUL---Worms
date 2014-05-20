@@ -135,29 +135,6 @@ public abstract class Projectile extends Jump{
 	}
 	
 	/**
-	 * Method to calculate the time needed for this jump.
-	 * 
-	 * @param 	timeS
-	 * 			The timestep.
-	 * @return	The time that a jump will be executed for.
-	 */
-	
-	public double jumpTime(double timeS){
-		double t;
-		if(getDirection() == 0 || getDirection() == Math.PI/2){
-			throw new IllegalStateException("Not able to jump.");
-		}
-		
-		t = timeS;
-		double[] pos = new double[]{getX(), getY()};
-		while(!getWorld().isImpassable(pos[0], pos[1], getRadius())){
-			pos = jumpStep(t);
-			t = t + timeS;
-		}
-		return t;
-	}
-	
-	/**
 	 * Method to calculate the position an object would be after performing a jump.
 	 * 
 	 * @param 	time
@@ -166,17 +143,16 @@ public abstract class Projectile extends Jump{
 	 */
 	
 	public double[] jumpStep(double time){
-		if(getDirection() == 0 || getDirection() == Math.PI/2){
-			return new double[]{getX(), getY()};
+		if(time < 0){
+			throw new IllegalArgumentException("Time is less than 0");
 		}
-		double[] positionPerTime = new double[2];
-		double v0 = ((getForce()/getMass())*0.5);
-		double v0x = (v0*Math.cos(getDirection()));
-		double v0y = (v0*Math.sin(getDirection()));
-		positionPerTime[0] = (getX()+(v0x*time));
-		positionPerTime[1] = (getY()+((v0y*time)-((9.80665*time*time/2))));
-		
-		return positionPerTime;
+		double v0 = getInitialVelocity();
+		double vX = v0 * Math.cos(getDirection());
+		double vY = v0 * Math.sin(getDirection());
+		double dX = getX() + (vX * time);
+		double dY = getY() + (vY * time - 0.5*9.80665*Math.pow(time, 2));
+		double[] step = {dX, dY};
+		return step;
 	}
 	
 	/**
@@ -190,11 +166,43 @@ public abstract class Projectile extends Jump{
 	 */
 	
 	public void jump(double timeS){
-		if(getDirection() == 0 || getDirection() == Math.PI || getDirection() == 2*Math.PI || getDirection() == Math.PI/2){
-			throw new IllegalStateException("Can't jump at the current angle!");
+ 		double t = (getRadius()/(getInitialVelocity()*4));
+		double[] temp = jumpStep(t);
+		double dX = temp[0];
+		double dY = temp[1];
+		while(!getWorld().isImpassable(dX, dY, getRadius()) && getWorld().objectInWorld(dX, dY, getRadius())){
+			t += timeS;
+			temp = jumpStep(t);
+			dX = temp[0];
+			dY = temp[1];
 		}
-		setX(jumpStep(this.jumpTime(timeS))[0]);
-		setY(jumpStep(this.jumpTime(timeS))[1]);
+		if(!getWorld().objectInWorld(dX, dY, getRadius())){
+			this.remove();
+		}
+		else{
+			setX(dX);
+			setY(dY);
+
+		}
+	}
+
+	public double jumpTime(double timeS){
+		double time = (getRadius()/getInitialVelocity());
+		double[] temp = jumpStep(time);
+		double dX = temp[0];
+		double dY = temp[1];
+		while(!getWorld().isImpassable(dX, dY, getRadius())){
+			time = time + timeS;
+			temp = jumpStep(time);
+			dX = temp[0];
+			dY = temp[1];
+		}
+		return time;
+	}
+	
+	private double getInitialVelocity(){
+		double v0 = (getForce()/getMass())*0.5;
+		return v0;
 	}
 	
 	/**

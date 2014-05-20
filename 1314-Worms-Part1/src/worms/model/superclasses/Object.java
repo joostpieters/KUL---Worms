@@ -216,7 +216,7 @@ public abstract class Object {
 	
 	public void remove(){
 			World ex = this.getWorld();
-			ex.delObjects(this);
+			//ex.delObjects(this);
 			this.world = null;
 			this.isRemoved = true;
 

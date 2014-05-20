@@ -41,6 +41,9 @@ public class Facade implements IFacade {
 
 	@Override
 	public double[] getJumpStep(Worm worm, double t){
+		if(!worm.canJump()){
+			throw new ModelException("Worm cannot jump: no AP left");
+		}
 		return worm.jumpStep(t);
 	}
 
@@ -298,7 +301,12 @@ public class Facade implements IFacade {
 
 	@Override
 	public void jump(Worm worm, double timeStep) {
-			worm.jump(timeStep);
+			try{
+				worm.jump(timeStep);
+			}
+			catch(Exception e){
+				throw new ModelException("Worm can't jump: "+e.getMessage());
+			}
 	}
 
 	@Override
@@ -319,12 +327,8 @@ public class Facade implements IFacade {
 
 	@Override
 	public void shoot(Worm worm, int yield) {
-		try{
 			worm.shoot(yield);
-		}
-		catch(Exception e){
-			throw new ModelException("Not able to shoot with following error: "+e.getMessage());
-		}
+
 	}
 
 	@Override

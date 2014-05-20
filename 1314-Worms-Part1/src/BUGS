@@ -3,7 +3,8 @@ CURRENT BUGS THAT NEED TO BE FIXED
 **********************************
 
 - Game doesn't finish correctly for some reason.
-- test
+- Projectiles should be revised completely.
+- The entire program system needs to be revamped.
 
 ***********
 FIXED BUGS
@@ -25,3 +26,4 @@ FIXED BUGS
 - SetWorld sets correctly for projectiles now.
 - Jump works.
 - Worm actually being removed when out of world.
+- Jumping fixed entirely.
