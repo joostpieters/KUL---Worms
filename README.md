@@ -3,7 +3,7 @@ OGPProject
 
 Project voor het vak: Objectgericht Programmeren in JAVA.
 
-This project is linked directly to my eclipse workspace, so changes will be updated quite fast and regularly.
+This project is linked directly to my eclipse workspace, so changes will be updloaded quite fast and regularly.
 Any questions about this project are to be redirected to the following address:
 
 kristof.achten@student.kuleuven.be
