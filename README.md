@@ -12,7 +12,7 @@ Other than that, I'm still looking for testers. Feel free to download the source
 eclipse and run it. All bugs are to be emailed or reported via the feature on github. Another possibility is reporting
 them via my bugtracker:
 
-http://bt.divyak.org/
+http://divyak.org/bt/
 
 Thanks.
 
