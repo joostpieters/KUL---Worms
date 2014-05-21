@@ -129,9 +129,13 @@ public class Worm extends Jump {
 	@Raw
 	public static boolean isValidName(String name){
 		String validLetters = "\"\' abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+		String validFirstLetter = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		boolean validName = true;
 		int lenght = name.length();
-		for(int i = 0; i < lenght; i++){
+		if(lenght < 2 || !validFirstLetter.contains(name.subSequence(0, 1))){
+			validName = false;
+		}
+		for(int i = 1; i < lenght; i++){
 			if(!validLetters.contains(name.subSequence(i, i + 1))){
 				validName = false;
 				i = lenght;

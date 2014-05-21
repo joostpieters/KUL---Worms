@@ -43,10 +43,10 @@ public class World {
 	 * All of the variables and constants used in this class.
 	 */
 	
-	private Set<Worm> wormsList;
-	private Set<Food> foodlist;
-	private Set<Teams> teamsList;
-	private Set<Projectile> projList;
+	private List<Worm> wormsList;
+	private List<Food> foodlist;
+	private List<Teams> teamsList;
+	private List<Projectile> projList;
 	private Iterator<Worm> switchWorm;
 	private double width;
 	private double height;
@@ -94,10 +94,10 @@ public class World {
 		this.height = height;
 		this.passable = passable;
 		this.random = random;
-		wormsList = new LinkedHashSet<Worm>();
-		foodlist = new HashSet<Food>();
-		teamsList = new LinkedHashSet<Teams>();
-		projList = new HashSet<Projectile>();
+		wormsList = new ArrayList<Worm>();
+		foodlist = new ArrayList<Food>();
+		teamsList = new ArrayList<Teams>();
+		projList = new ArrayList<Projectile>();
 	}
 	
 	/**
@@ -702,7 +702,7 @@ public class World {
 	 */
 	
 	@Basic
-	public Set<Projectile> getProjectile(){
+	public List<Projectile> getProjectile(){
 		return projList;
 	}
 	
@@ -713,7 +713,7 @@ public class World {
 	 */
 	
 	@Basic
-	public Set<Food> getFood(){
+	public List<Food> getFood(){
 		return foodlist;
 	}
 	
@@ -724,7 +724,7 @@ public class World {
 	 */
 	
 	@Basic
-	public Set<Worm> getWorms(){
+	public List<Worm> getWorms(){
 		return wormsList;
 	}
 	
@@ -736,7 +736,7 @@ public class World {
 	
 	@Basic @Raw
 	public boolean isFinished(){
-		return finished ;
+		return (!(getWinner() == null));
 	}
 	
 	/**
@@ -861,22 +861,13 @@ public class World {
 	 */
 	
 	public String getWinner(){
-		if(teamsList.size() == 1){
-			java.lang.Object[] winners = getAllTeams().toArray();
-			Teams winner = (Teams)winners[0];
-			String string = "Team " + winner.getTName();
-			return string;
+		if(wormsList.size() == 1){
+			return wormsList.get(0).getName();
 		}
-		else{
-			java.lang.Object[] winnersWorm = getWorms().toArray();
-			try{
-				Worm winnerWorm = (Worm)winnersWorm[0];
-				return winnerWorm.getName();
-			}
-			catch(ArrayIndexOutOfBoundsException e){
-				return "Nobody!";
-			}
+		else if(teamsList.size() == 1){
+			return "Team: "+teamsList.get(0).getTName();
 		}
+		else return null;
 	}
 	
 	/**

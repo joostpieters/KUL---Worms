@@ -2,9 +2,8 @@
 CURRENT BUGS THAT NEED TO BE FIXED
 **********************************
 
-- Game doesn't finish correctly for some reason.
 - Projectiles should be revised completely.
-- The entire program system needs to be revamped.
+- The entire program system needs to be done.
 
 ***********
 FIXED BUGS
@@ -27,3 +26,6 @@ FIXED BUGS
 - Jump works.
 - Worm actually being removed when out of world.
 - Jumping fixed entirely.
+- Game finishes correctly.
+- Naming is now up to standards, also fixed some compatibility issues.
+- Worms now deleting correctly.

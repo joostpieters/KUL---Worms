@@ -198,7 +198,14 @@ public class Facade implements IFacade {
 
 	@Override
 	public double getJumpTime(Worm worm, double timeStep) {
-		return worm.jumpTime(timeStep);
+		try{
+			return worm.jumpTime(timeStep);
+		}
+		catch(Exception e){
+			System.out.println("Worm no longer exists");
+			worm.remove();
+			return 0;
+		}
 	}
 
 	@Override
