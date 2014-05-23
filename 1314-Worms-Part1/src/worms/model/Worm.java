@@ -34,7 +34,7 @@ public class Worm extends Jump {
 	 * All of the variables and constants used in this class.
 	 */
 	
-	private static String[] names = { "Podrick", "Cartman", "Kenny", "KEVIN", "Towly", "Kris", "Reinout", "Jorn", "Cedric", "Lieselotte", "Pjotr", "Vanessa", "Doctor", "Karen Love", "John", "Geoff", "Jennifer", "Philip", "Captain", "Ted", "Lily", "Marshall", "Barney", "Robin", "Zoe", "Frank", "Bill", "McSoap", "Chris", "Sam", "Lau", "Don", "Jim", "Andy", "James O'Hare", "2Slo", "2Pro", "Peter", "Bart", "Sensei", "Robb", "Arya", "Ann", "Ghost", "Solfatare", "Dietrich", "Lars", "Tom", "McAwesome", "Ayden", "Berta", "Daniel", "Matt", "David", "Hamish", "Capaldi", "Romero", "Calvin", "Bondi"};
+	private static String[] names = { "Podrick", "Cartman", "Kenny", "KEVIN", "Towly", "Kris", "Reinout", "Jorn", "Cedric", "Lieselotte", "Pjotr", "Vanessa", "Doctor", "Karen Love", "John", "Geoff", "Jennifer", "Philip", "Captain", "Ted", "Lily", "Marshall", "Barney", "Robin", "Zoe", "Frank", "Bill", "McSoap", "Chris", "Sam", "Lau", "Don", "Jim", "Andy", "James O'Hare", "TwoSlo", "TwoPro", "Peter", "Bart", "Sensei", "Robb", "Arya", "Ann", "Ghost", "Solfatare", "Dietrich", "Lars", "Tom", "McAwesome", "Ayden", "Berta", "Daniel", "Matt", "David", "Hamish", "Capaldi", "Romero", "Calvin", "Bondi"};
 	private double direction;
 	private double radius = 0.25;
 	private double mass = 0;

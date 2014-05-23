@@ -14,7 +14,9 @@
  */
 
 package worms.model;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import be.kuleuven.cs.som.annotate.*;
@@ -27,7 +29,7 @@ public class Teams {
 	
 	private String name;
 	private World world;
-	private Set<Worm> allWorms;
+	private List<Worm> allWorms;
 	
 	/**
 	 * Constructor for the teams.
@@ -49,7 +51,7 @@ public class Teams {
 			throw new IllegalArgumentException(name);
 		}
 		this.name = name;
-		this.allWorms = new HashSet<Worm>();
+		this.allWorms = new ArrayList<Worm>();
 	}
 	
 	/**
@@ -121,7 +123,7 @@ public class Teams {
 	 */
 	
 	@Basic
-	public Set<Worm> getAllWorms(){
+	public List<Worm> getAllWorms(){
 		return allWorms;
 	}
 

@@ -861,11 +861,16 @@ public class World {
 	 */
 	
 	public String getWinner(){
-		if(wormsList.size() == 1){
-			return wormsList.get(0).getName();
+		for(Teams team : teamsList){
+			if(team.getAllWorms().size() == 0){
+				teamsList.remove(team);
+			}
 		}
-		else if(teamsList.size() == 1){
+		if(teamsList.size() == 1){
 			return "Team: "+teamsList.get(0).getTName();
+		}
+		else if(wormsList.size() == 1){
+			return wormsList.get(0).getName();
 		}
 		else return null;
 	}
