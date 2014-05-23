@@ -1,6 +1,7 @@
 package worms.model;
 
 import worms.gui.game.IActionHandler;
+import worms.model.statements.Statement;
 
 public class Program {
 	
@@ -39,7 +40,7 @@ public class Program {
 	
 	public void execute(){
 		try{
-			statement.execute(this);
+			statement.run();
 		}
 		catch(Error e){
 			System.out.println("Program failed: "+e.getMessage());
@@ -47,5 +48,10 @@ public class Program {
 		if(!worm.isActive()){
 			return;
 		}
+	}
+
+	public void terminate() {
+		// TODO Auto-generated method stub
+		
 	}
 }

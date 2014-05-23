@@ -6,7 +6,6 @@ CURRENT BUGS THAT NEED TO BE FIXED
 - Check all headings etc. (Sunday)
 - Hand in project (Sunday)
 - Fix program system (Saturday)
-- Remove "ate" debug (Saturday)
 - Revamp facade a little bit.(Saturday)
 
 ***********
@@ -33,4 +32,5 @@ FIXED BUGS
 - Game finishes correctly.
 - Naming is now up to standards, also fixed some compatibility issues.
 - Worms now deleting correctly.
-- Program system done
+- Program system done.
+- Removed some debug.

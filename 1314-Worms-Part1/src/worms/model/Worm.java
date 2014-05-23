@@ -867,7 +867,7 @@ public class Worm extends Jump {
 				getWorld().delFood(food);
 				setRadius(1.1*getRadius());
 				food.remove();
-				System.out.println("ATE");
+				//System.out.println("ATE"); -- Debug
 			}
 		}
 	}

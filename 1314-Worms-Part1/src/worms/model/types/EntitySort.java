@@ -9,7 +9,7 @@ public class EntitySort<Sort> extends Type {
 	}
 	
 	public EntitySort(){
-		setValue(null);
+		this.sort = null;
 	}
 
 	@Override
@@ -19,9 +19,6 @@ public class EntitySort<Sort> extends Type {
 
 	@Override
 	public void setValue(Object obj) {
-		if(!(obj instanceof worms.model.superclasses.Object)){ //Worm or food or projectile
-			return;
-		}
 		this.sort = (Sort) obj;
 	}
 
