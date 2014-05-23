@@ -10,7 +10,7 @@ public class Sqrt extends Expression{
 
 	@Override
 	public DoubleLit getValue() {
-		return new DoubleLit(Math.sqrt((Double)exp.getValue());
+		return new DoubleLit(Math.sqrt((Double)exp.getValue()));
 	}
 
 	@Override

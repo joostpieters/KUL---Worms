@@ -23,4 +23,9 @@ public class DoubleLit extends Expression{
 		return dbl;
 	}
 
+	@Override
+	public String toString() {
+		return dbl.toString();
+	}
+
 }

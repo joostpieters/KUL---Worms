@@ -23,5 +23,15 @@ public class BooleanLit extends Expression {
 		return bool;
 	}
 
+	@Override
+	public String toString() {
+		if(bool.getValue() == true){
+			return "True";
+		}
+		else{
+			return "False";
+		}
+	}
+
 	
 }
