@@ -2,8 +2,12 @@
 CURRENT BUGS THAT NEED TO BE FIXED
 **********************************
 
-- Projectiles should be revised completely.
-- The entire program system needs to be done.
+- Projectiles should be revised completely. (Sunday)
+- Check all headings etc. (Sunday)
+- Hand in project (Sunday)
+- Fix program system (Saturday)
+- Remove "ate" debug (Saturday)
+- Revamp facade a little bit.(Saturday)
 
 ***********
 FIXED BUGS
@@ -29,3 +33,4 @@ FIXED BUGS
 - Game finishes correctly.
 - Naming is now up to standards, also fixed some compatibility issues.
 - Worms now deleting correctly.
+- Program system done
