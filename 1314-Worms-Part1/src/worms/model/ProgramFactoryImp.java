@@ -38,8 +38,7 @@ public class ProgramFactoryImp implements ProgramFactory<Expression, Statement, 
 
 	@Override
 	public Expression createNull(int line, int column) {
-		// TODO Auto-generated method stub
-		return null;
+		return new NullLit();
 	}
 
 	@Override
@@ -94,8 +93,7 @@ public class ProgramFactoryImp implements ProgramFactory<Expression, Statement, 
 
 	@Override
 	public Expression createSearchObj(int line, int column, Expression e) {
-		// TODO Auto-generated method stub
-		return null;
+		return new SearchObject(e);
 	}
 
 	@Override
@@ -110,14 +108,12 @@ public class ProgramFactoryImp implements ProgramFactory<Expression, Statement, 
 
 	@Override
 	public Expression createVariableAccess(int line, int column, String name) {
-		// TODO Auto-generated method stub
-		return null;
+		return new VariableAccess(name);
 	}
 
 	@Override
 	public Expression createVariableAccess(int line, int column, String name,
 			Type type) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -229,37 +225,32 @@ public class ProgramFactoryImp implements ProgramFactory<Expression, Statement, 
 	@Override
 	public Statement createAssignment(int line, int column,
 			String variableName, Expression rhs) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Assign(variableName, rhs);
 	}
 
 	@Override
 	public Statement createIf(int line, int column, Expression condition,
 			Statement then, Statement otherwise) {
-		// TODO Auto-generated method stub
-		return null;
+		return new If(condition, then, otherwise);
 	}
 
 	@Override
 	public Statement createWhile(int line, int column, Expression condition,
 			Statement body) {
-		// TODO Auto-generated method stub
-		return null;
+		return new While(condition, body);
 	}
 
 	@Override
 	public Statement createForeach(int line, int column,
 			worms.model.programs.ProgramFactory.ForeachType type,
 			String variableName, Statement body) {
-		// TODO Auto-generated method stub
-		return null;
+		return new ForEach(type, variableName, body);
 	}
 
 	@Override
 	public Statement createSequence(int line, int column,
 			List<Statement> statements) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Sequence(statements);
 	}
 
 	@Override
