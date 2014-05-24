@@ -7,6 +7,10 @@ public class WormSelf extends Expression{
 
 	public static Worm worm;
 
+	public WormSelf(){
+		//Nothing to declare
+	}
+	
 	public WormSelf(Worm worm){
 		this.worm = worm;
 	}

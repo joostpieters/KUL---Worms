@@ -11,34 +11,29 @@ public class ProgramFactoryImp implements ProgramFactory<Expression, Statement, 
 
 	@Override
 	public Expression createDoubleLiteral(int line, int column, double d) {
-		// TODO Auto-generated method stub
-		return null;
+		return new DoubleLit(d);
 	}
 
 	@Override
 	public Expression createBooleanLiteral(int line, int column, boolean b) {
-		// TODO Auto-generated method stub
-		return null;
+		return new BooleanLit(b);
 	}
 
 	@Override
 	public Expression createAnd(int line, int column, Expression e1,
 			Expression e2) {
-		// TODO Auto-generated method stub
-		return null;
+		return new AndExp(e1, e2);
 	}
 
 	@Override
 	public Expression createOr(int line, int column, Expression e1,
 			Expression e2) {
-		// TODO Auto-generated method stub
-		return null;
+		return new OrExp(e1, e2);
 	}
 
 	@Override
 	public Expression createNot(int line, int column, Expression e) {
-		// TODO Auto-generated method stub
-		return null;
+		return new NotExp(e);
 	}
 
 	@Override
@@ -49,62 +44,52 @@ public class ProgramFactoryImp implements ProgramFactory<Expression, Statement, 
 
 	@Override
 	public Expression createSelf(int line, int column) {
-		// TODO Auto-generated method stub
-		return null;
+		return new WormSelf();
 	}
 
 	@Override
 	public Expression createGetX(int line, int column, Expression e) {
-		// TODO Auto-generated method stub
-		return null;
+		return new GetX(e);
 	}
 
 	@Override
 	public Expression createGetY(int line, int column, Expression e) {
-		// TODO Auto-generated method stub
-		return null;
+		return new GetY(e);
 	}
 
 	@Override
 	public Expression createGetRadius(int line, int column, Expression e) {
-		// TODO Auto-generated method stub
-		return null;
+		return new GetRadius(e);
 	}
 
 	@Override
 	public Expression createGetDir(int line, int column, Expression e) {
-		// TODO Auto-generated method stub
-		return null;
+		return new GetDirection(e);
 	}
 
 	@Override
 	public Expression createGetAP(int line, int column, Expression e) {
-		// TODO Auto-generated method stub
-		return null;
+		return new GetAP(e);
 	}
 
 	@Override
 	public Expression createGetMaxAP(int line, int column, Expression e) {
-		// TODO Auto-generated method stub
-		return null;
+		return new GetMaxAP(e);
 	}
 
 	@Override
 	public Expression createGetHP(int line, int column, Expression e) {
-		// TODO Auto-generated method stub
-		return null;
+		return new GetHP(e);
 	}
 
 	@Override
 	public Expression createGetMaxHP(int line, int column, Expression e) {
-		// TODO Auto-generated method stub
-		return null;
+		return new GetMaxHP(e);
 	}
 
 	@Override
 	public Expression createSameTeam(int line, int column, Expression e) {
-		// TODO Auto-generated method stub
-		return null;
+		return new SameTeam(e);
 	}
 
 	@Override
@@ -115,14 +100,12 @@ public class ProgramFactoryImp implements ProgramFactory<Expression, Statement, 
 
 	@Override
 	public Expression createIsWorm(int line, int column, Expression e) {
-		// TODO Auto-generated method stub
-		return null;
+		return new IsWorm(e);
 	}
 
 	@Override
 	public Expression createIsFood(int line, int column, Expression e) {
-		// TODO Auto-generated method stub
-		return null;
+		return new IsFood(e);
 	}
 
 	@Override
@@ -141,125 +124,106 @@ public class ProgramFactoryImp implements ProgramFactory<Expression, Statement, 
 	@Override
 	public Expression createLessThan(int line, int column, Expression e1,
 			Expression e2) {
-		// TODO Auto-generated method stub
-		return null;
+		return new SmallerThan(e1, e2);
 	}
 
 	@Override
 	public Expression createGreaterThan(int line, int column, Expression e1,
 			Expression e2) {
-		// TODO Auto-generated method stub
-		return null;
+		return new BiggerThan(e1, e2);
 	}
 
 	@Override
 	public Expression createLessThanOrEqualTo(int line, int column,
 			Expression e1, Expression e2) {
-		// TODO Auto-generated method stub
-		return null;
+		return new SmallerOrEqual(e1, e2);
 	}
 
 	@Override
 	public Expression createGreaterThanOrEqualTo(int line, int column,
 			Expression e1, Expression e2) {
-		// TODO Auto-generated method stub
-		return null;
+		return new BiggerOrEqual(e1, e2);
 	}
 
 	@Override
 	public Expression createEquality(int line, int column, Expression e1,
 			Expression e2) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Equals(e1, e2);
 	}
 
 	@Override
 	public Expression createInequality(int line, int column, Expression e1,
 			Expression e2) {
-		// TODO Auto-generated method stub
-		return null;
+		return new NotEquals(e1, e2);
 	}
 
 	@Override
 	public Expression createAdd(int line, int column, Expression e1,
 			Expression e2) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Addition(e1, e2);
 	}
 
 	@Override
 	public Expression createSubtraction(int line, int column, Expression e1,
 			Expression e2) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Subtraction(e1, e1);
 	}
 
 	@Override
 	public Expression createMul(int line, int column, Expression e1,
 			Expression e2) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Multiplication(e1,  e2);
 	}
 
 	@Override
 	public Expression createDivision(int line, int column, Expression e1,
 			Expression e2) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Division(e1, e2);
 	}
 
 	@Override
 	public Expression createSqrt(int line, int column, Expression e) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Sqrt(e);
 	}
 
 	@Override
 	public Expression createSin(int line, int column, Expression e) {
-		// TODO Auto-generated method stub
-		return null;
+		return null; // Not for students that work alone.
 	}
 
 	@Override
 	public Expression createCos(int line, int column, Expression e) {
-		// TODO Auto-generated method stub
-		return null;
+		return null; // Not for students that work alone.
 	}
 
 	@Override
 	public Statement createTurn(int line, int column, Expression angle) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Turn(angle);
 	}
 
 	@Override
 	public Statement createMove(int line, int column) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Move();
 	}
 
 	@Override
 	public Statement createJump(int line, int column) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Jump();
 	}
 
 	@Override
 	public Statement createToggleWeap(int line, int column) {
-		// TODO Auto-generated method stub
-		return null;
+		return new ToggleWeapon();
 	}
 
 	@Override
 	public Statement createFire(int line, int column, Expression yield) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Fire(yield);
 	}
 
 	@Override
 	public Statement createSkip(int line, int column) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Skip();
 	}
 
 	@Override
@@ -300,26 +264,22 @@ public class ProgramFactoryImp implements ProgramFactory<Expression, Statement, 
 
 	@Override
 	public Statement createPrint(int line, int column, Expression e) {
-		// TODO Auto-generated method stub
-		return null;
+		return new Print(e);
 	}
 
 	@Override
 	public Type createDoubleType() {
-		// TODO Auto-generated method stub
-		return null;
+		return new DoubleSort();
 	}
 
 	@Override
 	public Type createBooleanType() {
-		// TODO Auto-generated method stub
-		return null;
+		return new BooleanSort();
 	}
 
 	@Override
 	public Type createEntityType() {
-		// TODO Auto-generated method stub
-		return null;
+		return new EntitySort<>();
 	}
 	
 
