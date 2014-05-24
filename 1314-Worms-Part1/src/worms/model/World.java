@@ -34,6 +34,7 @@ import java.util.Random;
 import java.util.Set;
 
 import be.kuleuven.cs.som.annotate.*;
+import worms.model.expressions.WormSelf;
 import worms.model.superclasses.Object;
 import worms.util.Util;
 
@@ -761,6 +762,10 @@ public class World {
 		setActiveWorm(switchWorm.next());
 		getActiveWorm().setActionPoints(getActiveWorm().getMaxActionPoints());
 		getActiveWorm().setHitPoints(getActiveWorm().getHitPoints() + 10);
+		if(getActiveWorm().hasActiveProgram()){
+			WormSelf.setWorm(getActiveWorm());
+			getActiveWorm().getProgram().execute();
+		}
 	}
 
 	/**
@@ -820,6 +825,10 @@ public class World {
 				getActiveWorm().remove();
 				nextTurn();
 			}
+		}
+		if(getActiveWorm().hasActiveProgram()){
+			WormSelf.setWorm(getActiveWorm());
+			getActiveWorm().getProgram().execute();
 		}
 		setActiveTeam(null);
 		setStarted();

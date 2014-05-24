@@ -17,7 +17,6 @@ public class EntitySort<Sort> extends Type {
 		return sort;
 	}
 
-	@Override
 	public void setValue(Object obj) {
 		this.sort = (Sort) obj;
 	}

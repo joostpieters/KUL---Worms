@@ -30,4 +30,8 @@ public class WormSelf extends Expression{
 	public static Worm getWorm(){
 		return worm;
 	}
+
+	public static void setWorm(Worm activeWorm) {
+		worm = activeWorm;		
+	}
 }

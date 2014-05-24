@@ -1,3 +1,13 @@
+/**
+ * Implementation of ProgramFactory..
+
+ * @version 1.0
+ * @author 	Kristof Achten <kristof.achten@student.kuleuven.be>
+ * GitHub: https://github.com/Divyak156/OGPProject.git
+ * StudentNr: r0462748 - 1ste Bachelor informatica
+ *
+ */
+
 package worms.model;
 
 import java.util.List;

@@ -16,7 +16,6 @@ public class DoubleSort extends Type {
 		return dbl;
 	}
 
-	@Override
 	public void setValue(Object obj) {
 		if(!(obj instanceof Double)){
 			return;

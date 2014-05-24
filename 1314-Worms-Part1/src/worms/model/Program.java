@@ -1,8 +1,10 @@
 package worms.model;
 
+import java.util.List;
 import java.util.Map;
 
 import worms.gui.game.IActionHandler;
+import worms.model.expressions.WormSelf;
 import worms.model.statements.Statement;
 import worms.model.types.Type;
 
@@ -12,10 +14,12 @@ public class Program {
 	public IActionHandler handler;
 	public Worm worm;
 	private Map<String, Type> vars;
+	private List<Worm> wormslist;
+	private boolean stopped;
 	
 	public Program(Statement statement, IActionHandler handler, Map<String, Type> vars){
-		setStatement(statement);
-		setHandler(handler);
+		this.statement = statement;
+		this.handler = handler;
 		this.vars = vars;
 	}
 	
@@ -44,16 +48,27 @@ public class Program {
 	}
 
 	public void addWorm(Worm worm) {
-		this.worm = worm;
+		try{
+			wormslist.add(worm);
+		}
+		catch(Exception e){
+			
+		}
 	}
 	
-	public Worm getWorm(){
-		return worm;
+	public void removeWorm(Worm worm){
+		wormslist.remove(worm);
 	}
 	
 	public void execute(){
+		stopped = false;
 		try{
 			statement.run();
+			if(WormSelf.getWorm().getHitPoints() <= 0){
+				World world = WormSelf.getWorm().getWorld();
+				WormSelf.getWorm().remove();
+				world.nextTurn();
+			}
 		}
 		catch(Error e){
 			System.out.println("Program failed: "+e.getMessage());
@@ -64,7 +79,6 @@ public class Program {
 	}
 
 	public void terminate() {
-		// TODO Auto-generated method stub
-		
+		stopped = true;
 	}
 }
