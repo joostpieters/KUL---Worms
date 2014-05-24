@@ -7,8 +7,8 @@ CURRENT BUGS THAT NEED TO BE FIXED
 - Write tests (Sunday)
 - Hand in project (Sunday)
 - Fix program system (Saturday)
-	TODO: Assign, For Each, if, while, action, seq.
-- Revamp facade a little bit. (Saturday)
+	TODO: Assign, For Each, if, while, action, seq and also finish searchobj.
+- Finish programfactory (Saturday)
 
 ***********
 FIXED BUGS
@@ -35,4 +35,6 @@ FIXED BUGS
 - Naming is now up to standards, also fixed some compatibility issues.
 - Worms now deleting correctly.
 - Program system done.
+- Facade has been revamped and is functioning correctly.
 - Removed some debug.
+- Programfactory has been implemented.

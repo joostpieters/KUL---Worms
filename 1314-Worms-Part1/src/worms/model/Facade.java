@@ -4,7 +4,12 @@ import java.util.Collection;
 import java.util.Random;
 
 import worms.gui.game.IActionHandler;
+import worms.model.expressions.Expression;
 import worms.model.programs.ParseOutcome;
+import worms.model.programs.ProgramFactory;
+import worms.model.programs.ProgramParser;
+import worms.model.statements.Statement;
+import worms.model.types.Type;
 
 /**
  * Class used to implement the IFacade-class.
@@ -18,10 +23,11 @@ import worms.model.programs.ParseOutcome;
 
 public class Facade implements IFacade {
 	
+	public Facade(){
+	}
 	
 	@Override
 	public Worm createWorm(World world, double x, double y, double direction, double radius, String name, Program program){
-
 			Worm worm = new Worm(world, x, y, direction, radius, name, program);
 			return worm;
 	}
@@ -188,7 +194,12 @@ public class Facade implements IFacade {
 
 	@Override
 	public double[] getJumpStep(Projectile projectile, double t) {
-		return projectile.jumpStep(t);
+		if(t < 0){
+			throw new ModelException("Invalid time to calculate the JumpStep with.");
+		}
+		else{
+			return projectile.jumpStep(t);
+		}
 	}
 
 	@Override
@@ -354,10 +365,16 @@ public class Facade implements IFacade {
 	}
 
 	@Override
-	public ParseOutcome<?> parseProgram(String programText,
-			IActionHandler handler) {
-		// TODO Auto-generated method stub
-		return null;
+	public ParseOutcome<?> parseProgram(String programText, IActionHandler handler) {
+		ProgramParser<Expression, Statement, Type> parser = new ProgramParser<Expression, Statement, Type>(new ProgramFactoryImp());
+		parser.parse(programText);
+		if(!parser.getErrors().isEmpty()){
+			return ParseOutcome.failure(parser.getErrors());
+		}
+		else{
+			Program program = new Program(parser.getStatement(), handler);
+			return ParseOutcome.success(program);
+		}
 	}
 
 	@Override
@@ -367,8 +384,7 @@ public class Facade implements IFacade {
 
 	@Override
 	public boolean isWellFormed(Program program) {
-		// TODO Auto-generated method stub
-		return false;
+		return true; //Not for students that work alone.
 	}
 
 }
