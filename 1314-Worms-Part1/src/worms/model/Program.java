@@ -8,6 +8,16 @@ import worms.model.expressions.WormSelf;
 import worms.model.statements.Statement;
 import worms.model.types.Type;
 
+/**
+ * Class that creates a program object.
+ * 
+ * @version 1.0
+ * @author 	Kristof Achten <kristof.achten@student.kuleuven.be>
+ * GitHub: https://github.com/Divyak156/OGPProject.git
+ * StudentNr: r0462748 - 1ste Bachelor informatica
+ *
+ */
+
 public class Program {
 	
 	private Statement statement;
