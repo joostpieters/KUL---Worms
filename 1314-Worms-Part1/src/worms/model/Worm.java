@@ -1,11 +1,5 @@
 package worms.model;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Random;
-import java.util.Set;
-
 import worms.model.superclasses.Jump;
 import worms.model.weapons.Bazooka;
 import worms.model.weapons.Rifle;
@@ -20,8 +14,16 @@ import be.kuleuven.cs.som.annotate.*;
  * 		 |	Worm.radius >= 0.25
  * @invar	The position of each worm must resemble a valid X and Y coordinate.
  * 		 |  isValidPosition(worm)
+ * @invar	Each worm must have a valid world.
+ * 		 |	getWorld() != null && getWorld.getWorms().contains(this);
+ * @invar	Hitpoints must always be less than the maximum hitpoints.
+ * 		 | 	getHitPoints() <= getMaxHitPoints();	 
+ * @invar	Actionpoints must always be less than the maximum hitpoints.
+ * 		 | 	getActionPoints() <= getMaxActionPoints();	
+ * @invar	The worm must have a valid weapon.
+ * 		 |	isValidWeapon(getCurrentWeapon());
  * 
- * @version 2.0
+ * @version 3.0
  * @author 	Kristof Achten <kristof.achten@student.kuleuven.be>
  * GitHub: https://github.com/Divyak156/OGPProject.git
  * StudentNr: r0462748 - 1ste Bachelor informatica
@@ -34,7 +36,7 @@ public class Worm extends Jump {
 	 * All of the variables and constants used in this class.
 	 */
 	
-	private static String[] names = { "Podrick", "Cartman", "Kenny", "KEVIN", "Towly", "Kris", "Reinout", "Jorn", "Cedric", "Lieselotte", "Pjotr", "Vanessa", "Doctor", "Karen Love", "John", "Geoff", "Jennifer", "Philip", "Captain", "Ted", "Lily", "Marshall", "Barney", "Robin", "Zoe", "Frank", "Bill", "McSoap", "Chris", "Sam", "Lau", "Don", "Jim", "Andy", "James O'Hare", "TwoSlo", "TwoPro", "Peter", "Bart", "Sensei", "Robb", "Arya", "Ann", "Ghost", "Solfatare", "Dietrich", "Lars", "Tom", "McAwesome", "Ayden", "Berta", "Daniel", "Matt", "David", "Hamish", "Capaldi", "Romero", "Calvin", "Bondi"};
+	private static String[] names = { "Podrick", "Cartman", "Kenny", "KEVIN", "Towly", "Kris", "Reinout", "Jorn", "Cedric", "Pjotr", "Vanessa", "Doctor", "Karen Love", "John", "Geoff", "Jennifer", "Philip", "Captain", "Ted", "Lily", "Marshall", "Barney", "Robin", "Zoe", "Frank", "Bill", "McSoap", "Chris", "Sam", "Lau", "Don", "Jim", "Andy", "James O'Hare", "TwoSlo", "TwoPro", "Peter", "Bart", "Sensei", "Robb", "Arya", "Ann", "Ghost", "Solfatare", "Dietrich", "Lars", "Tom", "McAwesome", "Ayden", "Berta", "Daniel", "Matt", "David", "Hamish", "Capaldi", "Romero", "Calvin", "Bondi"};
 	private double direction;
 	private double radius = 0.25;
 	private double mass = 0;
@@ -60,6 +62,10 @@ public class Worm extends Jump {
 	 * 		  	The initial radius of the worm.
 	 * @param 	name
 	 * 		  	The name that will be displayed for the worm.
+	 * @param	world
+	 * 			The world that this worm will belong to.
+	 * @param	prg
+	 * 			The program this worm will run.
 	 * @pre 	The initial name must be a valid name conform to given standards
 	 * 		  | isValidName(getName())
 	 * @pre		The initial radius must be bigger than the minimal radius.
@@ -80,6 +86,8 @@ public class Worm extends Jump {
 	 * 		  |	super(world, x, y, radius);
 	 * @effect	The worm's initial weapon will be set to Rifle.
 	 * 		  |	setWeapons("Rifle");
+	 * @effect	The worm's world will be set to the parameter world.
+	 * 		  | super(world, x, y, radius);
 	 */
 	
 	@Raw
@@ -109,6 +117,8 @@ public class Worm extends Jump {
 	 * 			The x-coordinate of this worm.
 	 * @param 	y
 	 * 			The y-coordinate of this worm.
+	 * @param	prg
+	 * 			The program that this worm will run.
 	 * @effect	A worm will be created with a radius equal to the minimal radius and a random name from the nameslist.
 	 * 		  |	this(world, x, y, Math.PI/2, getMinimalRadius(), names[(int)Math.floor(Math.random()*names.length)]);
 	 */
@@ -123,7 +133,13 @@ public class Worm extends Jump {
 	 * 
 	 * @param 	name
 	 * 			The string to check.
-	 * @return	True if the name contains only letters, spaces and quotationmarks.
+	 * @return	True if the name contains only letters, spaces and quotationmarks. Must start with a capital and be atleast 2 chars long.
+	 * 		  |	if(name.length() < 2 || !validFirstLetter.contains(name.subSequence(0, 1))){
+	 * 		  |		return false;}
+	 * 		  |	for(int i = 1; i < lenght; i++){
+	 *		  |		if(!validLetters.contains(name.subSequence(i, i + 1))){
+	 *		  |			validName = false;
+	 *		  |			i = lenght;}}
 	 */
 	
 	@Raw
@@ -154,8 +170,9 @@ public class Worm extends Jump {
 	 * @post	The new radius will be equal to the newRadius.
 	 * 		  |	new.getRadius() == newRadius;
 	 * @effect	The mass and maximum amount of actionpoints for this worm will be calculated.
-	 * 		  | calcMass(); calcMaxAP;
+	 * 		  | getMaxActionPoints();
 	 * @throws	IllegalRadiusException	The given newRadius is not valid.
+	 * 		  |	result == !isValidRadius;
 	 * 		  	
 	 */
 	
@@ -174,7 +191,7 @@ public class Worm extends Jump {
 	 * Calculate and set the mass for this worm.
 	 * 
 	 * @post	The mass will equal the newly calculated mass.
-	 * 		  |	new.mass == getMass();
+	 * 		  |	new.mass == (DENSITY*((4.0*Math.PI*(this.getRadius()*this.getRadius()*this.getRadius())/3.0)));
 	 */
 	
 	public void calcMass(){
@@ -309,7 +326,7 @@ public class Worm extends Jump {
 	 * @return	The current number of hitpoints for a worm.
 	 */
 	
-	@Raw @Basic 
+	@Basic 
 	public int getHitPoints(){
 		return hitPoints;
 	}
@@ -320,7 +337,7 @@ public class Worm extends Jump {
 	 * @return	The current number of actionpoints given worm has.
 	 */
 	
-	@Raw @Basic
+	@Basic
 	public int getActionPoints(){
 		return actionPoints;
 	}
@@ -330,10 +347,13 @@ public class Worm extends Jump {
 	 *  
 	 * @param 	newName
 	 * 			The new name we would like to give to given worm.
-	 * @post	The new name of this worm will equal newName
+	 * @effect	The new name of this worm will be set to the parameter newName.
 	 * 		  |	new.getName() == newName;
+	 * @throws	IllegalArgumentException	The given name is not up to standards and thus invalid;
+	 * 		  |	!isValidName(newName);
 	 */
 	
+	@Raw
 	public void rename(String newName) throws IllegalArgumentException{
 			if(!isValidName(newName)){
 				throw new IllegalArgumentException(name + " is not a valid name!");
@@ -348,6 +368,7 @@ public class Worm extends Jump {
 	 * @return 	True if and only if a valid fall location can be found..
 	 * 		  |	searchFallLocation(getRadius());
 	 */
+	
 	public boolean canMove(){
 		boolean canMove = true;
 		if(isActive()){
@@ -427,15 +448,21 @@ public class Worm extends Jump {
 	/**
 	 * Make a worm move a certain amount of steps conform to his current orientation.
 	 * 
-	 * @param 	steps
-	 * 			The amount of steps given worm is going to move.
 	 * @post	The x and y coordinates will have changed according to the number of steps.
-	 * @effect	The worm will eat if there is food on his fall location.
+	 * @effect	The worm's position and actionpoints will be updated. And the worm will eat.
+	 * 		  | setX(newX);
+			  |	setY(newY);
+			  |	setActionPoints(newAP);
+			  |	fall();
+			  |	eat();
 	 * @throws 	IllegalStateException() Cannot move this way.
-	 * 		  |	!canMove(steps);
+	 * 		  |	!canMove;
 	 */
 		
 		public void move() throws IllegalStateException{
+			if(!canMove()){
+				throw new IllegalStateException("canMove returned false");
+			}
 			double currentDistance = getRadius();
 			double[] newLocation = null;
 			while (newLocation == null && currentDistance>=0.1){
@@ -588,7 +615,7 @@ public class Worm extends Jump {
 	 * 			The angle we would like given worm to turn.
 	 * @pre		You must have sufficient amount of ActionPoints
 	 * 		  |	canTurn = true;
-	 * @post	The worm will be facing at a new angle consisting of the previous angle
+	 * @effect	The worm will be facing at a new angle consisting of the previous angle
 	 * 			with the angle specified as parameter added to it.
 	 */
 	
@@ -615,14 +642,35 @@ public class Worm extends Jump {
 	 * 		  |	result == ((5*actionPoints)+(mass*9.80665))
 	 */
 	
-	@Basic @Raw
 	public double getJumpForce(){
 		return ((5.0*getActionPoints())+(getMass()*9.80665));
 	}
 	
+	/**
+	 * Method to return the initial velocity of a worm.
+	 * 
+	 * @return 	The initial velocity.
+	 * 		  | (getJumpForce()/getMass() * 0.5);
+	 */
+	
 	private double getInitialVelocity(){
 		return (getJumpForce()/getMass() * 0.5);
 	}
+	
+	/**
+	 * Method to calculate the jumpTime for a worm.
+	 * 
+	 * @param	timeS
+	 * 			The timestep.
+	 * @return	The time it takes to jump.
+	 *		  |	while(!getWorld().isImpassable(dX, dY, getRadius()) && getWorld().objectInWorld(dX, dY, getRadius())){
+	 *		  |		time = time + timeS;
+	 *		  |		temp = jumpStep(time);
+	 *		  |		dX = temp[0];
+	 *		  |		dY = temp[1];
+	 *		  |	}
+	 *		  |	return time;
+	 */
 	
 	public double jumpTime(double timeS){
 		double time = (getRadius()/getInitialVelocity());
@@ -766,7 +814,7 @@ public class Worm extends Jump {
 	 * 		  |	!canShoot();
 	 */
 	
-	public void shoot(int yield){
+	public void shoot(int yield) throws IllegalStateException{
 		if(!canShoot()){
 			throw new IllegalStateException("Not able to fire. Get into the bunkers!");
 		}
@@ -954,6 +1002,7 @@ public class Worm extends Jump {
 	 * Check whether this worm currently has an active program.
 	 * 
 	 * @return	True if there is a program active, false otherwise.
+	 * 		  |	getProgram != null;
 	 */
 	
 	public boolean hasActiveProgram(){
@@ -962,7 +1011,9 @@ public class Worm extends Jump {
 	
 	/**
 	 * Method to start the execution of this worm's program.
+	 * 
 	 * @effect	The worm will act as defined in the program.
+	 * 		  |	getProgram().execute();
 	 * 
 	 */
 	

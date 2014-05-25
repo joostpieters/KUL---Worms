@@ -1,3 +1,8 @@
+package worms.model;
+import java.util.ArrayList;
+import java.util.List;
+import be.kuleuven.cs.som.annotate.*;
+
 /**
  * A class of Teams containing worms.
  * 
@@ -12,14 +17,6 @@
  * StudentNr: r0462748 - 1ste Bachelor informatica
  *
  */
-
-package worms.model;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import be.kuleuven.cs.som.annotate.*;
 
 public class Teams {
 	

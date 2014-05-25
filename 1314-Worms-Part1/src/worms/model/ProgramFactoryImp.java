@@ -1,3 +1,12 @@
+package worms.model;
+
+import java.util.List;
+
+import worms.model.expressions.*;
+import worms.model.programs.ProgramFactory;
+import worms.model.statements.*;
+import worms.model.types.*;
+
 /**
  * Implementation of ProgramFactory..
 
@@ -7,15 +16,6 @@
  * StudentNr: r0462748 - 1ste Bachelor informatica
  *
  */
-
-package worms.model;
-
-import java.util.List;
-
-import worms.model.expressions.*;
-import worms.model.programs.ProgramFactory;
-import worms.model.statements.*;
-import worms.model.types.*;
 
 public class ProgramFactoryImp implements ProgramFactory<Expression, Statement, Type>{
 

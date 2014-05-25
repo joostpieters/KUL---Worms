@@ -1,3 +1,7 @@
+package worms.model;
+import be.kuleuven.cs.som.annotate.*;
+import worms.model.superclasses.Object;
+
 /**
  * A class of Foods, that are Objects.
 
@@ -7,10 +11,6 @@
  * StudentNr: r0462748 - 1ste Bachelor informatica
  *
  */
-
-package worms.model;
-import be.kuleuven.cs.som.annotate.*;
-import worms.model.superclasses.Object;
 
 public class Food extends Object {
 

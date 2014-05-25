@@ -1,3 +1,7 @@
+package worms.model;
+import be.kuleuven.cs.som.annotate.*;
+import worms.model.superclasses.Jump;
+
 /**
  * A class of projectiles that can be specified, and are an Object.
  * 
@@ -6,16 +10,12 @@
  * @invar	The projectile will spawn in equal direction with of the worm.
  * 		 |	getWorm().getOrientation() == getOrientation();
  * 
- * @version 1.0
+ * @version 2.0
  * @author 	Kristof Achten <kristof.achten@student.kuleuven.be>
  * GitHub: https://github.com/Divyak156/OGPProject.git
  * StudentNr: r0462748 - 1ste Bachelor informatica
  *
  */
-
-package worms.model;
-import be.kuleuven.cs.som.annotate.*;
-import worms.model.superclasses.Jump;
 
 public abstract class Projectile extends Jump{
 	

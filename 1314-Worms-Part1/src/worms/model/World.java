@@ -1,3 +1,14 @@
+package worms.model;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import be.kuleuven.cs.som.annotate.*;
+import worms.model.expressions.WormSelf;
+import worms.model.superclasses.Object;
+import worms.util.Util;
+
 /**
  * A class to create, manage and represent a world in the game.
  * 
@@ -16,27 +27,13 @@
  * @invar	Random may not be null.
  * 		 |	getRandom() != null;
  * 
- * @version 1.0
+ * @version 3.0
  * @author 	Kristof Achten <kristof.achten@student.kuleuven.be>
  * GitHub: https://github.com/Divyak156/OGPProject.git
  * StudentNr: r0462748 - 1ste Bachelor informatica
  *
  */
 
-package worms.model;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
-import be.kuleuven.cs.som.annotate.*;
-import worms.model.expressions.WormSelf;
-import worms.model.superclasses.Object;
-import worms.util.Util;
 
 public class World {
 	
@@ -872,12 +869,15 @@ public class World {
 			}
 		}
 		if(teamsList.size() == 1){
+			setFinished();
 			return "Team: "+teamsList.get(0).getTName();
 		}
 		else if(wormsList.size() == 1){
+			setFinished();
 			return wormsList.get(0).getName();
 		}
 		else return null;
+		
 	}
 	
 	/**
