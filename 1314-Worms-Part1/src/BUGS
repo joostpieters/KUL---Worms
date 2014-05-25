@@ -4,8 +4,8 @@ CURRENT BUGS THAT NEED TO BE FIXED
 
 - Projectiles should be revised completely. (Sunday)
 - Check all headings etc. (Sunday)
-- Write tests (Sunday)
-- Hand in project (Sunday)
+- Make sure the program system converts everything right (E.g.: booleans, doubles and nullliterals)
+- Hand in project (Monday)
 
 ***********
 FIXED BUGS
@@ -36,3 +36,4 @@ FIXED BUGS
 - Removed some debug.
 - Programfactory has been implemented.
 - Program system done!
+- Tests written.

@@ -24,6 +24,7 @@ public class AllTest {
 	private Worm testWorm;
 	private static World world;
 	private static final double EPS = Util.DEFAULT_EPSILON;
+	private static Program prg;
 
 	
 	@Before
@@ -35,7 +36,7 @@ public class AllTest {
 			}
 		}
 		world = new World(15, 10, passable, new Random(9000));
-		testWorm = new Worm(world, 8, 5, Math.PI, 0.5, "Matt");
+		testWorm = new Worm(world, 8, 5, Math.PI, 0.5, "Matt", prg);
 	}
 	
 	@Test
@@ -68,7 +69,7 @@ public class AllTest {
 	@Test
 	public void testIsValidName(){
 		assertTrue("Name is invalid", Worm.isValidName("Peter"));
-		assertTrue("Name is invalid", Worm.isValidName("123Jack"));
+		assertFalse("Name is invalid", Worm.isValidName("123Jack"));
 		assertTrue("Name is invalid", Worm.isValidName("Jack Wolfskin"));
 		assertFalse("Name is invalid", Worm.isValidName("Jack &&é Wolfskin"));
 
@@ -198,17 +199,80 @@ public class AllTest {
 		testWorm.selectNextWeapon();
 		assertEquals("Rifle", testWorm.getWeapon());
 	}
-
+	
 	@Test
-	public void testGame(){
-		Teams team2 = new Teams("Test2");
-		world.addWorm();
-		world.addWorm();
-		world.addWorm();
+	public void testEmptyGame(){
 		world.start();
-		assertFalse("Wrong!", world.isFinished());
-		assertFalse("Wrong!", world.getWorms().isEmpty());
-		assertFalse("Wrong!", world.getActiveWorm() == null);
+		assertTrue(!world.isFinished());
 	}
+	
+	@Test
+	public void testWormGame(){
+		world.addWorm(null);
+		world.start();
+		assertEquals(world.getWorms().get(0).getName(), world.getWinner());
+	}
+	
+	@Test
+	public void multipleWorms(){
+		world.addWorm(null);
+		world.addWorm(null);
+		world.start();
+		assertFalse(world.isFinished());
+	}
+	
+	@Test
+	public void objectOutOfWorld(){
+		Worm w = new Worm(world, -1.0, -1.0, Math.PI, 0.50, "James", null);		
+		assertFalse(world.objectInWorld(w.getX(), w.getY(), w.getRadius()));
+		assertEquals(0.25, w.getRadius(), EPS);
+		assertEquals("James", w.getName());
+	}
+	
+	@Test
+	public void removeFood(){
+		Food f = new Food(world, 2, 2);
+		f.setWorld(world);
+		f.remove();
+		assertFalse(world.getObjects().contains(f));
+	}
+	
+	@Test
+	public void removeWorm(){
+		Worm w = new Worm(world, 1.0, 1.0, Math.PI, 0.50, "James", null);
+		w.setWorld(world);
+		w.remove();
+		assertFalse(world.getObjects().contains(w));
+	}
+	
+	@Test
+	public void emptyWorld(){
+		assertTrue(world.getObjects().isEmpty());
+		assertEquals(null, world.getWinner());
+	}
+	
+	@Test
+	public void edgeCases(){
+		assertTrue(world.validHeight(Double.MAX_VALUE));
+		assertTrue(world.validWidth(Double.MAX_VALUE));
+		assertFalse(world.validHeight(Double.NaN));
+		assertFalse(world.validWidth(Double.NaN));
+	}
+	
+	@Test
+	public void testProgram(){
+		world.addWorm(null);
+		assertFalse(world.getWorms().get(0).hasActiveProgram());
+	}
+	
+	@Test
+	public void testSwitchWeapon(){
+		testWorm.selectNextWeapon();
+		assertEquals(testWorm.getWeapon(), "Bazooka");
+		testWorm.selectNextWeapon();
+		assertEquals(testWorm.getWeapon(), "Rifle");
+	}
+	
+	
 	
 }

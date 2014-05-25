@@ -826,10 +826,6 @@ public class World {
 				nextTurn();
 			}
 		}
-		if(getActiveWorm().hasActiveProgram()){
-			WormSelf.setWorm(getActiveWorm());
-			getActiveWorm().getProgram().execute();
-		}
 		setActiveTeam(null);
 		setStarted();
 	}
