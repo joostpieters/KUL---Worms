@@ -44,7 +44,6 @@ public class World {
 	private List<Worm> wormsList;
 	private List<Food> foodlist;
 	private List<Teams> teamsList;
-	private List<Projectile> projList;
 	private Iterator<Worm> switchWorm;
 	private double width;
 	private double height;
@@ -95,7 +94,6 @@ public class World {
 		wormsList = new ArrayList<Worm>();
 		foodlist = new ArrayList<Food>();
 		teamsList = new ArrayList<Teams>();
-		projList = new ArrayList<Projectile>();
 	}
 	
 	/**
@@ -334,9 +332,6 @@ public class World {
 		if(obj instanceof Food){
 			addFood((Food) obj);
 		}
-		if(obj instanceof Projectile){
-			addProjectile((Projectile) obj);
-		}
 	}
 	
 	/**
@@ -346,8 +341,6 @@ public class World {
 	 * 			The object to remove.
 	 * @effect	if the object is a Worm then the method to remove a worm will be called.
 	 * 		  |	if(obj instanceof Worm) delWorm(obj);	
-	 * @effect	if the object is a Projectile then the method to remove a Projectile will be called.
-	 * 		  |	if(obj instanceof Projectile) delProjectile(obj);	
 	 * @effect	if the object is Food then the method to remove food will be called.
 	 * 		  |	if(obj instanceof Food) delFood(obj);	
 	 */
@@ -358,9 +351,6 @@ public class World {
 		}
 		if(obj instanceof Worm){
 			delWorm((Worm) obj);
-		}
-		if(obj instanceof Projectile){
-			delProjectile((Projectile) obj);
 		}
 	}
 	
@@ -472,7 +462,7 @@ public class World {
 	/**
 	 * Returns a list of all the objects in this world.
 	 * 
-	 * @return	All the Worms, Projectiles and Food in this world.
+	 * @return	All the Worms and Food in this world.
 	 */
 	
 	@Basic
@@ -483,9 +473,6 @@ public class World {
 		}
 		for(Worm worm : wormsList){
 			all.add(worm);
-		}
-		for(Projectile proj : projList){
-			all.add(proj);
 		}
 		return all;
 	}
@@ -582,35 +569,6 @@ public class World {
 	}
 	
 	/**
-	 * Method to add a Projectile to this world.
-	 * 
-	 * @param 	proj
-	 * 			Projectile to be added to the world.
-	 * @effect	The projectile will be added to the list of projectiles in this world.
-	 * 		  |	getProjectiles().add(proj);
-	 */
-	
-
-	public void addProjectile(Projectile proj){
-		if(proj.getWorld() == this){
-		projList.add(proj);
-		}
-	}
-	
-	/**
-	 * Method to remove a projectile from this world.
-	 * 
-	 * @param 	proj
-	 * 			Projectile that is to be removed.
-	 * @effect	The projectile is removed from the world.
-	 * 	  	  |	getActiveProjectile().remove();
-	 */
-	
-	public void delProjectile(Projectile proj){
-			projList.remove(proj);
-	}
-	
-	/**
 	 * Check whether this team is a valid team.
 	 * 
 	 * @param 	team
@@ -692,18 +650,7 @@ public class World {
 	public Worm getActiveWorm(){
 		return activeWorm;
 	}
-	
-	/**
-	 * Returns a list of all the projectiles.
-	 * 
-	 * @return Set of projectiles.
-	 */
-	
-	@Basic
-	public List<Projectile> getProjectile(){
-		return projList;
-	}
-	
+
 	/**
 	 * Returns a list of all the food.
 	 * 

@@ -41,12 +41,6 @@ public abstract class Jump extends Object{
 	public abstract double getMass();
 
 	/**
-	 * Gets the Force exerted on this projectile from the weapons-classes.
-	 */
-
-	public abstract double getForce();
-
-	/**
 	 * gets the direction of the worm.
 	 */
 

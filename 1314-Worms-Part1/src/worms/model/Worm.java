@@ -1,8 +1,6 @@
 package worms.model;
 
 import worms.model.superclasses.Jump;
-import worms.model.weapons.Bazooka;
-import worms.model.weapons.Rifle;
 import be.kuleuven.cs.som.annotate.*;
 
 /**
@@ -792,7 +790,7 @@ public class Worm extends Jump {
 	 */
 	
 	public boolean canShoot(){
-		return ((getActionPoints() != 0) && (!getWorld().isImpassable(getX(), getY(), getRadius()))); //add removed
+		return (!(getActionPoints() == 0)); //add removed
 	}
 	
 	/**
@@ -820,23 +818,20 @@ public class Worm extends Jump {
 		}
 		double shootX = this.getX()+Math.cos(this.getOrientation())*getRadius();
 		double shootY = this.getY()+Math.sin(this.getOrientation())*getRadius();
-		Projectile proj = null;
 		if(getWeapon() == "Bazooka"){
-			proj = new Bazooka(getWorld(), shootX, shootY, yield);
-			if(proj.getWorld() != this.getWorld()){
-				proj.setWorld(getWorld());
-			}	
-			}
-		if(getWeapon() == "Rifle"){
-			proj = new Rifle(getWorld(), shootX, shootY);
-			if(proj.getWorld() != this.getWorld()){
-				proj.setWorld(getWorld());
-			}
+			double F = 	2.5+((yield*(9.5-2.5))/100);
+			Projectile proj = new Projectile(getWorld(), shootX, shootY, getDirection(), 0.30, F, yield, 80);
+			proj.setCurrentWorm(this);
+			getWorld().setActiveProjectile(proj);
+			setActionPoints(getActionPoints()-50);
+
 		}
-		proj.setCurrentWorm(this);
-		proj.shoot();
-		setActionPoints(getActionPoints()-proj.getAP());
-		getWorld().setActiveProjectile(proj);
+		if(getWeapon() == "Rifle"){
+			Projectile proj = new Projectile(getWorld(), shootX, shootY, getDirection(), 0.01, 1.5, yield, 20);
+			proj.setCurrentWorm(this);
+			getWorld().setActiveProjectile(proj);
+			setActionPoints(getActionPoints()-10);
+		}
 
 	}
 	

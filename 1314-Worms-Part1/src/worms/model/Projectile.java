@@ -1,6 +1,7 @@
 package worms.model;
 import be.kuleuven.cs.som.annotate.*;
 import worms.model.superclasses.Jump;
+import worms.util.Util;
 
 /**
  * A class of projectiles that can be specified, and are an Object.
@@ -17,7 +18,7 @@ import worms.model.superclasses.Jump;
  *
  */
 
-public abstract class Projectile extends Jump{
+public class Projectile{
 	
 	/**
 	 * All of the variables and constants used in this class.
@@ -25,6 +26,10 @@ public abstract class Projectile extends Jump{
 	
 	private Worm worm;
 	private final int DENSITY = 7800;
+	private double dir, mass, xPos, yPos, force;
+	private int yield, damage;
+	private World world;
+	private boolean removed;
 
 	/**
 	 * Constructor for the Projectile.
@@ -39,9 +44,16 @@ public abstract class Projectile extends Jump{
 	 */
 	
 	@Raw
-	public Projectile(World world, double xPos, double yPos){
-		super(world, xPos, yPos, 0.0);
-		this.setRadius(getRadius());
+	public Projectile(World world, double xPos, double yPos, double dir, double mass, double force, int yield, int damage){
+		this.world = world;
+		this.xPos = xPos;
+		this.yPos = yPos;
+		this.dir = dir;
+		this.force = force;
+		this.mass = mass;
+		this.yield = yield;
+		this.damage = damage;
+		this.removed = false;
 	}
 	
 	/**
@@ -54,6 +66,46 @@ public abstract class Projectile extends Jump{
 	 * @throws	IllegalArgumentException if the worm is null and therefor doesn't exist.
 	 * 		  |	worm != null;
 	 */
+	
+	public double getMass(){
+		return this.mass;
+	}
+	
+	public double getX(){
+		return this.xPos;
+	}
+	
+	public double getY(){
+		return this.yPos;
+	}
+	
+	public void setX(double xPos){
+		this.xPos = xPos;
+	}
+	
+	public void setY(double yPos){
+		this.yPos = yPos;
+	}
+	
+	public double getForce(){
+		return this.force;
+	}
+	
+	public World getWorld(){
+		return this.world;
+	}
+	
+	public double getYield(){
+		return this.yield;
+	}
+	
+	public int getDamage(){
+		return this.damage;
+	}
+	
+	public double getDirection(){
+		return dir;
+	}
 	
 	@Raw
 	public void setCurrentWorm(Worm worm){
@@ -77,18 +129,6 @@ public abstract class Projectile extends Jump{
 	
 	
 	/**
-	 * Getter for the direction of the current worm, and therefor also the projectile due to the invar.
-	 * 
-	 * @return	The direction of the current worm.
-	 * 		  |	result == getWorm().getOrientation();
-	 */
-	
-	@Basic @Raw
-	public double getDirection(){
-		return this.currentWorm().getOrientation();
-	}
-	
-	/**
 	 * Getter for the radius of this projectile.
 	 * 
 	 * @return	The radius of this projectile.
@@ -97,24 +137,7 @@ public abstract class Projectile extends Jump{
 	
 	@Basic @Raw
 	public double getRadius(){
-		return Math.cbrt((this.getMass()*0.75)/(DENSITY*Math.PI));
-	}
-	
-	/**
-	 * Method to make a projectile jump, and therefor shoot.
-	 * 
-	 * @param	time
-	 * 			The time that this projectile will jump.
-	 * @effect	Will call the Jump superclass with given time as parameter.
-	 * 		  |	super.jump(time);
-	 * @effect	Post jump, the Projectile will damage worms within it's radius and remove itself.
-	 * 		  | damage(); remove();
-	 */
-	
-	public void shoot(){
-		jump(jumpTime(1e-4));
-		damage();
-		remove();
+		return Math.cbrt((getMass()*0.75)/(DENSITY*Math.PI));
 	}
 	
 	/**
@@ -124,15 +147,15 @@ public abstract class Projectile extends Jump{
 	 * 		  |	worm.setHitPoints(worm.getHitPoints() - this.getDamage());	 * 
 	 */
 	
-	public void damage(){
-		if(isActive()){
-			for(Worm worm : this.getWorld().getWorms()){
-				if(this.overlaps(worm)){
-					worm.setHitPoints(worm.getHitPoints() - this.getDamage());
-				}
-			}
-		}
-	}
+//	public void damage(){
+//		if(isActive()){
+//			for(Worm worm : this.getWorld().getWorms()){
+//				if(this.overlaps(worm)){
+//					worm.setHitPoints(worm.getHitPoints() - this.getDamage());
+//				}
+//			}
+//		}
+//	}
 	
 	/**
 	 * Method to calculate the position an object would be after performing a jump.
@@ -166,6 +189,7 @@ public abstract class Projectile extends Jump{
 	 */
 	
 	public void jump(double timeS){
+		System.out.println("Debug: projjump happened");
  		double t = (getRadius()/(getInitialVelocity()*4));
 		double[] temp = jumpStep(t);
 		double dX = temp[0];
@@ -176,18 +200,13 @@ public abstract class Projectile extends Jump{
 			dX = temp[0];
 			dY = temp[1];
 		}
-		if(!getWorld().objectInWorld(dX, dY, getRadius())){
-			this.remove();
-		}
-		else{
-			setX(dX);
-			setY(dY);
-
-		}
+		this.setX(dX);
+		this.setY(dY);
+		remove();
 	}
 
 	public double jumpTime(double timeS){
-		double time = (getRadius()/getInitialVelocity());
+		double time = (getRadius()*0.1/getInitialVelocity());
 		double[] temp = jumpStep(time);
 		double dX = temp[0];
 		double dY = temp[1];
@@ -200,33 +219,28 @@ public abstract class Projectile extends Jump{
 		return time;
 	}
 	
+
+	private boolean overlapsWith(Projectile proj) {
+		boolean overlaps = false;
+		for(Worm worm : getWorld().getWorms()){
+			if(Util.fuzzyEquals(proj.getX(), worm.getX(), 0.40) && Util.fuzzyEquals(proj.getY(), worm.getY(), 0.40)){
+				overlaps = true;
+			}
+		}
+		return overlaps;
+	}
+
 	private double getInitialVelocity(){
 		double v0 = (getForce()/getMass())*0.5;
 		return v0;
 	}
 	
-	/**
-	 * Gets the mass of this specific projectile from the weapons-classes.
-	 */
+	public boolean isActive(){
+		return(!removed);
+	}
 	
-	public abstract double getMass();
-	
-	/**
-	 * Gets the Force exerted on this projectile from the weapons-classes.
-	 */
-	
-	public abstract double getForce();
-	
-	/**
-	 * gets the Damage done by this specific projectile from the weapons-classes.
-	 */
-	
-	public abstract int getDamage();
-	
-	/**
-	 * Gets the actionpoints required to fire this projectile from the weapons-classes.
-	 */
-	
-	public abstract int getAP();
-	
+	public void remove(){
+		world.setActiveProjectile(null);
+		removed = true;
+	}
 }

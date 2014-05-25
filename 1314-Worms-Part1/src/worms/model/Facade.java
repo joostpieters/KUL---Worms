@@ -310,7 +310,7 @@ public class Facade implements IFacade {
 	@Override
 	public void jump(Projectile projectile, double timeStep) {
 		try{
-			projectile.shoot();
+			projectile.jump(timeStep);
 		}
 		catch(Exception e){
 			throw new ModelException("Not able to shoot with following error: "+e.getMessage());
@@ -345,7 +345,12 @@ public class Facade implements IFacade {
 
 	@Override
 	public void shoot(Worm worm, int yield) {
-			worm.shoot(yield);
+			try{
+				worm.shoot(yield);
+			}
+			catch(Exception e){
+				throw new ModelException("Not able to fire");
+			}
 
 	}
 
