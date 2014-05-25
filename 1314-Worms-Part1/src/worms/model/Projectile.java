@@ -1,6 +1,7 @@
 package worms.model;
 import be.kuleuven.cs.som.annotate.*;
 import worms.model.superclasses.Jump;
+import worms.model.superclasses.Object;
 import worms.util.Util;
 
 /**
@@ -32,15 +33,24 @@ public class Projectile{
 	private boolean removed;
 
 	/**
-	 * Constructor for the Projectile.
+	 * Constructor for the projectile.
 	 * 
 	 * @param 	world
-	 * 			The world the projectile is added to.
+	 * 			The world.
 	 * @param 	xPos
-	 * 			The initial X-coordinate of the Projectile.
+	 * 			X position
 	 * @param 	yPos
-	 * 			The initial Y-coordinate of teh Projectile.
-	 * @effect	Will call the Object superclass in model.superclasses.
+	 * 			Y position
+	 * @param 	dir
+	 * 			The direction
+	 * @param 	mass
+	 * 			The mass
+	 * @param 	force
+	 * 			The force
+	 * @param 	yield
+	 * 			The yield
+	 * @param 	damage
+	 * 			The damage done.
 	 */
 	
 	@Raw
@@ -67,46 +77,6 @@ public class Projectile{
 	 * 		  |	worm != null;
 	 */
 	
-	public double getMass(){
-		return this.mass;
-	}
-	
-	public double getX(){
-		return this.xPos;
-	}
-	
-	public double getY(){
-		return this.yPos;
-	}
-	
-	public void setX(double xPos){
-		this.xPos = xPos;
-	}
-	
-	public void setY(double yPos){
-		this.yPos = yPos;
-	}
-	
-	public double getForce(){
-		return this.force;
-	}
-	
-	public World getWorld(){
-		return this.world;
-	}
-	
-	public double getYield(){
-		return this.yield;
-	}
-	
-	public int getDamage(){
-		return this.damage;
-	}
-	
-	public double getDirection(){
-		return dir;
-	}
-	
 	@Raw
 	public void setCurrentWorm(Worm worm){
 		if(worm == null){
@@ -114,6 +84,110 @@ public class Projectile{
 		}
 		this.worm = worm;
 	}
+	
+	/**
+	 * Getter for the mass.
+	 * 
+	 * @return 	mass
+	 */
+	
+	public double getMass(){
+		return this.mass;
+	}
+	
+	/**
+	 * Getter for the xpos.
+	 * 
+	 * @return xPos
+	 */
+	
+	public double getX(){
+		return this.xPos;
+	}
+	
+	/**
+	 * Getter for the ypos.
+	 * 
+	 * @return yPos
+	 */
+	
+	public double getY(){
+		return this.yPos;
+	}
+	
+	/**
+	 * Setter for the x-pos.
+	 * 
+	 * @param 	xPos
+	 * 			The x-postion.
+	 */
+	
+	public void setX(double xPos){
+		this.xPos = xPos;
+	}
+	
+	/**
+	 * Setter for the y-pos.
+	 * 
+	 * @param 	yPos
+	 * 			The y-position
+	 */
+	
+	public void setY(double yPos){
+		this.yPos = yPos;
+	}
+	
+	/**
+	 * Getter for the force. 
+	 * 
+	 * @return	Force
+	 */
+	
+	public double getForce(){
+		return this.force;
+	}
+	
+	/**
+	 * Getter for the world.
+	 * 
+	 * @return 	World
+	 */
+	
+	public World getWorld(){
+		return this.world;
+	}
+	
+	/**
+	 * Getter for the yield.
+	 * 
+	 * @return 	Yield
+	 * 
+	 */
+	
+	public double getYield(){
+		return this.yield;
+	}
+	
+	/**
+	 * Getter for the damage.
+	 * 
+	 * @return	damage
+	 */
+	
+	public int getDamage(){
+		return this.damage;
+	}
+	
+	/**
+	 * Getter for the direction.
+	 * 
+	 * @return	Direction
+	 */
+	
+	public double getDirection(){
+		return dir;
+	}
+
 	
 	/**
 	 * Getter for the worm that this projectile belongs to.
@@ -147,15 +221,15 @@ public class Projectile{
 	 * 		  |	worm.setHitPoints(worm.getHitPoints() - this.getDamage());	 * 
 	 */
 	
-//	public void damage(){
-//		if(isActive()){
-//			for(Worm worm : this.getWorld().getWorms()){
-//				if(this.overlaps(worm)){
-//					worm.setHitPoints(worm.getHitPoints() - this.getDamage());
-//				}
-//			}
-//		}
-//	}
+	public void damage(){
+		if(isActive()){
+			for(Worm worm : this.getWorld().getWorms()){
+				if(this.overlaps(worm)){
+					worm.setHitPoints(worm.getHitPoints() - this.getDamage());
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Method to calculate the position an object would be after performing a jump.
@@ -204,13 +278,28 @@ public class Projectile{
 		this.setY(dY);
 		remove();
 	}
+	
+	/**
+	 * Method to calculate the jumpTime for a projectile.
+	 * 
+	 * @param	timeS
+	 * 			The timestep.
+	 * @return	The time it takes to jump.
+	 *		  |	while(!getWorld().isImpassable(dX, dY, getRadius()) && getWorld().objectInWorld(dX, dY, getRadius())){
+	 *		  |		time = time + timeS;
+	 *		  |		temp = jumpStep(time);
+	 *		  |		dX = temp[0];
+	 *		  |		dY = temp[1];
+	 *		  |	}
+	 *		  |	return time;
+	 */
 
 	public double jumpTime(double timeS){
 		double time = (getRadius()*0.1/getInitialVelocity());
 		double[] temp = jumpStep(time);
 		double dX = temp[0];
 		double dY = temp[1];
-		while(!getWorld().isImpassable(dX, dY, getRadius())){
+		while(!getWorld().isImpassable(dX, dY, getRadius()) && getWorld().objectInWorld(dX, dY, getRadius()) && !overlapsWith(this)){
 			time = time + timeS;
 			temp = jumpStep(time);
 			dX = temp[0];
@@ -218,6 +307,17 @@ public class Projectile{
 		}
 		return time;
 	}
+	
+	/**
+	 * Check whether a projectile overlaps with a worm.
+	 * 
+	 * @param 	proj
+	 * 			The projectile
+	 * @return	True if the projectile has the same position as a worm.
+	 * 		  |	if(Util.fuzzyEquals(proj.getX(), worm.getX(), 0.40) && Util.fuzzyEquals(proj.getY(), worm.getY(), 0.40)){
+	 *		  |		overlaps = true;
+	 *		  |	}
+	 */
 	
 
 	private boolean overlapsWith(Projectile proj) {
@@ -230,17 +330,54 @@ public class Projectile{
 		return overlaps;
 	}
 
+	/**
+	 * Get the initial velocity for a projectile.
+	 * 
+	 * @return 	The initial velocity.
+	 * 		  |	return (getForce()/getMass())*0.5;
+	 */
+	
 	private double getInitialVelocity(){
 		double v0 = (getForce()/getMass())*0.5;
 		return v0;
 	}
 	
+	/**
+	 * Check whether a projectile is active.
+	 * 
+	 * @return	true if the projectile hasn't been removed yet.
+	 */
+	
 	public boolean isActive(){
 		return(!removed);
 	}
 	
+	/**
+	 * Remove a projectile from the world.
+	 * 
+	 * @effect	The current projectile will be set to null.
+	 * 		  | world.setActiveProjectile(null);
+	 */
+	
 	public void remove(){
 		world.setActiveProjectile(null);
 		removed = true;
+	}
+	
+	
+	/**
+	 * Method to check whether this object overlaps with another object.
+	 * 
+	 * @param 	object
+	 * 			The object to overlap with.
+	 * @return	True if the object overlaps, thus is within the sum of the 2 radiuses away from this object.
+	 * 		  |	(getX() - object.getX()) <= (getRadius() + object.getRadius()) || (getY() - object.getY()) <= (getRadius() + object.getRadius());
+	 */
+	
+	public boolean overlaps(Object object){
+		if(Util.fuzzyEquals(this.getX(), object.getX(), 0.40) && Util.fuzzyEquals(this.getY(), object.getY(), 0.40)){
+			return true;
+		}
+		return false;
 	}
 }

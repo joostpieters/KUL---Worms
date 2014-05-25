@@ -2,9 +2,7 @@
 CURRENT BUGS THAT NEED TO BE FIXED
 **********************************
 
-- Projectiles should be revised completely. (Sunday)
 - Make sure the program system converts everything right (E.g.: booleans, doubles and nullliterals)
-- Hand in project (Monday)
 
 ***********
 FIXED BUGS
@@ -37,3 +35,4 @@ FIXED BUGS
 - Program system done!
 - Tests written.
 - Documentation done.
+- Projectile have been revised.
