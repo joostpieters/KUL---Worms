@@ -2,7 +2,7 @@
 CURRENT BUGS THAT NEED TO BE FIXED
 **********************************
 
-- Projectile appears, but doesn't make the jump movement.
+- Program returns errors, not enough time to fix unfortunately.
 
 ***********
 FIXED BUGS
@@ -37,3 +37,4 @@ FIXED BUGS
 - Documentation done.
 - Projectile have been revised and work.
 - Program system done as much as possible.
+- JAVADoc created and added.

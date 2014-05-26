@@ -25,7 +25,7 @@ public class Sequence extends Statement {
 			i = 0;
 		}
 		while(i < s.size()){
-			s.get(i).run();
+			s.get(i).run();;
 			i++;
 		}
 		ran = true;

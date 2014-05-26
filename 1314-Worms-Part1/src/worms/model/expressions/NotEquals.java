@@ -13,10 +13,15 @@ public class NotEquals extends Expression {
 
 	@Override
 	public BooleanSort getValue() {
-		if(!(left.getValue().getValue().equals(right.getValue().getValue()))){
-			return new BooleanSort(true);
+		if(left.getValue().getValue() == null && right.getValue().getValue() == null){
+			return new BooleanSort(false);
 		}
-		return new BooleanSort(false);
+		else{
+			if(left.getValue().getValue().equals(right.getValue().getValue())){
+			return new BooleanSort(false);
+			}
+		}
+		return new BooleanSort(true);
 	}
 
 	@Override
