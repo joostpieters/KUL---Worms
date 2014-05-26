@@ -16,11 +16,13 @@ public class DoubleSort extends Type {
 		return dbl;
 	}
 
-	public void setValue(Object obj) {
-		if(!(obj instanceof Double)){
-			return;
-		}
-		this.dbl = (Double) dbl;
+	public void setValue(double dbl) {
+		this.dbl = dbl;
 		
+	}
+
+	@Override
+	public Type clone() {
+		return new DoubleSort(this.dbl);
 	}
 }

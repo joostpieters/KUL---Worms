@@ -1,6 +1,7 @@
 package worms.model.expressions;
 
 import worms.model.Worm;
+import worms.model.types.BooleanSort;
 
 public class SameTeam extends Expression{
 	
@@ -11,23 +12,28 @@ public class SameTeam extends Expression{
 	}
 
 	@Override
-	public Object getValue() {
-		if(obj.getValue() instanceof Worm){
-			if(WormSelf.getWorm().getTeam().getTName().equals(((Worm) obj.getValue()).getTeam().getTName())){
-				return new BooleanLit(true);
+	public BooleanSort getValue() {
+		if(obj.getValue().getValue() instanceof Worm){
+			if(WormSelf.getWorm().getTeam().getTName().equals((((Worm) obj.getValue().getValue()).getTeam().getTName()))){
+				return new BooleanSort(true);
 			}
 			else{
-				return new BooleanLit(false);
+				return new BooleanSort(false);
 			}
 		}
 		else{
-			return new BooleanLit(false);
+			return new BooleanSort(false);
 		}
 	}
 
 	@Override
 	public String toString() {
 		return "sameteam "+obj.toString();
+	}
+
+	@Override
+	public Expression clone() {
+		return new SameTeam(this.obj);
 	}
 
 }

@@ -34,4 +34,9 @@ public class WormSelf extends Expression{
 	public static void setWorm(Worm activeWorm) {
 		worm = activeWorm;		
 	}
+
+	@Override
+	public Expression clone() {
+		return new WormSelf(getWorm());
+	}
 }

@@ -819,6 +819,9 @@ public class Worm extends Jump {
 		double shootX = this.getX()+Math.cos(this.getOrientation())*getRadius();
 		double shootY = this.getY()+Math.sin(this.getOrientation())*getRadius();
 		if(getWeapon() == "Bazooka"){
+			if(getActionPoints() < 50){
+				throw new IllegalStateException("Not enough AP");
+			}
 			double F = 	2.5+((yield*(9.5-2.5))/100);
 			Projectile proj = new Projectile(getWorld(), shootX, shootY, getDirection(), 0.30, F, yield, 80);
 			proj.setCurrentWorm(this);
@@ -827,6 +830,9 @@ public class Worm extends Jump {
 
 		}
 		if(getWeapon() == "Rifle"){
+			if(getActionPoints() < 10){
+				throw new IllegalStateException("Not enough AP");
+			}
 			Projectile proj = new Projectile(getWorld(), shootX, shootY, getDirection(), 0.01, 1.5, yield, 20);
 			proj.setCurrentWorm(this);
 			getWorld().setActiveProjectile(proj);

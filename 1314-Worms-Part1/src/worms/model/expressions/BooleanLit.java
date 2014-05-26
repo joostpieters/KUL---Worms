@@ -2,35 +2,40 @@ package worms.model.expressions;
 
 import worms.model.types.BooleanSort;
 
-public class BooleanLit extends Expression {
+public class BooleanLit extends Boolean {
 	
-	private BooleanSort bool;
+	private BooleanSort val;
+	private boolean bool;
 	
 	public BooleanLit(){
-		setValue(new BooleanSort(false));
-	}
+		this.bool = false;
+		BooleanSort val = new BooleanSort(bool);
+		this.val = val;	}
 	
-	public BooleanLit(Boolean bool){
-		setValue(new BooleanSort(bool));
-	}
-	
-	public void setValue(BooleanSort bool){
+	public BooleanLit(boolean bool){
 		this.bool = bool;
+		BooleanSort val = new BooleanSort(bool);
+		this.val = val;
 	}
 
 	@Override
-	public Object getValue() {
-		return bool;
+	public BooleanSort getValue() {
+		return val;
 	}
 
 	@Override
 	public String toString() {
-		if(bool.getValue() == true){
+		if(this.bool == true){
 			return "True";
 		}
 		else{
 			return "False";
 		}
+	}
+
+	@Override
+	public BooleanLit clone() {
+		return new BooleanLit(this.bool);
 	}
 
 	

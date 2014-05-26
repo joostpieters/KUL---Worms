@@ -1,4 +1,5 @@
 package worms.model.expressions;
+import worms.model.types.BooleanSort;
 
 public class BiggerThan extends Expression {
 	
@@ -10,16 +11,21 @@ public class BiggerThan extends Expression {
 	}
 
 	@Override
-	public BooleanLit getValue() {
-		if((Double) left.getValue()> (Double) right.getValue()){
-			return new BooleanLit(true);
+	public BooleanSort getValue() {
+		if((Double) left.getValue().getValue()> (Double) right.getValue().getValue()){
+			return new BooleanSort(true);
 		}
-		return new BooleanLit(false);
+		return new BooleanSort(false);
 	}
 
 	@Override
 	public String toString() {
 		return left.toString()+" > "+right.toString();
+	}
+
+	@Override
+	public Expression clone() {
+		return new BiggerThan(this.left, this.right);
 	}
 	
 	

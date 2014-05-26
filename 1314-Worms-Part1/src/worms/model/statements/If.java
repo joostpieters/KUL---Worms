@@ -23,11 +23,11 @@ public class If extends Statement{
 	@Override
 	public void run() {
 		ran = false;
-		if((Boolean) cond.getValue()){
+		if((Boolean) cond.getValue().getValue()){
 			then.run();
 			ran = true;
 		}
-		else if(!(Boolean) cond.getValue()){
+		else if(!(Boolean) cond.getValue().getValue()){
 			other.run();
 			ran = true;
 		}

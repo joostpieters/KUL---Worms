@@ -6,7 +6,6 @@ import java.util.Random;
 import worms.gui.game.IActionHandler;
 import worms.model.expressions.Expression;
 import worms.model.programs.ParseOutcome;
-import worms.model.programs.ProgramFactory;
 import worms.model.programs.ProgramParser;
 import worms.model.statements.Statement;
 import worms.model.types.Type;

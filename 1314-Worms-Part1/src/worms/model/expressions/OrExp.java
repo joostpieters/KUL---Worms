@@ -1,5 +1,7 @@
 package worms.model.expressions;
 
+import worms.model.types.BooleanSort;
+
 public class OrExp extends Expression{
 	
 	private Expression left, right;
@@ -10,16 +12,21 @@ public class OrExp extends Expression{
 	}
 
 	@Override
-	public BooleanLit getValue() {
-		if((Boolean) left.getValue() || (Boolean) right.getValue()){
-			return new BooleanLit(true);
+	public BooleanSort getValue() {
+		if((boolean) left.getValue().getValue() || (boolean) right.getValue().getValue()){
+			return new BooleanSort(true);
 		}
-		return new BooleanLit(false);
+		return new BooleanSort(false);
 	}
 
 	@Override
 	public String toString() {
 		return left.toString()+" || "+right.toString();
+	}
+
+	@Override
+	public Expression clone() {
+		return new OrExp(this.left, this.right);
 	}
 
 	

@@ -2,6 +2,7 @@ package worms.model.expressions;
 
 import worms.model.Food;
 import worms.model.Worm;
+import worms.model.types.DoubleSort;
 
 public class GetY extends Expression {
 	
@@ -12,18 +13,23 @@ public class GetY extends Expression {
 	}
 
 	@Override
-	public Object getValue() {
-		if(obj.getValue() instanceof Worm){
-			return new DoubleLit(((Worm) obj.getValue()).getY());
+	public DoubleSort getValue() {
+		if(obj.getValue().getValue() instanceof Worm){
+			return new DoubleSort((double) (((Worm) obj.getValue().getValue()).getY()));
 		}
 		else{
-			return new DoubleLit(((Food) obj.getValue()).getY());
+			return new DoubleSort((double) (((Food) obj.getValue().getValue()).getY()));
 		}
 	}
 
 	@Override
 	public String toString() {
 		return "gety "+obj.toString();
+	}
+
+	@Override
+	public Expression clone() {
+		return new GetY(this.obj);
 	}
 
 }

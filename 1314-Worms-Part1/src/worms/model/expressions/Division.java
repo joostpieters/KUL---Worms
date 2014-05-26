@@ -1,4 +1,5 @@
 package worms.model.expressions;
+import worms.model.types.DoubleSort;
 
 public class Division extends Expression{
 
@@ -10,12 +11,17 @@ public class Division extends Expression{
 	}
 	
 	@Override
-	public DoubleLit getValue() {
-		return new DoubleLit((Double) top.getValue()/(Double) bottom.getValue());
+	public DoubleSort getValue() {
+		return new DoubleSort((Double) top.getValue().getValue()/(Double) bottom.getValue().getValue());
 	}
 	
 	public String toString(){
 		return top.toString()+"/"+bottom.toString();
+	}
+
+	@Override
+	public Expression clone() {
+		return new Division(this.top, this.bottom);
 	}
 
 	

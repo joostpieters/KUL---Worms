@@ -9,16 +9,16 @@ public class BooleanSort extends Type{
 	}
 
 	public BooleanSort(Boolean bool){
-		setValue(bool);
-	}
-
-	
-	public void setValue(Boolean bool){
 		this.bool = bool;
 	}
 	
 	public Boolean getValue(){
 		return bool;
+	}
+
+	@Override
+	public BooleanSort clone() {
+		return new BooleanSort(getValue());
 	}
 
 }

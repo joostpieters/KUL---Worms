@@ -1,6 +1,7 @@
 package worms.model.expressions;
 
 import worms.model.Worm;
+import worms.model.types.DoubleSort;
 
 
 public class GetHP extends Expression {
@@ -12,18 +13,23 @@ public class GetHP extends Expression {
 	}
 
 	@Override
-	public Object getValue() {
-		if(obj.getValue() instanceof Worm){
-			return new DoubleLit((double)(((Worm) obj.getValue()).getHitPoints()));
+	public DoubleSort getValue() {
+		if(obj.getValue().getValue() instanceof Worm){
+			return new DoubleSort((double) (((Worm) obj.getValue().getValue()).getHitPoints()));
 		}
 		else{
-			return new DoubleLit(0.0);
+			return new DoubleSort(0.0);
 		}
 	}
 
 	@Override
 	public String toString() {
 		return "gethp "+obj.toString();
+	}
+
+	@Override
+	public Expression clone() {
+		return new GetHP(this.obj);
 	}
 
 }

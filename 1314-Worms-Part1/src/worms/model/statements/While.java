@@ -21,7 +21,7 @@ public class While extends Statement{
 	@Override
 	public void run() {
 		ran = false;
-		while((Boolean) (cond.getValue())){
+		while((boolean) (cond.getValue()).getValue()){
 			s.run();
 			ran = true;
 		}

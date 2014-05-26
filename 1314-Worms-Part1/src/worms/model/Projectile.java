@@ -1,6 +1,5 @@
 package worms.model;
 import be.kuleuven.cs.som.annotate.*;
-import worms.model.superclasses.Jump;
 import worms.model.superclasses.Object;
 import worms.util.Util;
 
@@ -263,8 +262,7 @@ public class Projectile{
 	 */
 	
 	public void jump(double timeS){
-		System.out.println("Debug: projjump happened");
- 		double t = (getRadius()/(getInitialVelocity()*4));
+		double t = (getRadius()/(getInitialVelocity()*4));
 		double[] temp = jumpStep(t);
 		double dX = temp[0];
 		double dY = temp[1];
@@ -274,9 +272,9 @@ public class Projectile{
 			dX = temp[0];
 			dY = temp[1];
 		}
-		this.setX(dX);
-		this.setY(dY);
-		remove();
+		setX(dX);
+		setY(dY);
+		damage();
 	}
 	
 	/**

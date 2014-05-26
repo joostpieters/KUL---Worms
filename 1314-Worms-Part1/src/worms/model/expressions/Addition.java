@@ -1,4 +1,5 @@
 package worms.model.expressions;
+import worms.model.types.DoubleSort;
 
 public class Addition extends Expression{
 	
@@ -15,8 +16,13 @@ public class Addition extends Expression{
 	}
 
 	@Override
-	public DoubleLit getValue() {
-		return new DoubleLit((Double)left.getValue()+(Double) right.getValue());
+	public DoubleSort getValue() {
+		return new DoubleSort((Double) left.getValue().getValue() + (Double) right.getValue().getValue());
+	}
+
+	@Override
+	public Expression clone() {
+		return new Addition(this.left, this.right);
 	}
 	
 

@@ -83,9 +83,6 @@ public class Program {
 		catch(Error e){
 			System.out.println("Program failed: "+e.getMessage());
 		}
-		if(!worm.isActive()){
-			return;
-		}
 	}
 
 	public void terminate() {

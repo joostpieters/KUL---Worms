@@ -1,6 +1,7 @@
 package worms.model.expressions;
 
 import worms.model.Worm;
+import worms.model.types.DoubleSort;
 
 
 public class GetDirection extends Expression {
@@ -12,18 +13,23 @@ public class GetDirection extends Expression {
 	}
 
 	@Override
-	public Object getValue() {
-		if(obj.getValue() instanceof Worm){
-			return new DoubleLit(((Worm) obj.getValue()).getOrientation());
+	public DoubleSort getValue() {
+		if(obj.getValue().getValue() instanceof Worm){
+			return new DoubleSort((double) (((Worm) obj.getValue().getValue()).getOrientation()));
 		}
 		else{
-			return new DoubleLit(0.0);
+			return new DoubleSort(0.0);
 		}
 	}
 
 	@Override
 	public String toString() {
 		return "getdir "+obj.toString();
+	}
+
+	@Override
+	public Expression clone() {
+		return new GetDirection(this.obj);
 	}
 
 }

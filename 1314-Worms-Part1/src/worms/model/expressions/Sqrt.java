@@ -1,5 +1,7 @@
 package worms.model.expressions;
 
+import worms.model.types.DoubleSort;
+
 public class Sqrt extends Expression{
 	
 	private Expression exp;
@@ -9,13 +11,18 @@ public class Sqrt extends Expression{
 	}
 
 	@Override
-	public DoubleLit getValue() {
-		return new DoubleLit(Math.sqrt((Double)exp.getValue()));
+	public DoubleSort getValue() {
+		return new DoubleSort(Math.sqrt((double)exp.getValue().getValue()));
 	}
 
 	@Override
 	public String toString() {
 		return "sqrt("+exp.toString()+")";
+	}
+
+	@Override
+	public Expression clone() {
+		return new Sqrt(this.exp);
 	}
 
 	

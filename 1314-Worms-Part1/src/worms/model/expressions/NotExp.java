@@ -1,5 +1,7 @@
 package worms.model.expressions;
 
+import worms.model.types.BooleanSort;
+
 public class NotExp extends Expression {
 
 	private Expression e;
@@ -9,18 +11,23 @@ public class NotExp extends Expression {
 	}
 
 	@Override
-	public BooleanLit getValue() {
-		if(!(Boolean)e.getValue()){
-			return new BooleanLit(true);
+	public BooleanSort getValue() {
+		if(!(boolean)e.getValue().getValue()){
+			return new BooleanSort(true);
 		}
 		else{
-			return new BooleanLit(false);
+			return new BooleanSort(false);
 		}
 	}
 
 	@Override
 	public String toString() {
 		return "!"+e.toString();
+	}
+
+	@Override
+	public Expression clone() {
+		return new NotExp(this.e);
 	}
 	
 }

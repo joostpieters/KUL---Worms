@@ -1,6 +1,7 @@
 package worms.model.expressions;
 
 import worms.model.Food;
+import worms.model.types.BooleanSort;
 
 public class IsFood extends Expression{
 	
@@ -11,18 +12,23 @@ public class IsFood extends Expression{
 	}
 
 	@Override
-	public BooleanLit getValue() {
-		if(obj.getValue() instanceof Food){
-			return new BooleanLit(true);
+	public BooleanSort getValue() {
+		if(obj.getValue().getValue() instanceof Food){
+			return new BooleanSort(true);
 		}
 		else{
-			return new BooleanLit(false);
+			return new BooleanSort(false);
 		}
 	}
 
 	@Override
 	public String toString() {
 		return "isfood "+obj.toString();
+	}
+
+	@Override
+	public Expression clone() {
+		return new IsFood(this.obj);
 	}
 
 }

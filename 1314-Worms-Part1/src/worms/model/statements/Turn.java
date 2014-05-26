@@ -23,7 +23,7 @@ public class Turn extends Statement{
 	public void run() {
 		Worm worm = WormSelf.getWorm();
 		IActionHandler handler = worm.getProgram().getHandler();
-		handler.turn(worm, (int)angle.getValue());
+		handler.turn(worm, (int)angle.getValue().getValue());
 		ran = true;
 	}
 

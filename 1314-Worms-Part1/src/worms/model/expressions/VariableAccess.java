@@ -1,5 +1,7 @@
 package worms.model.expressions;
 
+import worms.model.types.Type;
+
 
 public class VariableAccess extends Expression{
 	
@@ -10,13 +12,18 @@ public class VariableAccess extends Expression{
 	}
 
 	@Override
-	public Object getValue() {
+	public Type getValue() {
 		return WormSelf.getWorm().getProgram().getVars().get(name);
 	}
 
 	@Override
 	public String toString() {
 		return "variableaccess("+name+")";
+	}
+
+	@Override
+	public Expression clone() {
+		return new VariableAccess(this.name);
 	}
 
 }

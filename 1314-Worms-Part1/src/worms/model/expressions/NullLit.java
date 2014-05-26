@@ -1,5 +1,7 @@
 package worms.model.expressions;
 
+import worms.model.types.DoubleSort;
+
 public class NullLit extends Expression{
 	
 	public NullLit(){
@@ -7,13 +9,18 @@ public class NullLit extends Expression{
 	}
 
 	@Override
-	public Object getValue() {
+	public DoubleSort getValue() {
 		return null;
 	}
 
 	@Override
 	public String toString() {
 		return "null";
+	}
+
+	@Override
+	public Expression clone() {
+		return new NullLit();
 	}
 	
 }

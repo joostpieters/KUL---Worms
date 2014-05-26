@@ -1,4 +1,5 @@
 package worms.model.expressions;
+import worms.model.types.BooleanSort;
 
 public class Equals extends Expression {
 	
@@ -10,16 +11,26 @@ public class Equals extends Expression {
 	}
 
 	@Override
-	public BooleanLit getValue() {
-		if(left.getValue().equals(right.getValue())){
-			return new BooleanLit(true);
+	public BooleanSort getValue() {
+		if(left.getValue() == null && right.getValue() == null){
+			return new BooleanSort(true);
 		}
-		return new BooleanLit(false);
+		else{
+			if(left.getValue().getValue().equals(right.getValue().getValue())){
+			return new BooleanSort(true);
+			}
+		}
+		return new BooleanSort(false);
 	}
 
 	@Override
 	public String toString() {
 		return left.toString()+" == "+right.toString();
+	}
+
+	@Override
+	public Expression clone() {
+		return new Equals(this.left, this.right);
 	}
 
 }

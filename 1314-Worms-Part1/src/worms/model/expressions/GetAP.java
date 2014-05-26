@@ -1,6 +1,7 @@
 package worms.model.expressions;
 
 import worms.model.Worm;
+import worms.model.types.DoubleSort;
 
 
 public class GetAP extends Expression {
@@ -12,18 +13,19 @@ public class GetAP extends Expression {
 	}
 
 	@Override
-	public Object getValue() {
-		if(obj.getValue() instanceof Worm){
-			return new DoubleLit((double)(((Worm) obj.getValue()).getActionPoints()));
-		}
-		else{
-			return new DoubleLit(0.0);
-		}
+	public DoubleSort getValue() {
+		return new DoubleSort((double) (((Worm) obj.getValue().getValue()).getActionPoints()));
+		
 	}
 
 	@Override
 	public String toString() {
 		return "getap "+obj.toString();
+	}
+
+	@Override
+	public Expression clone() {
+		return new GetAP(this.obj);
 	}
 
 }

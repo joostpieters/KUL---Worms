@@ -1,5 +1,7 @@
 package worms.model.expressions;
 
+import worms.model.types.BooleanSort;
+
 public class NotEquals extends Expression {
 	
 	private Expression left, right;
@@ -10,16 +12,21 @@ public class NotEquals extends Expression {
 	}
 
 	@Override
-	public BooleanLit getValue() {
-		if(!(left.getValue().equals(right.getValue()))){
-			return new BooleanLit(true);
+	public BooleanSort getValue() {
+		if(!(left.getValue().getValue().equals(right.getValue().getValue()))){
+			return new BooleanSort(true);
 		}
-		return new BooleanLit(false);
+		return new BooleanSort(false);
 	}
 
 	@Override
 	public String toString() {
 		return left.toString()+" != "+right.toString();
+	}
+
+	@Override
+	public Expression clone() {
+		return new NotEquals(this.left, this.right);
 	}
 
 }

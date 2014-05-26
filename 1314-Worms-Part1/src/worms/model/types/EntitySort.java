@@ -13,12 +13,17 @@ public class EntitySort<Sort> extends Type {
 	}
 
 	@Override
-	public Object getValue() {
+	public Sort getValue() {
 		return sort;
 	}
 
-	public void setValue(Object obj) {
-		this.sort = (Sort) obj;
+	public void setValue(Sort obj) {
+		this.sort = obj;
+	}
+
+	@Override
+	public Type clone() {
+		return new EntitySort<Sort>(this.sort);
 	}
 
 }

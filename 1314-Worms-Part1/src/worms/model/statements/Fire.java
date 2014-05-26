@@ -23,7 +23,7 @@ public class Fire extends Statement{
 	public void run() {
 		Worm worm = WormSelf.getWorm();
 		IActionHandler handler = worm.getProgram().getHandler();
-		handler.fire(worm, (int)yield.getValue());
+		handler.fire(worm, (int)yield.getValue().getValue());
 		ran = true;
 	}
 

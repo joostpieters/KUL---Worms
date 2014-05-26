@@ -2,7 +2,7 @@
 CURRENT BUGS THAT NEED TO BE FIXED
 **********************************
 
-- Make sure the program system converts everything right (E.g.: booleans, doubles and nullliterals)
+- Projectile appears, but doesn't make the jump movement.
 
 ***********
 FIXED BUGS
@@ -35,4 +35,5 @@ FIXED BUGS
 - Program system done!
 - Tests written.
 - Documentation done.
-- Projectile have been revised.
+- Projectile have been revised and work.
+- Program system done as much as possible.
